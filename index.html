@@ -1,100 +1,100 @@
 <!doctype html>
 <!-- ═══════════════════════════════════════════════════════════════════
-     SKJ TECH  ·  skj-tech.online  ·  main page (single file)
+     SKJ TECH  ·  skj-tech.online  ·  strona główna (jeden plik)
 
-     PL: Wszystko edytujesz w sekcji "EDIT HERE" zaraz poniżej.
-         Dodaj projekt → zapisz plik → wgraj na Cloudflare. Tyle.
+     ══════════════════ JAK EDYTOWAĆ TĘ STRONĘ ══════════════════
 
-     ══════════════════ HOW TO EDIT THIS PAGE ══════════════════
+     Wszystko, co kiedykolwiek zmieniasz, jest w sekcji EDYTUJ TUTAJ
+     zaraz poniżej. Reszta pliku to kod strony i nie trzeba go ruszać.
 
-     Everything you ever change lives in the EDIT HERE block just
-     below. The rest of the file is page code and never needs touching.
+     DODANIE PROJEKTU
+       1. Znajdź  const PROJECTS = [ ... ]
+       2. Skopiuj cały blok { ... } razem z przecinkiem po }
+       3. Wklej go wewnątrz [ ] i uzupełnij pola:
 
-     ADD A PROJECT
-       1. Find  const PROJECTS = [ ... ]
-       2. Copy one whole { ... } block, including the comma after }
-       3. Paste it inside the [ ], fill in the fields:
+          name    tytuł karty
+          desc    jedna krótka linijka: co to robi
+          url     działający link, np. "https://cos.skj-tech.online"
+                  zostaw "" aby ukryć przycisk Otwórz
+          repo    link do GitHuba · "" ukrywa przycisk Kod
+          tags    ["html","gra"] małe znaczniki na karcie · [] = brak
+          status  "live" (zielony) · "wip" (żółty) · "paused" (szary)
 
-          name    card title
-          desc    one short line about what it does
-          url     live link, e.g. "https://blockflow.skj-tech.online"
-                  leave as "" to hide the Open button
-          repo    GitHub link · "" hides the Code button
-          tags    ["html","game"] small pills on the card · [] for none
-          status  "live" (green) · "wip" (yellow) · "paused" (gray)
+       Zasady: nie usuwaj cudzysłowów ani przecinków. Każdy blok
+       { ... } kończy się przecinkiem. Tekst z cudzysłowem w środku?
+       Użyj ' zamiast ".
 
-       Rules: keep the quotes, keep the commas. Every { ... } block
-       ends with a comma. Text with a quote in it? Use ' instead: "Ja's app"
+     KOLEJNOŚĆ   przesuwaj całe bloki { ... } w górę lub w dół.
+                 Kolejność na liście = kolejność na stronie.
+     USUWANIE    skasuj cały blok { ... } (razem z przecinkiem).
+     UKRYWANIE   otocz blok znakami /* i */ aby ukryć bez kasowania.
+     DANE STRONY w  const SITE = { ... } : tagline, przycisk GitHub,
+                 dodatkowe przyciski w nagłówku (links).
 
-     REORDER    move whole { ... } blocks up or down.
-                Order in the list = order on the page.
-     REMOVE     delete the whole { ... } block (with its comma).
-     HIDE       wrap a block in /* and */ to hide it without deleting.
-     SITE INFO  in  const SITE = { ... } : tagline, GitHub button,
-                extra header buttons (links).
+     PUBLIKACJA
+       Zapisz plik i wgraj go na Cloudflare tak samo jak inne wasze
+       aplikacje (projekt Pages → nowy deployment). Przed wgraniem
+       możesz po prostu otworzyć plik na telefonie lub PC, żeby
+       zobaczyć podgląd. Działa w pełni offline, bez bibliotek
+       i bez internetu.
 
-     PUBLISH
-       Save, then upload this file to Cloudflare the same way as your
-       other apps (your Pages project → new deployment). Before
-       uploading you can just open the file on your phone or PC to
-       preview it. It works fully offline, no libraries, no internet.
-
-     IF THE PAGE SHOWS A RED ERROR BOX
-       The data block has a syntax error. It is almost always a
-       missing comma or quote near your last edit. Fix it, refresh.
+     JEŚLI STRONA POKAZUJE CZERWONY BŁĄD
+       Sekcja z danymi ma błąd składni. Prawie zawsze to brakujący
+       przecinek lub cudzysłów obok ostatniej edycji. Popraw, odśwież.
      ═══════════════════════════════════════════════════════════════════ -->
-<html lang="en">
+<html lang="pl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0c0e11">
-<meta name="description" content="SKJ Tech — projects by Kuba &amp; Jaś">
+<meta name="description" content="SKJ Tech — projekty Kuby i Jasia">
 <title>SKJ Tech</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230c0e11'/%3E%3Ctext%20x='32'%20y='42'%20font-family='monospace'%20font-size='22'%20fill='%23e7ecf2'%20text-anchor='middle'%3ESKJ%3C/text%3E%3C/svg%3E">
 
 <script>
-/* ╔════════════════════════════════════════════════╗
-   ║   ✏️  EDIT HERE — the only part you change  ✏️   ║
-   ╚════════════════════════════════════════════════╝ */
+/* ╔══════════════════════════════════════════════════╗
+   ║  ✏️  EDYTUJ TUTAJ — jedyne miejsce do zmian  ✏️   ║
+   ╚══════════════════════════════════════════════════╝ */
 
 const SITE = {
   name: "SKJ Tech",
-  wordmark: "skj-tech",          // big header text
-  wordmarkSuffix: ".online",     // dimmed part right after it
+  wordmark: "skj-tech",          // duży tekst w nagłówku
+  wordmarkSuffix: ".online",     // przygaszona część zaraz po nim
   tagline: "Sklep Kuby i Jasia",
-  github: "https://github.com/SKJ-Technology",   // main GitHub button · "" hides it
+  github: "https://github.com/SKJ-Technology",   // główny przycisk GitHub · "" ukrywa go
   links: [
-    // Extra header buttons — remove the // at the start of a line to enable:
-     { label: "Kuba", url: "https://github.com/jakub362" },
-     { label: "Jaś",  url: "https://github.com/Janolo2456" },
+    // Dodatkowe przyciski w nagłówku — usuń // na początku linii, aby włączyć:
+     { label: "GitHub Kuby", url: "https://github.com/jakub362" },
+     { label: "GitHub Jasia",  url: "https://github.com/Janolo2456" },
   ],
 };
 
 const PROJECTS = [
 
   {
-    name: "SKJ Search",                        // ← card title
-    desc: "A search engine created by SKJ.", // ← one-line description
-    url: "https://search.skj-tech.online",         // ← Open button · "" hides it
-    repo: "",                                       // ← Code button · "" hides it
-    tags: ["html", "Search Engine"],                      // ← small pills · [] for none
-    status: "live",                                  // ← "live" | "wip" | "paused"
+    name: "SKJ Search",                          // ← tytuł karty
+    desc: "Wyszukiwarka stworzona przez SKJ.",   // ← jedna linijka opisu
+    url: "https://search.skj-tech.online",       // ← przycisk Otwórz · "" ukrywa go
+    repo: "",                                    // ← przycisk Kod · "" ukrywa go
+    tags: ["html", "wyszukiwarka"],              // ← małe znaczniki · [] = brak
+    status: "live",                              // ← "live" | "wip" | "paused"
   },
- {
-    name: "SKJ Apps",                        // ← card title
-    desc: "Apps made by Jan of SKJ.", // ← one-line description
-    url: "https://apps.skj-tech.online",         // ← Open button · "" hides it
-    repo: "",                                       // ← Code button · "" hides it
-    tags: ["html", "Apps"],                      // ← small pills · [] for none
-    status: "live",                                  // ← "live" | "wip" | "paused"
+  {
+    name: "SKJ Apps",                            // ← tytuł karty
+    desc: "Aplikacje tworzone przez Jasia z SKJ.", // ← jedna linijka opisu
+    url: "https://apps.skj-tech.online",         // ← przycisk Otwórz · "" ukrywa go
+    repo: "",                                    // ← przycisk Kod · "" ukrywa go
+    tags: ["html", "aplikacje"],                 // ← małe znaczniki · [] = brak
+    status: "live",                              // ← "live" | "wip" | "paused"
   },
+
 ];
 
-/* ────────────────  END OF EDIT AREA  ────────────────
-   Everything below is page code. You never need to
-   change anything under this line.
-   ───────────────────────────────────────────────────── */
+/* ────────────────  KONIEC SEKCJI EDYCJI  ────────────────
+   Poniżej jest kod strony. Niczego pod tą linią nie
+   trzeba nigdy zmieniać.
+   ───────────────────────────────────────────────────────── */
 </script>
 
 <style>
@@ -199,7 +199,7 @@ const PROJECTS = [
   </footer>
 </div>
 
-<noscript><p style="padding:20px;font-family:monospace">Enable JavaScript to see the project list.</p></noscript>
+<noscript><p style="padding:20px;font-family:monospace">Włącz JavaScript, aby zobaczyć listę projektów.</p></noscript>
 <script>
 (function(){
   "use strict";
@@ -218,16 +218,16 @@ const PROJECTS = [
 
   if (typeof SITE === "undefined" || typeof PROJECTS === "undefined"){
     $("#grid").append(el("div", "empty error",
-      "The EDIT HERE block at the top of this file has a syntax error — " +
-      "almost always a missing comma or quote near your last edit. " +
-      "Open the file, fix it, refresh."));
+      "Sekcja EDYTUJ TUTAJ na górze tego pliku ma błąd składni — " +
+      "prawie zawsze to brakujący przecinek lub cudzysłów obok " +
+      "ostatniej edycji. Otwórz plik, popraw, odśwież."));
     return;
   }
 
   var STATUS = {
-    live:   ["Live",   "var(--live)"],
-    wip:    ["WIP",    "var(--wip)"],
-    paused: ["Paused", "var(--paused)"]
+    live:   ["Działa",    "var(--live)"],
+    wip:    ["W budowie", "var(--wip)"],
+    paused: ["Pauza",     "var(--paused)"]
   };
 
   document.title = SITE.name || "SKJ Tech";
@@ -245,17 +245,17 @@ const PROJECTS = [
   });
 
   var ps = PROJECTS || [];
-  $("#count").textContent = "Projects — " + ps.length;
+  $("#count").textContent = "Projekty — " + ps.length;
 
   var g = $("#grid");
   if (!ps.length){
-    g.append(el("div", "empty", "No projects yet — add one in the EDIT HERE block."));
+    g.append(el("div", "empty", "Brak projektów — dodaj pierwszy w sekcji EDYTUJ TUTAJ."));
   }
   ps.forEach(function(p){
     var c = el("article", "card");
 
     var head = el("div", "chead");
-    head.append(el("h3", null, p.name || "Untitled"));
+    head.append(el("h3", null, p.name || "Bez nazwy"));
     var st = STATUS[p.status] || [p.status || "—", "var(--paused)"];
     var s = el("span", "status");
     var dot = el("i"); dot.style.background = st[1];
@@ -272,8 +272,8 @@ const PROJECTS = [
     }
 
     var act = el("div", "actions");
-    if (p.url)  act.append(link("Open ↗", p.url));
-    if (p.repo) act.append(link("Code", p.repo));
+    if (p.url)  act.append(link("Otwórz ↗", p.url));
+    if (p.repo) act.append(link("Kod", p.repo));
     if (act.children.length) c.append(act);
 
     g.append(c);
