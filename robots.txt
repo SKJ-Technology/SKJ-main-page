@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+
+# Blokujemy indeksowanie podstron wyszukiwarki, jeśli robot spróbuje tam wejść przez guzik
+Disallow: https://search.skj-tech.online/
+
+
+Sitemap: https://skj-tech.online/sitemap.xml
