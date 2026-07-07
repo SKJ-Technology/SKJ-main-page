@@ -1,0 +1,361 @@
+<!doctype html>
+<!-- ═══════════════════════════════════════════════════════════════════
+     SKJ CLICKER  ·  strona produktu / pobierania (jeden plik)
+
+     ══════════════════ JAK EDYTOWAĆ TĘ STRONĘ ══════════════════
+
+     Wszystko zmieniasz w sekcji EDYTUJ TUTAJ zaraz poniżej.
+     Reszta pliku to kod strony i nie trzeba go ruszać.
+
+     NAJCZĘSTSZE ZMIANY  (w  const APP = { ... })
+       version        numer wersji, np. "v1.1.0"
+       released       data wydania pokazywana obok wersji
+       download       link do pobrania (do Releases albo prosto do .exe)
+       downloadLabel  napis na przycisku pobierania
+       repo           link do repozytorium GitHub
+       note           uwaga pod przyciskiem (np. wymagania)
+       tagline        jedno zdanie pod nazwą na górze
+
+     FUNKCJE  (w  const FEATURES = [ ... ])
+       Skopiuj blok { ... } razem z przecinkiem po }, wklej w [ ]
+       i uzupełnij:  icon (emoji lub ""),  title,  desc.
+
+     INSTALACJA  (w  const INSTALL = [ ... ])
+       Każda karta ma title oraz steps: ["krok 1", "krok 2", ...].
+       Dodawaj/edytuj kroki wpisując je w cudzysłowach po przecinku.
+
+     ZASADY   nie usuwaj cudzysłowów ani przecinków. Każdy blok { }
+              i każdy tekst kończy się przecinkiem. Cudzysłów w tekście?
+              Użyj ' zamiast ".
+     UKRYWANIE otocz blok znakami /* i */ aby ukryć bez kasowania.
+
+     JEŚLI STRONA POKAZUJE CZERWONY BŁĄD
+       Sekcja z danymi ma błąd składni — prawie zawsze brakujący
+       przecinek lub cudzysłów obok ostatniej edycji. Popraw, odśwież.
+     ═══════════════════════════════════════════════════════════════════ -->
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0c0e11">
+<meta name="description" content="SKJ Clicker — zaawansowany autoklikacz i rejestrator makr dla Windows, stworzony w Pythonie przez SKJ Tech. Darmowy i open source.">
+<link rel="canonical" href="https://autoclicker.skj-tech.online/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://autoclicker.skj-tech.online/">
+<meta property="og:title" content="SKJ Clicker — autoklikacz i rejestrator makr (Windows)">
+<meta property="og:description" content="Zaawansowany autoklikacz i rejestrator makr dla Windows, stworzony w Pythonie przez SKJ Tech. Darmowy i open source.">
+<title>SKJ Clicker — autoklikacz i rejestrator makr dla Windows</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230c0e11'/%3E%3Ctext%20x='32'%20y='42'%20font-family='monospace'%20font-size='22'%20fill='%23e7ecf2'%20text-anchor='middle'%3ESKJ%3C/text%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SKJ Clicker",
+  "operatingSystem": "Windows",
+  "applicationCategory": "UtilitiesApplication",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "url": "https://autoclicker.skj-tech.online/",
+  "author": { "@type": "Organization", "name": "SKJ Tech", "url": "https://skj-tech.online/" }
+}
+</script>
+
+<script>
+/* ╔══════════════════════════════════════════════════╗
+   ║  ✏️  EDYTUJ TUTAJ — jedyne miejsce do zmian  ✏️   ║
+   ╚══════════════════════════════════════════════════╝ */
+
+const APP = {
+  name: "SKJ Clicker",
+  wordmark: "skj",                 // jasna część nazwy
+  wordmarkSuffix: "-clicker",      // przygaszona część zaraz po niej
+  tagline: "Zaawansowany autoklikacz i rejestrator makr dla Windows. Zbudowany w Pythonie.",
+  version: "v1.0.0",               // numer wersji (obok nazwy)
+  released: "26 maja 2026",        // data wydania
+  download: "https://github.com/SKJ-Technology/SKJ-Clicker/releases/latest", // przycisk Pobierz
+  downloadLabel: "Pobierz (.exe)", // napis na przycisku
+  repo: "https://github.com/SKJ-Technology/SKJ-Clicker",                      // przycisk Kod
+  note: "Wymaga zainstalowanego Pythona 3.8+ na Windows (przy instalacji zaznacz „Add Python to PATH”).",
+  links: [
+    
+     { label: "Głowna strona", url: "https://skj-tech.online" },
+  ],
+};
+
+const FEATURES = [
+  {
+    icon: "🖱️",
+    title: "Podwójny silnik automatyzacji",
+    desc: "Przełączaj się między szybkim klikaniem myszą (lewy/prawy) a spamowaniem lub przytrzymywaniem klawiszy.",
+  },
+  {
+    icon: "🖲️",
+    title: "Przechwytywanie scrolla",
+    desc: "Nagrywa kierunek kółka myszy z podziałem na kroki, dla wiernego odtwarzania.",
+  },
+  {
+    icon: "⏱️",
+    title: "Odliczanie startowe",
+    desc: "Konfigurowalne opóźnienie startu, które chroni przed przypadkowym kliknięciem.",
+  },
+  {
+    icon: "📊",
+    title: "Statystyki na żywo",
+    desc: "Śledzi czas działania, liczbę makr i kliknięć — w sesji oraz przez cały czas używania.",
+  },
+  {
+    icon: "🪟",
+    title: "Przezroczysty HUD",
+    desc: "Przeciągalne okno nakładki pokazujące stan bezpośrednio nad grą lub aplikacją.",
+  },
+  {
+    icon: "🎨",
+    title: "Tryb ciemny i jasny",
+    desc: "Nowoczesny, wysokokontrastowy motyw ciemny oraz czysty motyw jasny.",
+  },
+];
+
+const INSTALL = [
+  {
+    title: "Opcja 1 — gotowy plik .exe (zalecane)",
+    steps: [
+      "Wejdź w zakładkę Releases w repozytorium na GitHubie.",
+      "Pobierz najnowszy plik SKJ-Clicker.exe.",
+      "Uruchom go — sam rozpakuje pliki i wystartuje.",
+    ],
+  },
+  {
+    title: "Opcja 2 — z kodu źródłowego",
+    steps: [
+      "git clone https://github.com/SKJ-Technology/SKJ-Clicker",
+      "pip install -r r.txt",
+      "python main.py",
+    ],
+  },
+];
+
+/* ────────────────  KONIEC SEKCJI EDYCJI  ────────────────
+   Poniżej jest kod strony. Niczego pod tą linią nie
+   trzeba nigdy zmieniać.
+   ───────────────────────────────────────────────────────── */
+</script>
+
+<style>
+  :root{
+    --bg:#0c0e11; --panel:#12151a; --line:#242a32; --line-hi:#3a4350;
+    --text:#e7ecf2; --muted:#8e99a8;
+    --live:#4ac26b; --wip:#d4a72c; --paused:#768390; --danger:#e5534b;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1080px; margin:0 auto; padding:44px 20px 56px}
+
+  .top{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap}
+  .brand{
+    margin:0; font-family:var(--mono); font-weight:600;
+    font-size:clamp(26px,6vw,40px); letter-spacing:-.03em; line-height:1.1;
+  }
+  .dim{color:var(--muted); font-weight:400}
+  .brand .cursor{
+    display:inline-block; width:.55ch; height:1em;
+    background:var(--text); margin-left:.15ch; vertical-align:text-bottom;
+    animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){ .brand .cursor{animation:none} }
+  .tagline{color:var(--muted); margin:10px 0 0; max-width:60ch}
+  .nav{display:flex; gap:8px; flex-wrap:wrap}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:7px 14px; border:1px solid var(--line); border-radius:8px;
+    font-family:var(--mono); font-size:13.5px; color:var(--text);
+    transition:border-color .15s, background .15s, opacity .15s;
+  }
+  .btn:hover{border-color:var(--line-hi); background:var(--panel)}
+  .btn:focus-visible, a:focus-visible{outline:2px solid var(--line-hi); outline-offset:2px}
+  .btn.primary{background:var(--text); color:var(--bg); border-color:var(--text); font-weight:600}
+  .btn.primary:hover{opacity:.88; background:var(--text)}
+
+  /* hero */
+  .hero{margin-top:30px}
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+    border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+  }
+  .badge i{width:7px; height:7px; border-radius:50%; background:var(--live); display:inline-block}
+  .hero-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
+  .hero-actions .btn{padding:10px 18px; font-size:14px}
+  .note{
+    margin:14px 0 0; color:var(--muted); font-size:13px; max-width:60ch;
+    border-left:2px solid var(--wip); padding-left:12px;
+  }
+
+  .sec{
+    margin:52px 0 16px; color:var(--muted);
+    font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  }
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px}
+  .grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .card{
+    border:1px solid var(--line); background:var(--panel); border-radius:12px;
+    padding:18px; display:flex; flex-direction:column; gap:10px;
+    transition:border-color .15s;
+  }
+  .card:hover{border-color:var(--line-hi)}
+  .ficon{font-size:22px; line-height:1}
+  .card h2,.card h3{margin:0; font-size:16px; font-weight:600}
+  .card p{margin:0; color:var(--muted); font-size:14px}
+
+  .steps{margin:4px 0 0; padding-left:20px; color:var(--muted); font-size:14px}
+  .steps li{margin:6px 0}
+  .steps code{
+    font-family:var(--mono); font-size:12.5px; color:var(--text);
+    background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:1px 6px;
+  }
+
+  .empty.error{
+    border:1px solid var(--danger); border-radius:12px;
+    padding:34px 20px; text-align:center; color:var(--danger); font-size:14.5px;
+  }
+
+  footer{
+    margin-top:60px; padding-top:18px; border-top:1px solid var(--line);
+    color:var(--muted); font-family:var(--mono); font-size:12.5px;
+    display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+  footer a{color:var(--muted)} footer a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1 id="brand" class="brand"></h1>
+      <p id="tagline" class="tagline"></p>
+    </div>
+    <nav id="nav" class="nav"></nav>
+  </header>
+
+  <div id="main"></div>
+
+  <footer>
+    <span id="fleft"></span>
+    <span id="fright" class="dim"></span>
+  </footer>
+</div>
+
+<noscript><p style="padding:20px;font-family:monospace">Włącz JavaScript, aby zobaczyć stronę.</p></noscript>
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+  function el(t, c, x){
+    var e = document.createElement(t);
+    if (c) e.className = c;
+    if (x != null) e.textContent = x;
+    return e;
+  }
+  function link(label, href, cls){
+    var a = el("a", cls || "btn", label);
+    a.href = href; a.rel = "noopener";
+    if (/^https?:/.test(href)) a.target = "_blank";
+    return a;
+  }
+
+  if (typeof APP === "undefined" || typeof FEATURES === "undefined" || typeof INSTALL === "undefined"){
+    $("#main").append(el("div", "empty error",
+      "Sekcja EDYTUJ TUTAJ na górze tego pliku ma błąd składni — " +
+      "prawie zawsze to brakujący przecinek lub cudzysłów obok " +
+      "ostatniej edycji. Otwórz plik, popraw, odśwież."));
+    return;
+  }
+
+  document.title = APP.name ?
+    (APP.name + " — autoklikacz i rejestrator makr dla Windows") : document.title;
+
+  var b = $("#brand");
+  b.append(el("span", null, APP.wordmark || ""),
+           el("span", "dim", APP.wordmarkSuffix || ""),
+           el("span", "cursor"));
+  $("#tagline").textContent = APP.tagline || "";
+
+  var nav = $("#nav");
+  if (APP.repo) nav.append(link("Kod", APP.repo));
+  (APP.links || []).forEach(function(l){
+    if (l && l.url) nav.append(link(l.label || l.url, l.url));
+  });
+
+  var main = $("#main");
+
+  // hero
+  var hero = el("section", "hero");
+  if (APP.version){
+    var badge = el("div", "badge");
+    badge.append(el("i"));
+    var vtext = APP.version + (APP.released ? "  ·  " + APP.released : "");
+    badge.append(document.createTextNode(vtext));
+    hero.append(badge);
+  }
+  var actions = el("div", "hero-actions");
+  if (APP.download) actions.append(link(APP.downloadLabel || "Pobierz", APP.download, "btn primary"));
+  hero.append(actions);
+  if (APP.note) hero.append(el("p", "note", APP.note));
+  main.append(hero);
+
+  // features
+  if (FEATURES.length){
+    main.append(el("div", "sec", "Funkcje"));
+    var fg = el("div", "grid");
+    FEATURES.forEach(function(f){
+      var c = el("article", "card");
+      if (f.icon) c.append(el("div", "ficon", f.icon));
+      c.append(el("h2", null, f.title || ""));
+      if (f.desc) c.append(el("p", null, f.desc));
+      fg.append(c);
+    });
+    main.append(fg);
+  }
+
+  // install
+  if (INSTALL.length){
+    main.append(el("div", "sec", "Instalacja"));
+    var ig = el("div", "grid two");
+    INSTALL.forEach(function(opt){
+      var c = el("article", "card");
+      c.append(el("h3", null, opt.title || ""));
+      if (opt.steps && opt.steps.length){
+        var ol = el("ol", "steps");
+        opt.steps.forEach(function(s){
+          var li = el("li");
+          // pokaż komendy (zawierające spację i znak) monospace
+          if (/^[a-z]+ /.test(s) && /[\/\-]/.test(s)) li.append(el("code", null, s));
+          else li.textContent = s;
+          ol.append(li);
+        });
+        c.append(ol);
+      }
+      ig.append(c);
+    });
+    main.append(ig);
+  }
+
+  // footer
+  $("#fleft").textContent = "© " + new Date().getFullYear() + " SKJ Tech · Licencja MIT";
+  var fr = $("#fright");
+  var home = el("a", "dim", "skj-tech.online"); home.href = "https://skj-tech.online";
+  home.target = "_blank"; home.rel = "noopener";
+  fr.append(home);
+})();
+</script>
+</body>
+</html>
