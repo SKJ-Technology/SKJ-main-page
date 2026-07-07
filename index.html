@@ -38,6 +38,12 @@
        zobaczyć podgląd. Działa w pełni offline, bez bibliotek
        i bez internetu.
 
+     SEO (Google / Bing)
+       Tytuł strony (title) i meta opis (description) są wpisane na
+       sztywno w sekcji head na samej górze pliku. Wyszukiwarki chcą
+       dłuższych tekstów, więc nie skracaj ich. Nagłówkiem h1 jest
+       nazwa w lewym górnym rogu strony.
+
      JEŚLI STRONA POKAZUJE CZERWONY BŁĄD
        Sekcja z danymi ma błąd składni. Prawie zawsze to brakujący
        przecinek lub cudzysłów obok ostatniej edycji. Popraw, odśwież.
@@ -48,8 +54,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0c0e11">
-<meta name="description" content="Sklep Kuby i Jasia">
-<title>SKJ Tech</title>
+<meta name="description" content="SKJ Tech (Sklep Kuby i Jasia) — projekty i aplikacje w jednym miejscu: wyszukiwarka SKJ Search, SKJ Apps oraz kolejne narzędzia tworzone przez Kubę i Jasia.">
+<link rel="canonical" href="https://skj-tech.online/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://skj-tech.online/">
+<meta property="og:title" content="SKJ Tech — Sklep Kuby i Jasia | Projekty, aplikacje i narzędzia">
+<meta property="og:description" content="SKJ Tech (Sklep Kuby i Jasia) — projekty i aplikacje w jednym miejscu: wyszukiwarka SKJ Search, SKJ Apps oraz kolejne narzędzia tworzone przez Kubę i Jasia.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "name": "SKJ Tech", "alternateName": "Sklep Kuby i Jasia", "url": "https://skj-tech.online/" },
+    { "@type": "Organization", "name": "SKJ Tech", "url": "https://skj-tech.online/", "sameAs": ["https://github.com/SKJ-Technology"] }
+  ]
+}
+</script>
+<title>SKJ Tech — Sklep Kuby i Jasia | Projekty, aplikacje i narzędzia</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230c0e11'/%3E%3Ctext%20x='32'%20y='42'%20font-family='monospace'%20font-size='22'%20fill='%23e7ecf2'%20text-anchor='middle'%3ESKJ%3C/text%3E%3C/svg%3E">
 
 <script>
@@ -131,7 +151,7 @@ const PROJECTS = [
 
   .top{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; flex-wrap:wrap}
   .brand{
-    font-family:var(--mono); font-weight:600;
+    margin:0; font-family:var(--mono); font-weight:600;
     font-size:clamp(26px,6vw,40px); letter-spacing:-.03em; line-height:1.1;
   }
   .dim{color:var(--muted); font-weight:400}
@@ -167,7 +187,7 @@ const PROJECTS = [
   }
   .card:hover{border-color:var(--line-hi)}
   .chead{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
-  .card h3{margin:0; font-size:17px; font-weight:600}
+  .card h2{margin:0; font-size:17px; font-weight:600}
   .status{
     font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
     color:var(--muted); display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
@@ -199,7 +219,7 @@ const PROJECTS = [
 <div class="wrap">
   <header class="top">
     <div>
-      <div id="brand" class="brand"></div>
+      <h1 id="brand" class="brand"></h1>
       <p id="tagline" class="tagline"></p>
     </div>
     <nav id="nav" class="nav"></nav>
@@ -245,8 +265,6 @@ const PROJECTS = [
     paused: ["Pauza",     "var(--paused)"]
   };
 
-  document.title = SITE.name || "SKJ Tech";
-
   var b = $("#brand");
   b.append(el("span", null, SITE.wordmark || ""),
            el("span", "dim", SITE.wordmarkSuffix || ""),
@@ -270,7 +288,7 @@ const PROJECTS = [
     var c = el("article", "card");
 
     var head = el("div", "chead");
-    head.append(el("h3", null, p.name || "Bez nazwy"));
+    head.append(el("h2", null, p.name || "Bez nazwy"));
     var st = STATUS[p.status] || [p.status || "—", "var(--paused)"];
     var s = el("span", "status");
     var dot = el("i"); dot.style.background = st[1];
