@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>.bruh Converter — Najbardziej memowy format na świecie!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f1e;
+    --card: #1a1a2e;
+    --accent: #ff3cac;
+    --accent2: #784ba0;
+    --accent3: #2b86c5;
+    --text: #f5f5f7;
+    --muted: #a0a0b8;
+    --ok: #4ade80;
+    --err: #f87171;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,60,172,0.15), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(43,134,197,0.18), transparent 40%),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px 80px;
+    line-height: 1.5;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 36px; }
+
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 60px rgba(255,60,172,0.25);
+    margin-bottom: 10px;
+    animation: glow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { filter: drop-shadow(0 0 6px rgba(255,60,172,0.25)); }
+    to   { filter: drop-shadow(0 0 22px rgba(120,75,160,0.45)); }
+  }
+
+  h2 {
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-weight: 600;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Akordeon */
+  .accordion { margin-bottom: 32px; }
+
+  .acc-item {
+    margin-bottom: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .acc-item.open {
+    border-color: var(--card-accent);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  }
+
+  .acc-item.to-bruh   { --card-accent: var(--accent); }
+  .acc-item.from-bruh { --card-accent: var(--accent3); }
+  .acc-item.view-bruh { --card-accent: var(--accent2); }
+
+  .acc-toggle {
+    width: 100%;
+    padding: 20px 24px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: background 0.2s ease;
+    position: relative;
+  }
+
+  .acc-toggle::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--card-accent);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+
+  .acc-item.open .acc-toggle::before { opacity: 1; }
+
+  .acc-toggle:hover { background: rgba(255,255,255,0.03); }
+
+  .acc-toggle .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--card-accent);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .acc-toggle .label-wrap {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .acc-toggle .chev {
+    transition: transform 0.3s ease;
+    color: var(--muted);
+    font-size: 1.4rem;
+    font-weight: 300;
+  }
+
+  .acc-item.open .acc-toggle .chev { transform: rotate(180deg); color: var(--card-accent); }
+
+  /* Pasek postępu animowany na guziku po rozwinięciu */
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .acc-item.open .acc-body { max-height: 800px; }
+
+  .acc-content {
+    padding: 0 24px 24px 24px;
+  }
+
+  .acc-content .desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-top: 4px;
+  }
+
+  .file-label {
+    display: block;
+    cursor: pointer;
+    border: 2px dashed rgba(255,255,255,0.18);
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+    transition: all 0.2s ease;
+    margin-bottom: 14px;
+  }
+
+  .file-label:hover {
+    border-color: var(--card-accent);
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .file-label input { display: none; }
+
+  .file-name {
+    display: block;
+    margin-top: 8px;
+    color: var(--text);
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  button.action {
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--card-accent), color-mix(in srgb, var(--card-accent) 60%, #000));
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    letter-spacing: 0.02em;
+  }
+
+  button.action:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    filter: brightness(1.1);
+  }
+
+  button.action:active:not(:disabled) { transform: translateY(0); }
+  button.action:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .result {
+    margin-top: 14px;
+    font-size: 0.88rem;
+    min-height: 22px;
+  }
+
+  .result.ok  { color: var(--ok); }
+  .result.err { color: var(--err); }
+
+  .viewer {
+    margin-top: 24px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 24px;
+    min-height: 180px;
+    text-align: center;
+  }
+
+  .viewer h3 {
+    color: var(--accent2);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+
+  .viewer .placeholder {
+    color: var(--muted);
+    font-style: italic;
+    padding: 30px 20px;
+  }
+
+  .viewer img {
+    max-width: 100%;
+    max-height: 600px;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+
+  .viewer .meta {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  footer code {
+    background: rgba(255,255,255,0.06);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>.bruh Converter</h1>
+    <h2>Najbardziej memowy format na świecie!</h2>
+  </header>
+
+  <div class="accordion">
+
+    <!-- 1. Konwersja DO .bruh -->
+    <div class="acc-item to-bruh" data-acc>
+      <button class="acc-toggle" type="button">
+        <span class="label-wrap"><span class="num">1</span> Konwertuj na .bruh</span>
+        <span class="chev">⌄</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p class="desc">Wrzuć zdjęcie PNG, JPEG lub HEIF/HEIC, a zamienimy je na legendarne .bruh</p>
+          <label class="file-label">
+            Wybierz plik PNG / JPEG / HEIF
+            <input type="file" id="to-bruh-input" accept="image/png,image/jpeg,image/heif,image/heic,.heif,.heic">
+            <span class="file-name" id="to-bruh-name">— brak pliku —</span>
+          </label>
+          <button class="action" id="to-bruh-btn" disabled>Konwertuj na .bruh</button>
+          <div class="result" id="to-bruh-result"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Konwersja Z .bruh -->
+    <div class="acc-item from-bruh" data-acc>
+      <button class="acc-toggle" type="button">
+        <span class="label-wrap"><span class="num">2</span> Konwertuj z .bruh</span>
+        <span class="chev">⌄</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p class="desc">Wrzuć plik .bruh, a odzyskamy oryginalne zdjęcie.</p>
+          <label class="file-label">
+            Wybierz plik .bruh
+            <input type="file" id="from-bruh-input" accept=".bruh">
+            <span class="file-name" id="from-bruh-name">— brak pliku —</span>
+          </label>
+          <button class="action" id="from-bruh-btn" disabled>Konwertuj z .bruh</button>
+          <div class="result" id="from-bruh-result"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Wyświetl .bruh -->
+    <div class="acc-item view-bruh" data-acc>
+      <button class="acc-toggle" type="button">
+        <span class="label-wrap"><span class="num">3</span> Wyświetl .bruh</span>
+        <span class="chev">⌄</span>
+      </button>
+      <div class="acc-body">
+        <div class="acc-content">
+          <p class="desc">Załaduj .bruh, żeby od razu zobaczyć ukryte zdjęcie.</p>
+          <label class="file-label">
+            Wybierz plik .bruh
+            <input type="file" id="view-bruh-input" accept=".bruh">
+            <span class="file-name" id="view-bruh-name">— brak pliku —</span>
+          </label>
+          <button class="action" id="view-bruh-btn" disabled>Wyświetl .bruh</button>
+          <div class="result" id="view-bruh-result"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="viewer" id="viewer">
+    <h3>Podgląd zdjęcia</h3>
+    <div class="placeholder" id="viewer-placeholder">Tu pojawi się zdjęcie po konwersji lub wyświetlaniu .bruh</div>
+    <img id="viewer-img" alt="" style="display:none;">
+    <div class="meta" id="viewer-meta"></div>
+  </div>
+
+  <footer>
+    Format <code>.bruh</code> v1.0 — base64-encoded obraz (PNG / JPEG / HEIF) z memowym nagłówkiem. Wszystko działa lokalnie w przeglądarce.
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   .bruh FORMAT v1.0  —  specyfikacja
+   ------------------------------------------------------------
+   Plik tekstowy, linia po linii:
+     BRUH v1.0
+     FORMAT:png|jpeg|heif
+     BRUH_COUNTER: <liczba>
+     DATA:<base64 danych pliku>
+   ============================================================ */
+
+const BRUH_MAGIC = 'BRUH v1.0';
+
+function $(id) { return document.getElementById(id); }
+
+/* ---------- Akordeon: rozwijanie/zwijanie guzików ---------- */
+document.querySelectorAll('[data-acc]').forEach(item => {
+  const toggle = item.querySelector('.acc-toggle');
+  toggle.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    // zamknij wszystkie
+    document.querySelectorAll('[data-acc]').forEach(i => i.classList.remove('open'));
+    // otwórz ten jeśli był zamknięty
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+/* ---------- Aktywacja guzików akcji po wybraniu pliku ---------- */
+function bindFileInput(inputId, btnId, nameId) {
+  const input = $(inputId);
+  const name  = $(nameId);
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    name.textContent = file ? file.name : '— brak pliku —';
+    $(btnId).disabled = !file;
+  });
+}
+
+bindFileInput('to-bruh-input',   'to-bruh-btn',   'to-bruh-name');
+bindFileInput('from-bruh-input', 'from-bruh-btn', 'from-bruh-name');
+bindFileInput('view-bruh-input', 'view-bruh-btn', 'view-bruh-name');
+
+/* ---------- Wynik / podgląd ---------- */
+function setResult(el, type, html) {
+  el.className = 'result ' + type;
+  el.innerHTML = html;
+}
+
+function showInViewer(dataUrl, fileName, format) {
+  const img = $('viewer-img');
+  const placeholder = $('viewer-placeholder');
+  const meta = $('viewer-meta');
+  img.src = dataUrl;
+  img.style.display = 'block';
+  placeholder.style.display = 'none';
+  meta.textContent = `Plik: ${fileName} · Format źródłowy: ${format}`;
+}
+
+function download(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsText(file);
+  });
+}
+
+/* ---------- 1. Konwersja DO .bruh ---------- */
+async function convertToBruh() {
+  const input = $('to-bruh-input');
+  const result = $('to-bruh-result');
+  const file = input.files[0];
+  if (!file) return;
+
+  setResult(result, '', 'Konwertuję…');
+
+  try {
+    let format = 'png';
+    if (file.type === 'image/jpeg') format = 'jpeg';
+    else if (file.type === 'image/png') format = 'png';
+    else if (file.type === 'image/heif' || file.type === 'image/heic') format = 'heif';
+    else if (/\.jpe?g$/i.test(file.name)) format = 'jpeg';
+    else if (/\.png$/i.test(file.name)) format = 'png';
+    else if (/\.hei[fc]$/i.test(file.name)) format = 'heif';
+    else throw new Error('Akceptujemy tylko PNG, JPEG i HEIF/HEIC.');
+
+    const dataUrl = await readFileAsDataURL(file);
+    const base64 = dataUrl.split(',')[1];
+
+    const baseName = file.name.replace(/\.(png|jpg|jpeg|heif|heic)$/i, '');
+    const bruhContent =
+      BRUH_MAGIC + '\n' +
+      'FORMAT:' + format + '\n' +
+      'BRUH_COUNTER: ' + (Math.floor(Math.random() * 9000) + 1) + '\n' +
+      'DATA:' + base64 + '\n';
+
+    const blob = new Blob([bruhContent], { type: 'application/octet-stream' });
+    download(blob, baseName + '.bruh');
+
+    showInViewer(dataUrl, file.name, format);
+
+    setResult(result, 'ok',
+      `Gotowe! Plik <strong>${baseName}.bruh</strong> (${(blob.size / 1024).toFixed(1)} KB) został pobrany.`);
+  } catch (e) {
+    setResult(result, 'err', 'Błąd: ' + e.message);
+  }
+}
+
+/* ---------- 2. Konwersja Z .bruh ---------- */
+async function convertFromBruh() {
+  const input = $('from-bruh-input');
+  const result = $('from-bruh-result');
+  const file = input.files[0];
+  if (!file) return;
+
+  setResult(result, '', 'Odzyskuję zdjęcie…');
+
+  try {
+    const text = await readFileAsText(file);
+    const parsed = parseBruh(text);
+
+    const byteString = atob(parsed.data);
+    const bytes = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) bytes[i] = byteString.charCodeAt(i);
+    const blob = new Blob([bytes], { type: 'image/' + parsed.format });
+
+    const baseName = file.name.replace(/\.bruh$/i, '');
+    const extMap = { jpeg: 'jpg', png: 'png', heif: 'heif', heic: 'heif' };
+    const outName = baseName + '.' + (extMap[parsed.format] || parsed.format);
+    download(blob, outName);
+
+    const dataUrl = await readFileAsDataURL(new Blob([bytes], { type: 'image/' + parsed.format }));
+    showInViewer(dataUrl, outName, parsed.format);
+
+    setResult(result, 'ok',
+      `Odzyskano! Plik <strong>${outName}</strong> (${(blob.size / 1024).toFixed(1)} KB) został pobrany.`);
+  } catch (e) {
+    setResult(result, 'err', 'Błąd: ' + e.message);
+  }
+}
+
+/* ---------- 3. Wyświetl .bruh ---------- */
+async function viewBruh() {
+  const input = $('view-bruh-input');
+  const result = $('view-bruh-result');
+  const file = input.files[0];
+  if (!file) return;
+
+  setResult(result, '', 'Ładuję…');
+
+  try {
+    const text = await readFileAsText(file);
+    const parsed = parseBruh(text);
+
+    const dataUrl = 'data:image/' + parsed.format + ';base64,' + parsed.data;
+    showInViewer(dataUrl, file.name, parsed.format);
+
+    setResult(result, 'ok',
+      `Wyświetlam <strong>${file.name}</strong> · format źródłowy: ${parsed.format}`);
+  } catch (e) {
+    setResult(result, 'err', 'Błąd: ' + e.message);
+  }
+}
+
+/* ---------- Parser .bruh ---------- */
+function parseBruh(text) {
+  const lines = text.split('\n');
+  if (!lines[0] || !lines[0].startsWith('BRUH')) {
+    throw new Error('To nie jest poprawny plik .bruh (brak nagłówka BRUH).');
+  }
+
+  let format = 'png';
+  let data = null;
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('FORMAT:')) {
+      format = line.slice('FORMAT:'.length).trim().toLowerCase();
+    } else if (line.startsWith('DATA:')) {
+      data = lines.slice(i).join('').slice('DATA:'.length).replace(/\s+/g, '');
+      break;
+    }
+  }
+
+  if (!data) throw new Error('Plik .bruh nie zawiera danych DATA:.');
+  if (!/^[A-Za-z0-9+/=]+$/.test(data)) throw new Error('Dane base64 w pliku .bruh są uszkodzone.');
+
+  return { format, data };
+}
+
+/* ---------- Bindowanie guzików akcji ---------- */
+$('to-bruh-btn').addEventListener('click',   convertToBruh);
+$('from-bruh-btn').addEventListener('click', convertFromBruh);
+$('view-bruh-btn').addEventListener('click', viewBruh);
+
+/* Otwórz pierwszy guzik domyślnie */
+document.querySelector('[data-acc]').classList.add('open');
+</script>
+</body>
+</html>
