@@ -120,7 +120,7 @@
   .fav-chip>button:hover{background:#22242b}
   .fav-chip .fav-x{padding:9px;color:var(--muted);border-left:1px solid var(--border)}
   .fav-chip .fav-x:hover{color:#e5484d}
-  #helpOverlay,#examplesOverlay,#assetsOverlay,#lvOverlay,#w3Overlay,#settingsOverlay,#welcomeOverlay{display:none;position:fixed;inset:0;z-index:55;background:#0009;align-items:center;justify-content:center;padding:14px}
+  #helpOverlay,#examplesOverlay,#assetsOverlay,#lvOverlay,#w3Overlay,#settingsOverlay,#welcomeOverlay,#extOverlay{display:none;position:fixed;inset:0;z-index:55;background:#0009;align-items:center;justify-content:center;padding:14px}
   .set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
   .set-row:last-child{border-bottom:0}
   .set-row .lbl{font-size:14px;font-weight:600}
@@ -185,6 +185,29 @@
   .asset-empty{color:var(--muted);font-size:13px;padding:14px 2px}
   .asset-add{margin:12px 16px 16px;display:block;width:calc(100% - 32px)}
   .help-card,.ex-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;max-width:480px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px #000a;overflow:hidden}
+  #extOverlay.open{display:flex}
+  .ext-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;max-width:480px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px #000a;overflow:hidden}
+  .ext-head{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;font-weight:700;border-bottom:1px solid var(--border)}
+  .ext-head .x{appearance:none;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
+  .ext-body{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:14px}
+  .ext-note{font-size:12.5px;color:var(--muted);line-height:1.5;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  .ext-empty{font-size:13px;color:var(--muted);text-align:center;padding:18px 8px}
+  .ext-item{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:11px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+  .ext-name{font-weight:700;font-size:14px}
+  .ext-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .ext-desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
+  .ext-rm{flex:none;appearance:none;border:1px solid var(--border);background:transparent;color:var(--muted);font:600 12px inherit;padding:6px 11px;border-radius:8px;cursor:pointer}
+  .ext-rm:hover{color:#ff6b6b;border-color:#ff6b6b55}
+  .ext-add{border-top:1px solid var(--border);padding-top:14px}
+  .ext-add-title{font-weight:700;font-size:13px;margin-bottom:9px}
+  .ext-url-row{display:flex;gap:8px}
+  .ext-url-row input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--border);border-radius:9px;color:var(--fg);font:inherit;font-size:13px;padding:9px 11px}
+  .ext-add-btn{flex:none;appearance:none;border:0;background:var(--accent);color:#fff;font:700 13px inherit;padding:9px 16px;border-radius:9px;cursor:pointer}
+  .ext-or{font-size:12px;color:var(--muted);margin-top:9px}
+  .ext-or a{color:var(--accent);text-decoration:none}
+  .ext-or a:hover{text-decoration:underline}
+  #extToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:80;background:#0b0e13;color:#fff;border:1px solid var(--border);border-radius:12px;padding:11px 16px;font-size:13px;font-weight:600;box-shadow:0 10px 30px #0007;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}
+  #extToast.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .help-head,.ex-head{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;font-weight:700;border-bottom:1px solid var(--border)}
   .help-head .x,.ex-head .x{appearance:none;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
   .help-rows{padding:12px 16px;display:flex;flex-direction:column;gap:9px;font-size:13px}
@@ -361,6 +384,7 @@
     <button class="btn" id="pwaBtn2" onclick="downloadPWA()">📱 Download app (PWA)</button>
     <button class="btn" onclick="showAssets()">🖼 Assets (images & sounds)</button>
     <button class="btn" onclick="showSettings()">⚙️ Settings</button>
+    <button class="btn" onclick="showExtensions()">🧩 Extensions</button>
     <button class="btn" onclick="saveProject()">Save project</button>
     <button class="btn" onclick="document.getElementById('file').click()">Load project</button>
     <button class="btn" onclick="closeSheets();setTimeout(clearAll,0)">Clear all</button>
@@ -491,6 +515,7 @@
 <input type="file" id="assetFile" accept="image/*,audio/*" style="display:none" onchange="addAssetFile(event)">
 <div class="scrim" id="scrim" onclick="closeSheets()"></div>
 <input type="file" id="file" accept=".sflow,.bfflow,.json,.html" onchange="loadProject(event)">
+<input type="file" id="extFile" accept=".json,application/json,text/plain,*/*" style="display:none" onchange="extAddFromFile(event)">
 <datalist id="bfVars"></datalist><!-- variable-name autocomplete for node fields (filled by refresh()) -->
 <div id="helpOverlay" onclick="if(event.target===this)hideHelp()">
   <div class="help-card">
@@ -2396,7 +2421,9 @@
     return out;
   }
 
-  const API={NODES, generateCode, fixPy, RESERVED, makeZip};
+  // Helpers exposed for extension gen-functions (compiled outside this closure).
+  const GENHELP={expr, sexpr, raw, q, ident, interp, vref};
+  const API={NODES, generateCode, fixPy, RESERVED, makeZip, GENHELP};
   if(typeof module!=='undefined'&&module.exports) module.exports=API; else root.BlockFlow=API;
 })(typeof self!=='undefined'?self:this);
 </script>
@@ -2657,7 +2684,9 @@
     const wrap=$('palette'); wrap.innerHTML='';
     const cur = mode==='html'?'html':'py';
     const __simple=(_lsGet('bf_palette','classic')==='simple');
-    CATS.forEach(cat=>{
+    // built-in categories, plus any categories added by installed extensions
+    const allCats = CATS.concat([...EXT_CATS].filter(c=>CATS.indexOf(c)<0));
+    allCats.forEach(cat=>{
       let types=Object.keys(NODES).filter(t=>NODES[t].cat===cat && (NODES[t].mode==='both'||NODES[t].mode===cur));
       if(__simple) types=types.filter(t=>CORE_NODES.has(t));
       if(!types.length) return;
@@ -3602,7 +3631,212 @@
     [0,60,160,350,700,1200].forEach(t=>setTimeout(relayout,t));
   }
 
+  /* ============================================================
+     SKJ FLOW — EXTENSIONS (client side)
+     An extension is a JSON file that adds new nodes to the editor.
+     Format:
+     {
+       "id": "unique-id",              // required, unique key namespace
+       "name": "My Extension",         // shown in the panel
+       "author": "you",                // optional
+       "description": "what it does",  // shown before install (the warning uses this)
+       "category": "My Blocks",        // palette category for its nodes
+       "nodes": {
+         "my_node": {
+           "label":"My Block", "mode":"both", "io":[1,1],
+           "fields":[{"n":"x","l":"value","d":"hi"}],
+           "gen": { "js":"f => `alert(${expr(f.x)})`", "py":"f => `print(${sexpr(f.x)})`" }
+         }
+       }
+     }
+     gen.js / gen.py are STRINGS of function source. They are compiled with the
+     engine's codegen helpers (expr, sexpr, raw, q, ident, interp, vref) in scope.
+     Because that runs developer-provided code, install shows a trust warning.
+     ============================================================ */
+  const EXT_KEY='bf_extensions';           // localStorage: array of raw extension objects
+  const EXT_CATS=new Set();                // categories added by extensions (for palette)
+  let __extInstalled=[];                   // in-memory list of installed ext objects
+
+  function extLoadStored(){
+    try{ const raw=localStorage.getItem(EXT_KEY); __extInstalled = raw? JSON.parse(raw) : []; }
+    catch(e){ __extInstalled=[]; }
+    if(!Array.isArray(__extInstalled)) __extInstalled=[];
+  }
+  function extPersist(){
+    try{ localStorage.setItem(EXT_KEY, JSON.stringify(__extInstalled)); }catch(e){}
+  }
+
+  // Compile a gen source string into a real function with helpers in scope.
+  function extCompileGen(src){
+    if(typeof src!=='function' && typeof src!=='string') return null;
+    if(typeof src==='function') return src;
+    const H=(BlockFlow.GENHELP)||{};
+    // expose helpers as named params so "f => `...${expr(f.x)}`" works
+    const names=['expr','sexpr','raw','q','ident','interp','vref'];
+    const fn=new Function(...names, '"use strict"; return ('+src+');');
+    return fn(H.expr,H.sexpr,H.raw,H.q,H.ident,H.interp,H.vref);
+  }
+
+  // Validate + register one extension's nodes into the live NODES object.
+  // Returns {ok, count, error}. Namespacing: node keys are prefixed with ext id to avoid clashes.
+  function extRegister(ext){
+    if(!ext || typeof ext!=='object') return {ok:false,error:'Not a valid extension file.'};
+    if(!ext.id || typeof ext.id!=='string') return {ok:false,error:'Extension is missing an "id".'};
+    if(!ext.nodes || typeof ext.nodes!=='object') return {ok:false,error:'Extension has no "nodes".'};
+    const cat = (ext.category && String(ext.category)) || (ext.name?String(ext.name):'Extensions');
+    let count=0;
+    const added=[];
+    try{
+      for(const key of Object.keys(ext.nodes)){
+        const raw=ext.nodes[key];
+        if(!raw || typeof raw!=='object') continue;
+        const nk = 'ext_'+ext.id.replace(/[^a-zA-Z0-9_]/g,'_')+'_'+key.replace(/[^a-zA-Z0-9_]/g,'_');
+        const def = {
+          label: String(raw.label||key),
+          cat: cat,
+          mode: (raw.mode==='html'||raw.mode==='py')?raw.mode:'both',
+          io: Array.isArray(raw.io)?[raw.io[0]|0, raw.io[1]|0]:[1,1],
+          fields: Array.isArray(raw.fields)?raw.fields:[],
+          desc: raw.desc?String(raw.desc):(ext.description?String(ext.description):''),
+          __ext: ext.id
+        };
+        if(raw.accent) def.accent=String(raw.accent);
+        if(raw.entry) def.entry=String(raw.entry);
+        if(raw.event) def.event=String(raw.event);
+        if(raw.branch && typeof raw.branch==='string') def.branch=extCompileGen(raw.branch);
+        // codegen
+        def.gen={};
+        if(raw.gen && raw.gen.js) def.gen.js=extCompileGen(raw.gen.js);
+        if(raw.gen && raw.gen.py) def.gen.py=extCompileGen(raw.gen.py);
+        NODES[nk]=def; added.push(nk); count++;
+      }
+    }catch(e){
+      // roll back any partial registration
+      added.forEach(k=>{ delete NODES[k]; });
+      return {ok:false,error:'Code error while loading: '+e.message};
+    }
+    EXT_CATS.add(cat);
+    return {ok:true,count};
+  }
+
+  // Unregister an extension's nodes from NODES.
+  function extUnregister(ext){
+    if(!ext||!ext.id) return;
+    const pre='ext_'+ext.id.replace(/[^a-zA-Z0-9_]/g,'_')+'_';
+    Object.keys(NODES).forEach(k=>{ if(k.indexOf(pre)===0) delete NODES[k]; });
+  }
+
+  // Load all stored extensions at boot (before the palette is first built).
+  function extBootLoad(){
+    extLoadStored();
+    for(const ext of __extInstalled){
+      const r=extRegister(ext);
+      if(!r.ok) console.warn('Extension "'+(ext.name||ext.id)+'" failed to load:', r.error);
+    }
+  }
+
+  // ---- install flow (with trust warning) ----
+  async function extInstall(ext, sourceLabel){
+    // basic shape check first
+    if(!ext||typeof ext!=='object'||!ext.id||!ext.nodes){
+      extToast('That file is not a valid SKJ Flow extension.'); return false;
+    }
+    if(__extInstalled.some(e=>e.id===ext.id)){
+      const rep=await bfConfirm('Replace extension?', {msg:'An extension with id "'+ext.id+'" is already installed. Replace it?', ok:'Replace', danger:true});
+      if(!rep) return false;
+      extRemove(ext.id, true);
+    }
+    const nodeCount=Object.keys(ext.nodes||{}).length;
+    const detail =
+      (ext.author?('By '+ext.author+'\n'):'')+
+      (ext.description?(ext.description+'\n\n'):'')+
+      'Adds '+nodeCount+' block'+(nodeCount===1?'':'s')+'.'+
+      (sourceLabel?('\nSource: '+sourceLabel):'')+
+      '\n\n⚠ Extensions run code written by the developer. Only install ones you trust.';
+    const yes=await bfConfirm('Install "'+(ext.name||ext.id)+'"?', {msg:detail, ok:'Install'});
+    if(!yes) return false;
+
+    const r=extRegister(ext);
+    if(!r.ok){ extToast('Could not load: '+r.error); return false; }
+    __extInstalled.push(ext); extPersist();
+    if(typeof buildPalette==='function') buildPalette();
+    extToast('✓ Installed "'+(ext.name||ext.id)+'" ('+r.count+' block'+(r.count===1?'':'s')+')');
+    extRenderList();
+    return true;
+  }
+
+  window.extRemove=async function(id, silent){
+    const i=__extInstalled.findIndex(e=>e.id===id);
+    if(i<0) return;
+    const ext=__extInstalled[i];
+    if(!silent){
+      const yes=await bfConfirm('Remove "'+(ext.name||ext.id)+'"?', {msg:'Blocks it added will disappear from the palette.', ok:'Remove', danger:true});
+      if(!yes) return;
+    }
+    extUnregister(ext);
+    __extInstalled.splice(i,1); extPersist();
+    if(!silent){ if(typeof buildPalette==='function') buildPalette(); extRenderList(); extToast('Removed "'+(ext.name||ext.id)+'"'); }
+  };
+
+  // ---- sources: URL + file ----
+  window.extAddFromUrl=async function(){
+    const inp=document.getElementById('extUrl'); if(!inp) return;
+    const url=(inp.value||'').trim(); if(!url){ extToast('Paste an extension URL first.'); return; }
+    extToast('Fetching…');
+    try{
+      const res=await fetch(url,{mode:'cors'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const ext=await res.json();
+      if(await extInstall(ext, url)) inp.value='';
+    }catch(e){
+      extToast('Could not load from URL ('+e.message+'). If it keeps failing, download the .json and use "upload" below.');
+    }
+  };
+  window.extAddFromFile=function(ev){
+    const f=ev.target.files&&ev.target.files[0];
+    ev.target.value='';                       // reset early so re-selecting the same file re-fires
+    if(!f){ extToast('No file selected.'); return; }
+    const r=new FileReader();
+    r.onerror=()=>extToast('Could not read that file.');
+    r.onload=()=>{
+      let ext=null;
+      try{ ext=JSON.parse(String(r.result||'')); }
+      catch(e){ extToast('That file is not valid JSON.'); return; }
+      extInstall(ext, f.name);                 // async, fine to fire-and-forget
+    };
+    try{ r.readAsText(f); }catch(e){ extToast('Could not read that file: '+e.message); }
+  };
+
+  // ---- UI ----
+  window.showExtensions=function(){ closeSheets(); const o=document.getElementById('extOverlay'); if(o){ o.classList.add('open'); extRenderList(); } };
+  window.closeExtensions=function(){ const o=document.getElementById('extOverlay'); if(o) o.classList.remove('open'); };
+
+  function extRenderList(){
+    const box=document.getElementById('extList'); if(!box) return;
+    if(!__extInstalled.length){ box.innerHTML='<div class="ext-empty">No extensions installed yet. Add one by URL or upload a .json file below.</div>'; return; }
+    box.innerHTML=__extInstalled.map(e=>{
+      const n=Object.keys(e.nodes||{}).length;
+      return '<div class="ext-item">'+
+        '<div class="ext-meta"><div class="ext-name">'+extEsc(e.name||e.id)+'</div>'+
+        '<div class="ext-sub">'+(e.author?('by '+extEsc(e.author)+' · '):'')+n+' block'+(n===1?'':'s')+'</div>'+
+        (e.description?('<div class="ext-desc">'+extEsc(e.description)+'</div>'):'')+'</div>'+
+        '<button class="ext-rm" onclick="extRemove(\''+extEsc(e.id)+'\')">Remove</button>'+
+        '</div>';
+    }).join('');
+  }
+  function extEsc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function extToast(msg){
+    let t=document.getElementById('extToast');
+    if(!t){ t=document.createElement('div'); t.id='extToast'; document.body.appendChild(t); }
+    t.textContent=msg; t.classList.add('on'); clearTimeout(extToast._t);
+    extToast._t=setTimeout(()=>t.classList.remove('on'), 3200);
+  }
+
+  // extBootLoad() is called from init() before the palette is first built.
+
+
   function init(){
+    try{ extBootLoad(); }catch(e){ console.warn("ext boot",e); }
     editor=new Drawflow($('flow'));
     editor.reroute=false; editor.curvature=0.45; editor.zoom_min=0.4; editor.zoom_max=1.6;
     editor.start();
@@ -4250,5 +4484,24 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
+
+<div id="extOverlay" onclick="if(event.target===this)closeExtensions()">
+  <div class="ext-card">
+    <div class="ext-head">🧩 Extensions <button class="x" onclick="closeExtensions()">✕</button></div>
+    <div class="ext-body">
+      <div class="ext-note">Extensions add new blocks to SKJ Flow. They run code written by the developer — only install ones you trust.</div>
+      <div id="extList"></div>
+      <div class="ext-add">
+        <div class="ext-add-title">Add an extension</div>
+        <div class="ext-url-row">
+          <input id="extUrl" type="url" placeholder="Paste extension URL (.json)…" spellcheck="false" autocapitalize="off">
+          <button class="ext-add-btn" onclick="extAddFromUrl()">Add</button>
+        </div>
+        <div class="ext-or">or <a role="button" tabindex="0" onclick="document.getElementById('extFile').click()">upload a .json file by pressing here</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
