@@ -13,20 +13,20 @@
     <loc>https://skj-tech.online/os/xp/</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>1.0</priority>
   </url>
   #<url>
   #  <loc>https://skj-tech.online/</loc>
   #  <lastmod>2026-07-07</lastmod>
   #  <changefreq>daily</changefreq>
-  #  <priority>0.6</priority>
+  #  <priority>1.0</priority>
   #</url>
 
   <url>
     <loc>https://skj-tech.online/bruh</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.7</priority>
+    <priority>1.0</priority>
   </url>
   
   <!-- Strona z aplikacjami -->
@@ -34,7 +34,7 @@
     <loc>https://skj-tech.online/apps</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
 
   <!-- Wyszukiwarka CSE -->
@@ -42,7 +42,14 @@
     <loc>https://www.skj-tech.online/</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>1.0</priority>
   </url>
 
+    <!-- Piękne ads.txt -->
+  <url>
+    <loc>https://www.skj-tech.online/ads.txt</loc>
+    <lastmod>2026-07-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
 </urlset>
