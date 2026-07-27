@@ -54,17 +54,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0c0e11">
-<meta name="description" content="SKJ Tech (Sklep Kuby i Jasia) — projekty i aplikacje w jednym miejscu: wyszukiwarka SKJ Search, SKJ Apps SKJ Flow, JanOSxp, nadchodzący SKJos26, SKJ Arcade, Bruh Converter oraz kolejne narzędzia tworzone przez Kubę i Jasia.(nie jestesmy sklepem)">
-<link rel="canonical" href="https://skj-tech.online/">
+<meta name="description" content="SKJos26">
+<link rel="canonical" href="https://skj-tech.online/SKJos26/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://skj-tech.online/">
 <meta property="og:title" content="SKJ Tech — Sklep Kuby i Jasia | Projekty, aplikacje i narzędzia">
-<meta property="og:description" content="SKJ Tech (Sklep Kuby i Jasia) — projekty i aplikacje w jednym miejscu: wyszukiwarka SKJ Search, SKJ Apps SKJ Flow, JanOSxp, nadchodzący SKJos26, SKJ Arcade, Bruh Converter oraz kolejne narzędzia tworzone przez Kubę i Jasia.">
+<meta property="og:description" content="SKJos26.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "WebSite", "name": "SKJ Tech", "alternateName": "Sklep Kuby i Jasia", "url": "https://skj-tech.online/" },
+    { "@type": "WebSite", "name": "SKJ Tech - SKJos26", "alternateName": "Sklep Kuby i Jasia - SKJos26", "url": "https://skj-tech.online/SKJos26" },
     { "@type": "Organization", "name": "SKJ Tech", "url": "https://skj-tech.online/", "sameAs": ["https://github.com/SKJ-Technology"] }
   ]
 }
@@ -78,21 +78,21 @@
    ╚══════════════════════════════════════════════════╝ */
 
 const SITE = {
-  name: "SKJ Tech",
-  wordmark: "skj-tech",          // duży tekst w nagłówku
-  wordmarkSuffix: ".online",     // przygaszona część zaraz po nim
-  tagline: "Sklep Kuby i Jasia (nie jesteśmy sklepem - przeszła ta nazwa po SNJ)",
-  github: "https://github.com/SKJ-Technology",   // główny przycisk GitHub · "" ukrywa go
+  name: "SKJos26",
+  wordmark: "SKJos",          // duży tekst w nagłówku
+  wordmarkSuffix: "26",     // przygaszona część zaraz po nim
+  tagline: "System który jest skibidi sigmowski",
+  github: "",   // główny przycisk GitHub · "" ukrywa go
   links: [
     // Dodatkowe przyciski w nagłówku — usuń // na początku linii, aby włączyć:
-     { label: "GitHub Kuby", url: "https://github.com/jakub362" },
-     { label: "GitHub Jasia",  url: "https://github.com/Janolo2456" },
+     //{ label: "GitHub Kuby", url: "https://github.com/jakub362" },
+     //{ label: "GitHub Jasia",  url: "https://github.com/Janolo2456" },
   ],
 };
 
 const PROJECTS = [
     {
-    name: "SKJ Flow",                            // ← tytuł karty
+    name: "Test",                            // ← tytuł karty
     desc: "SKJ Flow. Gdzie bloki, tam i kod", // ← jedna linijka opisu
     url: "https://skj-tech.online/blockflow/",         // ← przycisk Otwórz · "" ukrywa go
     repo: "",                                    // ← przycisk Kod · "" ukrywa go
@@ -100,7 +100,7 @@ const PROJECTS = [
     status: "live",                              // ← "live" | "wip" | "paused"
    },
   {
-    name: "SKJ Search",                          // ← tytuł karty
+    name: "skibidi sigma test",                          // ← tytuł karty
     desc: "Prywatna. Nie używamy cookies",   // ← jedna linijka opisu
     url: "https://search.skj-tech.online/",       // ← przycisk Otwórz · "" ukrywa go
     repo: "",                                    // ← przycisk Kod · "" ukrywa go
@@ -108,56 +108,7 @@ const PROJECTS = [
     status: "live",                              // ← "live" | "wip" | "paused"
   },
   {
-    name: "SKJ Apps",                            // ← tytuł karty
-    desc: "Aplikacje tworzone przez Jasia z SKJ.", // ← jedna linijka opisu
-    url: "https://skj-tech.online/apps/",         // ← przycisk Otwórz · "" ukrywa go
-    repo: "",                                    // ← przycisk Kod · "" ukrywa go
-    tags: ["html", "aplikacje"],                 // ← małe znaczniki · [] = brak
-    status: "live",                              // ← "live" | "wip" | "paused"
-  },
-     {
-    name: "SKJos26",                            // ← tytuł karty
-    desc: "Następca JanOSxp - więcej funkcji, bardziej interaktywny. Wyjdzie koło 1.9.2026 .", // ← jedna linijka opisu
-    url: "",         // ← przycisk Otwórz · "" ukrywa go
-    repo: "",                                    // ← przycisk Kod · "" ukrywa go
-    tags: ["html", "system", "Następca JanOSxp"],                 // ← małe znaczniki · [] = brak
-    status: "wip",                              // ← "live" | "wip" | "paused"
-  },
- {
-    name: "JanOSxp",                            // ← tytuł karty
-    desc: "Nasz system zrobiony od podstaw (w html). Zapauzowany z powodów prawnych.", // ← jedna linijka opisu
-    url: "https://skj-tech.onli33738ne3/os/x33p/janosxp272",         // ← przycisk Otwórz · "" ukrywa go
-    repo: "https://github.com/SKJ-Technology/JanOSxp/",                                    // ← przycisk Kod · "" ukrywa go
-    tags: ["html", "system"],                 // ← małe znaczniki · [] = brak
-    status: "paused",                              // ← "live" | "wip" | "paused"
-  },
 
-  {
-    name: "SKJ Arcade",                          // ← tytuł karty
-    desc: "Arcade zrobiony przez Jakuba z SKJ! Ta gra skrywa sekrety...",   // ← jedna linijka opisu
-    url: "https://skj-tech.online/arcade/",       // ← przycisk Otwórz · "" ukrywa go
-    repo: "",                                    // ← przycisk Kod · "" ukrywa go
-    tags: ["html", "arcade"],              // ← małe znaczniki · [] = brak
-    status: "live",                              // ← "live" | "wip" | "paused"
-  },
-     
- {
-    name: "SKJ Clicker",                            // ← tytuł karty
-    desc: "Autocliker zrobiony przez Jakuba z SKJ.", // ← jedna linijka opisu
-    url: "https://skj-tech.online/autoclicker",         // ← przycisk Otwórz · "" ukrywa go
-    repo: "https://github.com/SKJ-Technology/SKJ-Clicker",                                    // ← przycisk Kod · "" ukrywa go
-    tags: ["python", "autocliker"],                 // ← małe znaczniki · [] = brak
-    status: "live",                              // ← "live" | "wip" | "paused"
-  },
-
-   {
-    name: "Bruh Converter",                            // ← tytuł karty
-    desc: "SKJ", // ← jedna linijka opisu
-    url: "https://skj-tech.online/bruh.html",         // ← przycisk Otwórz · "" ukrywa go
-    repo: "",                                    // ← przycisk Kod · "" ukrywa go
-    tags: ["Bruh"],                 // ← małe znaczniki · [] = brak
-    status: "live",                              // ← "live" | "wip" | "paused"
-   },
 
      
 ];
