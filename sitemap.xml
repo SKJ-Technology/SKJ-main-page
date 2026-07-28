@@ -1,55 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-  <!-- Strona główna -->
-  <url>
-    <loc>https://skj-tech.online/</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+<sitemapindex xmlns="http://sitemaps.org">
 
-  <url>
-    <loc>https://skj-tech.online/os/xp/</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  #<url>
-  #  <loc>https://skj-tech.online/</loc>
-  #  <lastmod>2026-07-07</lastmod>
-  #  <changefreq>daily</changefreq>
-  #  <priority>1.0</priority>
-  #</url>
+  <!-- Sitemapa ze zwykłymi adresami URL -->
+  <sitemap>
+    <loc>https://skj-tech.online/sitemap_of_urls.xml</loc>
+    <lastmod>2026-07-28</lastmod>
+  </sitemap>
 
-  <url>
-    <loc>https://skj-tech.online/bruh</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- Strona z aplikacjami -->
-  <url>
-    <loc>https://skj-tech.online/apps</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-
-  <!-- Wyszukiwarka CSE -->
-  <url>
-    <loc>https://www.skj-tech.online/</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-    <!-- Piękne blockflow -->
-  <url>
-    <loc>https://www.skj-tech.online/blockflow/</loc>
+  <!-- Sitemapa projektu SKJos26 -->
+  <sitemap>
+    <loc>https://skj-tech.online/SKJos26/sitemap.xml</loc>
     <lastmod>2026-07-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  </sitemap>
 
-</urlset>
+</sitemapindex>
