@@ -1,0 +1,19 @@
+/* Styl dla całej strony */
+body {
+    background-color: #f0f2f5;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Styl dla głównego nagłówka */
+h1 {
+    color: #333333;
+    text-align: center;
+}
+
+/* Styl dla akapitów oznaczonych klasą .wazny-tekst */
+.wazny-tekst {
+    color: #e74c3c;
+    font-weight: bold;
+}
