@@ -12,9 +12,10 @@ h1 {
     text-align: center;
 }
 
-.wysrodkoj {
+.wysrodkoj-h2 {
     color: #333333;
     text-align: center;
+    font-size: 24px;
 }
 
 /* Styl dla akapitów oznaczonych klasą .wazny-tekst */
