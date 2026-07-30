@@ -19,11 +19,17 @@ h1 {
     font-weight: 700;
 }
 
-.h2-2 {
+.pogrob {
     color: #333333;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 700;
 }
+
+.powieksz {
+    color: #333333;
+    font-size: 22px;
+}
+
 
 
 /* Styl dla akapitów oznaczonych klasą .wazny-tekst */
