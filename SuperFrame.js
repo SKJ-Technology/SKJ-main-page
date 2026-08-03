@@ -1,9 +1,7 @@
 (function (Scratch) {
   'use strict';
 
-  if (!Scratch.extensions.unsandboxed) {
-    throw new Error('Rozszerzenie SuperFrame wymaga uruchomienia w trybie unsandboxed!');
-  }
+  if (!Scratch.extensions.unsandboxed) throw new Error('Wymaga unsandboxed!');
 
   const PROXY_URL = 'https://proxy.skj-tech.online/?url=';
   const frames = new Map();
@@ -13,25 +11,18 @@
   function getStageContainer() {
     const fs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
     if (fs) return fs;
-    if (Scratch.renderer && Scratch.renderer.canvas) {
-      return Scratch.renderer.canvas.parentNode;
-    }
-    return document.body;
+    return (Scratch.renderer && Scratch.renderer.canvas) ? Scratch.renderer.canvas.parentNode : document.body;
   }
 
   function getTabDisplayTitle(url, defaultIndex) {
     try {
-      if (url.startsWith('data:')) return `Zasób HTML`;
-      const parsed = new URL(url);
-      return parsed.hostname.replace('www.', '') || `Karta ${defaultIndex}`;
-    } catch (e) {
-      return `Karta ${defaultIndex}`;
-    }
+      if (url.startsWith('data:')) return `HTML`;
+      return new URL(url).hostname.replace('www.', '') || `Karta ${defaultIndex}`;
+    } catch { return `Karta ${defaultIndex}`; }
   }
 
   function getFinalUrl(url, isHtmlData) {
-    if (isHtmlData || url.startsWith('data:')) return url;
-    if (isElectron) return url;
+    if (isHtmlData || url.startsWith('data:') || isElectron) return url;
     return url.startsWith('http') ? PROXY_URL + encodeURIComponent(url) : url;
   }
 
@@ -57,683 +48,74 @@
       frameData.container.style.width = `${canvasRect.width}px`;
       frameData.container.style.height = `${canvasRect.height}px`;
     } else {
-      const centerX = canvasLeft + (canvasRect.width / 2);
-      const centerY = canvasTop + (canvasRect.height / 2);
-      const widthPx = frameData.width * scaleX;
-      const heightPx = frameData.height * scaleY;
-      const left = centerX + (frameData.x * scaleX) - (widthPx / 2);
-      const top = centerY - (frameData.y * scaleY) - (heightPx / 2);
-
+      const w = frameData.width * scaleX, h = frameData.height * scaleY;
+      const left = canvasLeft + (canvasRect.width / 2) + (frameData.x * scaleX) - (w / 2);
+      const top = canvasTop + (canvasRect.height / 2) - (frameData.y * scaleY) - (h / 2);
       frameData.container.style.left = `${left}px`;
       frameData.container.style.top = `${top}px`;
-      frameData.container.style.width = `${widthPx}px`;
-      frameData.container.style.height = `${heightPx}px`;
-    }
-  }
-
-  function syncAllPositions() {
-    frames.forEach(updateFramePosition);
-  }
-
-  // Optymalizacja CPU: Pętla działa tylko, gdy istnieją iframe'y
-  function renderLoop() {
-    if (frames.size > 0) {
-      syncAllPositions();
-      requestAnimationFrame(renderLoop);
-    } else {
-      isLoopRunning = false;
-    }
-  }
-
-  function startLoopIfNeeded() {
-    if (!isLoopRunning && frames.size > 0) {
-      isLoopRunning = true;
-      requestAnimationFrame(renderLoop);
-    }
-  }
-
-  window.addEventListener('resize', () => { if (frames.size > 0) syncAllPositions(); });
-  document.addEventListener('fullscreenchange', () => { if (frames.size > 0) syncAllPositions(); });
-
-  // Sprzątanie po zatrzymaniu projektu (Garbage Collection)
-  if (Scratch.vm && Scratch.vm.runtime) {
-    Scratch.vm.runtime.on('PROJECT_STOP_ALL', () => {
-      frames.forEach(frameData => {
-        if (frameData.container.parentNode) {
-          frameData.container.parentNode.removeChild(frameData.container);
-        }
-      });
-      frames.clear();
-      isLoopRunning = false;
-    });
-  }
-
-  class SuperFrame {
-    getInfo() {
-      return {
-        id: 'superframe',
-        name: 'SuperFrame',
-        color1: '#4C97FF',
-        color2: '#3373CC',
-        blocks: [
-          {
-            opcode: 'createIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Stwórz iframe o nazwie [NAME] z URL [URL]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' },
-              URL: { type: Scratch.ArgumentType.STRING, defaultValue: 'https://example.com' }
-            }
-          },
-          {
-            opcode: 'createIframeHtml',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'otwórz długi tekst o nazwie [NAME] z [HTML]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' },
-              HTML: { type: Scratch.ArgumentType.STRING, defaultValue: '<h1>Witaj świecie!</h1>' }
-            }
-          },
-          {
-            opcode: 'removeIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Usuń iframe [NAME]',
-            arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } }
-          },
-          {
-            opcode: 'hideIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Ukryj [NAME]',
-            arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } }
-          },
-          {
-            opcode: 'showIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Pokaż [NAME]',
-            arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } }
-          },
-          {
-            opcode: 'setPosition',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Zmień x [X] i y [Y] u [NAME]',
-            arguments: {
-              X: { type: Scratch.ArgumentType.NUMBER, defaultValue: 0 },
-              Y: { type: Scratch.ArgumentType.NUMBER, defaultValue: 0 },
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' }
-            }
-          },
-          {
-            opcode: 'setMode',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Ustaw tryb iframe [NAME] na [MODE]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' },
-              MODE: { type: Scratch.ArgumentType.STRING, menu: 'modes', defaultValue: 'interactive' }
-            }
-          }
-        ],
-        menus: {
-          modes: {
-            acceptReporters: false,
-            items: ['kiosk', 'interactive', 'przeglądarka']
-          }
-        }
-      };
-    }
-
-    _setupFrame(name, sourceUrl, isHtmlData) {
-      if (frames.has(name)) {
-        const existing = frames.get(name);
-        const activeTab = existing.tabs.find(t => t.id === existing.activeTabId);
-        if (activeTab && sourceUrl && activeTab.url !== sourceUrl) {
-          activeTab.url = sourceUrl;
-          activeTab.title = getTabDisplayTitle(sourceUrl, activeTab.id);
-          existing.iframe.src = getFinalUrl(sourceUrl, isHtmlData);
-        }
-        return;
-      }
-
-      const stage = getStageContainer();
-      if (getComputedStyle(stage).position === 'static') stage.style.position = 'relative';
-
-      const container = document.createElement('div');
-      container.id = 'superframe-' + name;
-      container.style.position = 'absolute';
-      container.style.zIndex = '99999';
-      container.style.display = 'flex';
-      container.style.flexDirection = 'column';
-      container.style.boxSizing = 'border-box';
-      container.style.overflow = 'hidden';
-      container.style.borderRadius = '6px';
-      container.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
-
-      const browserBar = document.createElement('div');
-      browserBar.style.display = 'none';
-      browserBar.style.backgroundColor = '#e0e0e0';
-      browserBar.style.padding = '6px 8px';
-      browserBar.style.userSelect = 'none';
-      browserBar.style.gap = '6px';
-      browserBar.style.alignItems = 'center';
-
-      const windowControls = document.createElement('div');
-      windowControls.style.display = 'flex';
-      windowControls.style.gap = '10px';
-      windowControls.style.marginRight = '10px';
-      windowControls.style.alignItems = 'center';
-
-      const redBtn = document.createElement('div');
-      redBtn.style.width = '18px';
-      redBtn.style.height = '18px';
-      redBtn.style.borderRadius = '50%';
-      redBtn.style.backgroundColor = '#ff5f56';
-      redBtn.style.cursor = 'pointer';
-
-      const greenBtn = document.createElement('div');
-      greenBtn.style.width = '18px';
-      greenBtn.style.height = '18px';
-      greenBtn.style.borderRadius = '50%';
-      greenBtn.style.backgroundColor = '#27c93f';
-      greenBtn.style.cursor = 'pointer';
-
-      const stopProp = e => e.stopPropagation();
-      redBtn.addEventListener('pointerdown', stopProp);
-      redBtn.addEventListener('click', e => { e.stopPropagation(); this.removeIframe({ NAME: name }); });
-      greenBtn.addEventListener('pointerdown', stopProp);
-      greenBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        const fd = frames.get(name);
-        if (fd) { fd.isMaximized = !fd.isMaximized; updateFramePosition(fd); }
-      });
-
-      windowControls.appendChild(redBtn);
-      windowControls.appendChild(greenBtn);
-
-      const tabsContainer = document.createElement('div');
-      tabsContainer.style.display = 'flex';
-      tabsContainer.style.gap = '4px';
-      tabsContainer.style.alignItems = 'center';
-      tabsContainer.style.overflowX = 'auto';
-
-      const addTabBtn = document.createElement('button');
-      addTabBtn.textContent = '+';
-      addTabBtn.style.border = 'none';
-      addTabBtn.style.background = '#ccc';
-      addTabBtn.style.borderRadius = '3px';
-      addTabBtn.style.cursor = 'pointer';
-      addTabBtn.style.padding = '2px 8px';
-      addTabBtn.style.cssText += ' font-weight: 700 !important;';
-      addTabBtn.addEventListener('pointerdown', stopProp);
-
-      const dragArea = document.createElement('div');
-      dragArea.style.flex = '1';
-      dragArea.style.height = '24px';
-      dragArea.style.minWidth = '30px';
-      dragArea.style.cursor = 'grab';
-
-      const urlRow = document.createElement('div');
-      urlRow.style.display = 'flex';
-      urlRow.style.gap = '4px';
-      urlRow.style.width = '100%';
-      urlRow.style.marginTop = '4px';
-
-      const addressBar = document.createElement('input');
-      addressBar.type = 'text';
-      addressBar.value = sourceUrl;
-      addressBar.style.flex = '1';
-      addressBar.style.border = '1px solid #ccc';
-      addressBar.style.borderRadius = '3px';
-      addressBar.style.padding = '3px 6px';
-      addressBar.style.cssText += ' font-weight: 700 !important;';
-      addressBar.addEventListener('pointerdown', stopProp);
-
-      const goBtn = document.createElement('button');
-      goBtn.textContent = 'Idź';
-      goBtn.style.cursor = 'pointer';
-      goBtn.style.border = '1px solid #aaa';
-      goBtn.style.borderRadius = '3px';
-      goBtn.style.cssText += ' font-weight: 700 !important;';
-      goBtn.addEventListener('pointerdown', stopProp);
-
-      urlRow.appendChild(addressBar);
-      urlRow.appendChild(goBtn);
-
-      const navContainer = document.createElement('div');
-      navContainer.style.display = 'flex';
-      navContainer.style.flexDirection = 'column';
-      navContainer.style.width = '100%';
-
-      const topRow = document.createElement('div');
-      topRow.style.display = 'flex';
-      topRow.style.alignItems = 'center';
-      topRow.style.width = '100%';
-      topRow.appendChild(windowControls);
-      topRow.appendChild(tabsContainer);
-      topRow.appendChild(addTabBtn);
-      topRow.appendChild(dragArea);
-
-      navContainer.appendChild(topRow);
-      navContainer.appendChild(urlRow);
-      browserBar.appendChild(navContainer);
-
-      const frameElement = document.createElement(isElectron ? 'webview' : 'iframe');
-      frameElement.style.width = '100%';
-      frameElement.style.flex = '1';
-      frameElement.style.border = 'none';
-      frameElement.style.backgroundColor = '#ffffff';
-      
-      if (!isElectron) {
-        frameElement.setAttribute('allow', 'pointer-lock; fullscreen; autoplay; camera; microphone; clipboard-read; clipboard-write');
-        frameElement.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-modals');
-      }
-
-      const resizeHandle = document.createElement('div');
-      resizeHandle.style.position = 'absolute';
-      resizeHandle.style.bottom = '0';
-      resizeHandle.style.right = '0';
-      resizeHandle.style.width = '16px';
-      resizeHandle.style.height = '16px';
-      resizeHandle.style.cursor = 'nwse-resize';
-      resizeHandle.style.zIndex = '999999';
-      resizeHandle.style.display = 'none';
-      resizeHandle.style.background = 'linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.4) 50%)';
-
-      let tabCounter = 1;
-      const frameData = {
-        name: name,
-        container: container,
-        iframe: frameElement,
-        browserBar: browserBar,
-        resizeHandle: resizeHandle,
-        x: 0, y: 0, width: 320, height: 240,
-        isMaximized: false, mode: 'interactive',
-        tabs: [], activeTabId: null
-      };
-
-      const loadUrlInFrame = function (url) {
-        frameElement.src = getFinalUrl(url, false);
-      };
-
-      if (!isElectron) {
-        frameElement.addEventListener('load', function () {
-          try {
-            const doc = frameElement.contentDocument || frameElement.contentWindow.document;
-            if (doc) {
-              const cspMetas = doc.querySelectorAll('meta[http-equiv="Content-Security-Policy"]');
-              cspMetas.forEach(el => el.remove());
-              frameElement.contentWindow.open = url => { if (url) addNewTab(url); return null; };
-            }
-          } catch (e) {}
-        });
-      }
-
-      // Bezpieczne generowanie kart (ochrona przed XSS z użyciem textContent)
-      const renderTabs = function () {
-        tabsContainer.textContent = '';
-        frameData.tabs.forEach(t => {
-          const tabEl = document.createElement('div');
-          tabEl.style.display = 'flex';
-          tabEl.style.alignItems = 'center';
-          tabEl.style.gap = '4px';
-          tabEl.style.padding = '3px 8px';
-          tabEl.style.borderRadius = '4px 4px 0 0';
-          tabEl.style.fontSize = '11px';
-          tabEl.style.cursor = 'pointer';
-          tabEl.style.userSelect = 'none';
-          tabEl.style.background = t.id === frameData.activeTabId ? '#ffffff' : '#cccccc';
-          tabEl.style.border = '1px solid #999';
-          if (t.id === frameData.activeTabId) tabEl.style.borderBottom = 'none';
-
-          const titleSpan = document.createElement('span');
-          titleSpan.textContent = t.title || ('Karta ' + t.id);
-          titleSpan.style.whiteSpace = 'nowrap';
-          titleSpan.style.overflow = 'hidden';
-          titleSpan.style.textOverflow = 'ellipsis';
-          titleSpan.style.maxWidth = '80px';
-          titleSpan.style.cssText += ' font-weight: 700 !important;';
-          tabEl.appendChild(titleSpan);
-
-          if (frameData.tabs.length > 1) {
-            const closeBtn = document.createElement('div');
-            closeBtn.textContent = '×';
-            closeBtn.style.cursor = 'pointer';
-            closeBtn.style.color = '#d00000';
-            closeBtn.style.marginLeft = '6px';
-            closeBtn.addEventListener('click', e => {
-              e.stopPropagation();
-              frameData.tabs = frameData.tabs.filter(tab => tab.id !== t.id);
-              if (frameData.activeTabId === t.id) {
-                const nextTab = frameData.tabs[frameData.tabs.length - 1];
-                if (nextTab) {
-                  frameData.activeTabId = nextTab.id;
-                  addressBar.value = nextTab.url;
-                  loadUrlInFrame(nextTab.url);
-                }
-              }
-              renderTabs();
-            });
-            tabEl.appendChild(closeBtn);
-          }
-
-          tabEl.addEventListener('click', e => {
-            e.stopPropagation();
-            frameData.activeTabId = t.id;
-            addressBar.value = t.url;
-            loadUrlInFrame(t.url);
-            renderTabs();
-          });
-
-          tabEl.addEventListener('pointerdown', stopProp);
-          tabsContainer.appendChild(tabEl);
-        });
-      };
-
-      const addNewTab = function (url) {
-        if (!url) url = 'https://example.com';
-        const id = tabCounter++;
-        frameData.tabs.push({ id: id, title: getTabDisplayTitle(url, id), url: url });
-        frameData.activeTabId = id;
-        addressBar.value = url;
-        loadUrlInFrame(url);
-        renderTabs();
-      };
-
-      addTabBtn.addEventListener('click', e => { e.stopPropagation(); addNewTab('https://example.com'); });
-
-      const navigateCurrentTab = function () {
-        const activeTab = frameData.tabs.find(t => t.id === frameData.activeTabId);
-        if (activeTab) {
-          activeTab.url = addressBar.value;
-          activeTab.title = getTabDisplayTitle(addressBar.value, activeTab.id);
-          loadUrlInFrame(activeTab.url);
-          renderTabs();
-        }
-      };
-
-      addressBar.addEventListener('keydown', e => { if (e.key === 'Enter') navigateCurrentTab(); });
-      goBtn.addEventListener('click', e => { e.stopPropagation(); navigateCurrentTab(); });
-
-      addNewTab(sourceUrl);
-
-      let isDragging = false, startX = 0, startY = 0, initialX = 0, initialY = 0;
-      const startDrag = function (e) {
-        const fd = frames.get(name);
-        if (fd && fd.isMaximized) return;
-        isDragging = true; startX = e.clientX; startY = e.clientY; initialX = fd.x; initialY = fd.y;
-        window.addEventListener('pointermove', doDrag);
-        window.addEventListener('pointerup', stopDrag);
-      };
-      const doDrag = function (e) {
-        if (!isDragging) return;
-        const fd = frames.get(name);
-        if (fd) { fd.x = initialX + (e.clientX - startX); fd.y = initialY - (e.clientY - startY); updateFramePosition(fd); }
-      };
-      const stopDrag = function () {
-        isDragging = false;
-        window.removeEventListener('pointermove', doDrag);
-        window.removeEventListener('pointerup', stopDrag);
-      };
-
-      dragArea.addEventListener('pointerdown', startDrag);
-
-      let isResizing = false, startW = 0, startH = 0, startMouseX = 0, startMouseY = 0;
-      const startResize = function (e) {
-        e.stopPropagation();
-        const fd = frames.get(name);
-        if (fd && fd.isMaximized) return;
-        isResizing = true; startMouseX = e.clientX; startMouseY = e.clientY; startW = fd.width; startH = fd.height;
-        window.addEventListener('pointermove', doResize);
-        window.addEventListener('pointerup', stopResize);
-      };
-      const doResize = function (e) {
-        if (!isResizing) return;
-        const stage = getStageContainer();
-        const stageW = (Scratch.vm && Scratch.vm.runtime && Scratch.vm.runtime.stageWidth) || 480;
-        const stageH = (Scratch.vm && Scratch.vm.runtime && Scratch.vm.runtime.stageHeight) || 360;
-        const canvas = Scratch.renderer ? Scratch.renderer.canvas : null;
-        const canvasRect = canvas ? canvas.getBoundingClientRect() : stage.getBoundingClientRect();
-        
-        let newW = startW + ((e.clientX - startMouseX) / (canvasRect.width / stageW));
-        let newH = startH + ((e.clientY - startMouseY) / (canvasRect.height / stageH));
-        if (newW < 200) newW = 200; if (newH < 100) newH = 100;
-
-        const fd = frames.get(name);
-        if (fd) { fd.width = newW; fd.height = newH; updateFramePosition(fd); }
-      };
-      const stopResize = function () {
-        isResizing = false;
-        window.removeEventListener('pointermove', doResize);
-        window.removeEventListener('pointerup', stopResize);
-      };
-
-      resizeHandle.addEventListener('pointerdown', startResize);
-
-      container.appendChild(browserBar);
-      container.appendChild(frameElement);
-      container.appendChild(resizeHandle);
-      stage.appendChild(container);
-
-      frames.set(name, frameData);
-      updateFramePosition(frameData);
-      
-      startLoopIfNeeded();
-    }
-
-    createIframe(args) {
-      const name = String(args.NAME);
-      const rawUrl = String(args.URL);
-      this._setupFrame(name, rawUrl, false);
-    }
-
-    async decompressZIP(base64Str) {
-      try {
-        const binary = atob(base64Str);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) {
-          bytes[i] = binary.charCodeAt(i);
-        }
-        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
-        return await new Response(stream).text();
-      } catch (e) {
-        console.error('Błąd dekompresji ZIP:', e);
-        return '<h1>Błąd odczytu spakowanego HTML</h1>';
-      }
-    }
-
-    async createIframeHtml(args) {
-      const name = String(args.NAME);
-      let htmlContent = String(args.HTML);
-
-      if (htmlContent.startsWith('ZIP:')) {
-        htmlContent = await this.decompressZIP(htmlContent.substring(4));
-      }
-
-      const dataUri = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent);
-      this._setupFrame(name, dataUri, true);
-    }
-
-    removeIframe(args) {
-      const name = String(args.NAME);
-      if (frames.has(name)) {
-        const frameData = frames.get(name);
-        if (frameData.container.parentNode) {
-          frameData.container.parentNode.removeChild(frameData.container);
-        }
-        frames.delete(name);
-      }
-    }
-
-    hideIframe(args) {
-      const name = String(args.NAME);
-      if (frames.has(name)) {
-        frames.get(name).container.style.display = 'none';
-      }
-    }
-
-    showIframe(args) {
-      const name = String(args.NAME);
-      if (frames.has(name)) {
-        frames.get(name).container.style.display = 'flex';
-      }
-    }
-
-    setPosition(args) {
-      const name = String(args.NAME);
-      const frameData = frames.get(name);
-      if (!frameData) return;
-
-      frameData.x = Number(args.X) || 0;
-      frameData.y = Number(args.Y) || 0;
-      updateFramePosition(frameData);
-    }
-
-    setMode(args) {
-      const name = String(args.NAME);
-      const mode = String(args.MODE);
-      const frameData = frames.get(name);
-      if (!frameData) return;
-
-      frameData.mode = mode;
-
-      if (mode === 'przeglądarka') {
-        frameData.browserBar.style.display = 'flex';
-        frameData.resizeHandle.style.display = 'block';
-        frameData.container.style.border = '1px solid #ccc';
-      } else if (mode === 'kiosk' || mode === 'interactive') {
-        frameData.browserBar.style.display = 'none';
-        frameData.resizeHandle.style.display = 'none';
-        frameData.container.style.border = 'none';
-      }
-    }
-  }
-
-  Scratch.extensions.register(new SuperFrame());
-})(Scratch);  function updateFramePosition(frameData) {
-    const stage = getStageContainer();
-    if (frameData.container.parentNode !== stage) stage.appendChild(frameData.container);
-    if (getComputedStyle(stage).position === 'static') stage.style.position = 'relative';
-
-    const canvas = Scratch.renderer ? Scratch.renderer.canvas : null;
-    const stageRect = stage.getBoundingClientRect();
-    const canvasRect = canvas ? canvas.getBoundingClientRect() : stageRect;
-    const stageWidth = (Scratch.vm && Scratch.vm.runtime && Scratch.vm.runtime.stageWidth) || 480;
-    const stageHeight = (Scratch.vm && Scratch.vm.runtime && Scratch.vm.runtime.stageHeight) || 360;
-
-    const scaleX = canvasRect.width / stageWidth;
-    const scaleY = canvasRect.height / stageHeight;
-    const canvasLeft = canvasRect.left - stageRect.left;
-    const canvasTop = canvasRect.top - stageRect.top;
-
-    if (frameData.isMaximized) {
-      frameData.container.style.left = `${canvasLeft}px`;
-      frameData.container.style.top = `${canvasTop}px`;
-      frameData.container.style.width = `${canvasRect.width}px`;
-      frameData.container.style.height = `${canvasRect.height}px`;
-    } else {
-      const centerX = canvasLeft + (canvasRect.width / 2);
-      const centerY = canvasTop + (canvasRect.height / 2);
-      const widthPx = frameData.width * scaleX;
-      const heightPx = frameData.height * scaleY;
-      const left = centerX + (frameData.x * scaleX) - (widthPx / 2);
-      const top = centerY - (frameData.y * scaleY) - (heightPx / 2);
-
-      frameData.container.style.left = `${left}px`;
-      frameData.container.style.top = `${top}px`;
-      frameData.container.style.width = `${widthPx}px`;
-      frameData.container.style.height = `${heightPx}px`;
+      frameData.container.style.width = `${w}px`;
+      frameData.container.style.height = `${h}px`;
     }
   }
 
   function syncAllPositions() { frames.forEach(updateFramePosition); }
   function renderLoop() {
-    if (frames.size > 0) syncAllPositions();
-    requestAnimationFrame(renderLoop);
+    if (frames.size > 0) { syncAllPositions(); requestAnimationFrame(renderLoop); } 
+    else { isLoopRunning = false; }
   }
-  requestAnimationFrame(renderLoop);
+  function startLoopIfNeeded() {
+    if (!isLoopRunning && frames.size > 0) { isLoopRunning = true; requestAnimationFrame(renderLoop); }
+  }
 
-  window.addEventListener('resize', syncAllPositions);
-  document.addEventListener('fullscreenchange', syncAllPositions);
+  window.addEventListener('resize', () => { if (frames.size > 0) syncAllPositions(); });
+  document.addEventListener('fullscreenchange', () => { if (frames.size > 0) syncAllPositions(); });
+  
+  // Obsługa klawisza 'k' dla trybu kiosk
+  window.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 'k') {
+      frames.forEach(fd => {
+        if (fd.mode === 'kiosk') {
+          fd.isMaximized = !fd.isMaximized;
+          fd.windowControls.style.display = fd.isMaximized ? 'none' : 'flex';
+          updateFramePosition(fd);
+        }
+      });
+    }
+  });
 
   class SuperFrame {
+    constructor() {
+      if (Scratch.vm && Scratch.vm.runtime) {
+        Scratch.vm.runtime.on('PROJECT_STOP_ALL', () => {
+          frames.forEach(fd => fd.container.remove());
+          frames.clear();
+          isLoopRunning = false;
+        });
+      }
+    }
+
     getInfo() {
       return {
-        id: 'superframe',
-        name: 'SuperFrame',
-        color1: '#4C97FF',
-        color2: '#3373CC',
+        id: 'superframe', name: 'SuperFrame', color1: '#4C97FF', color2: '#3373CC',
         blocks: [
-          {
-            opcode: 'createIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Stwórz iframe o nazwie [NAME] z URL [URL]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' },
-              URL: { type: Scratch.ArgumentType.STRING, defaultValue: 'https://example.com' }
-            }
-          },
-          {
-            opcode: 'createIframeHtml',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'otwórz długi tekst o nazwie [NAME] z [HTML]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' },
-              HTML: { type: Scratch.ArgumentType.STRING, defaultValue: '<h1>Witaj świecie!</h1>' }
-            }
-          },
-          {
-            opcode: 'removeIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Usuń iframe [NAME]',
-            arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } }
-          },
-          {
-            opcode: 'hideIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Ukryj [NAME]',
-            arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } }
-          },
-          {
-            opcode: 'showIframe',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Pokaż [NAME]',
-            arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } }
-          },
-          {
-            opcode: 'setPosition',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Zmień x [X] i y [Y] u [NAME]',
-            arguments: {
-              X: { type: Scratch.ArgumentType.NUMBER, defaultValue: 0 },
-              Y: { type: Scratch.ArgumentType.NUMBER, defaultValue: 0 },
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' }
-            }
-          },
-          {
-            opcode: 'setMode',
-            blockType: Scratch.BlockType.COMMAND,
-            text: 'Ustaw tryb iframe [NAME] na [MODE]',
-            arguments: {
-              NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' },
-              MODE: { type: Scratch.ArgumentType.STRING, menu: 'modes', defaultValue: 'interactive' }
-            }
-          }
+          { opcode: 'createIframe', blockType: 'command', text: 'Stwórz iframe [NAME] z URL [URL]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' }, URL: { type: 'string', defaultValue: 'https://example.com' } } },
+          { opcode: 'createIframeHtml', blockType: 'command', text: 'Otwórz długi tekst [NAME] z [HTML]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' }, HTML: { type: 'string', defaultValue: '<h1>Hej!</h1>' } } },
+          { opcode: 'removeIframe', blockType: 'command', text: 'Usuń iframe [NAME]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' } } },
+          { opcode: 'hideIframe', blockType: 'command', text: 'Ukryj [NAME]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' } } },
+          { opcode: 'showIframe', blockType: 'command', text: 'Pokaż [NAME]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' } } },
+          { opcode: 'setPosition', blockType: 'command', text: 'Zmień x [X] i y [Y] u [NAME]', arguments: { X: { type: 'number', defaultValue: 0 }, Y: { type: 'number', defaultValue: 0 }, NAME: { type: 'string', defaultValue: 'okno1' } } },
+          { opcode: 'setMode', blockType: 'command', text: 'Ustaw tryb iframe [NAME] na [MODE]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' }, MODE: { type: 'string', menu: 'modes', defaultValue: 'interactive' } } }
         ],
-        menus: {
-          modes: {
-            acceptReporters: false,
-            items: ['kiosk', 'interactive', 'przeglądarka']
-          }
-        }
+        menus: { modes: { acceptReporters: false, items: ['kiosk', 'interactive', 'przeglądarka'] } }
       };
     }
 
     _setupFrame(name, sourceUrl, isHtmlData) {
       if (frames.has(name)) {
-        const existing = frames.get(name);
-        const activeTab = existing.tabs.find(t => t.id === existing.activeTabId);
-        if (activeTab && sourceUrl && activeTab.url !== sourceUrl) {
-          activeTab.url = sourceUrl;
-          activeTab.title = getTabDisplayTitle(sourceUrl, activeTab.id);
-          existing.iframe.src = getFinalUrl(sourceUrl, isHtmlData);
+        const ex = frames.get(name), act = ex.tabs.find(t => t.id === ex.activeTabId);
+        if (act && sourceUrl && act.url !== sourceUrl) {
+          act.url = sourceUrl; act.title = getTabDisplayTitle(sourceUrl, act.id);
+          ex.iframe.src = getFinalUrl(sourceUrl, isHtmlData);
         }
         return;
       }
@@ -743,405 +125,233 @@
 
       const container = document.createElement('div');
       container.id = 'superframe-' + name;
-      container.style.position = 'absolute';
-      container.style.zIndex = '99999';
-      container.style.display = 'flex';
-      container.style.flexDirection = 'column';
-      container.style.boxSizing = 'border-box';
-      container.style.overflow = 'hidden';
-      container.style.borderRadius = '6px';
-      container.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+      container.style.cssText = 'position:absolute;z-index:99999;display:flex;flex-direction:column;box-sizing:border-box;overflow:hidden;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.25);background:#fff;';
 
       const browserBar = document.createElement('div');
-      browserBar.style.display = 'none';
-      browserBar.style.backgroundColor = '#e0e0e0';
-      browserBar.style.padding = '6px 8px';
-      browserBar.style.userSelect = 'none';
-      browserBar.style.gap = '6px';
-      browserBar.style.alignItems = 'center';
+      browserBar.style.cssText = 'display:none;background:#e0e0e0;padding:6px 8px;user-select:none;gap:6px;align-items:center;';
 
       const windowControls = document.createElement('div');
-      windowControls.style.display = 'flex';
-      windowControls.style.gap = '10px';
-      windowControls.style.marginRight = '10px';
-      windowControls.style.alignItems = 'center';
+      windowControls.style.cssText = 'display:flex;gap:8px;align-items:center;';
 
+      const btnBase = 'width:14px;height:14px;border-radius:50%;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.3);';
       const redBtn = document.createElement('div');
-      redBtn.style.width = '18px';
-      redBtn.style.height = '18px';
-      redBtn.style.borderRadius = '50%';
-      redBtn.style.backgroundColor = '#ff5f56';
-      redBtn.style.cursor = 'pointer';
-
-      const greenBtn = document.createElement('div');
-      greenBtn.style.width = '18px';
-      greenBtn.style.height = '18px';
-      greenBtn.style.borderRadius = '50%';
-      greenBtn.style.backgroundColor = '#27c93f';
-      greenBtn.style.cursor = 'pointer';
+      redBtn.style.cssText = btnBase + 'background:#ff5f56;';
+      const yellowBtn = document.createElement('div');
+      yellowBtn.style.cssText = btnBase + 'background:#ffbd2e;';
 
       const stopProp = e => e.stopPropagation();
       redBtn.addEventListener('pointerdown', stopProp);
-      redBtn.addEventListener('click', e => { e.stopPropagation(); this.removeIframe({ NAME: name }); });
-      greenBtn.addEventListener('pointerdown', stopProp);
-      greenBtn.addEventListener('click', e => {
-        e.stopPropagation();
+      redBtn.addEventListener('click', e => { stopProp(e); this.removeIframe({ NAME: name }); });
+      
+      yellowBtn.addEventListener('pointerdown', stopProp);
+      yellowBtn.addEventListener('click', e => {
+        stopProp(e);
         const fd = frames.get(name);
         if (fd) { fd.isMaximized = !fd.isMaximized; updateFramePosition(fd); }
       });
 
       windowControls.appendChild(redBtn);
-      windowControls.appendChild(greenBtn);
+      windowControls.appendChild(yellowBtn);
 
       const tabsContainer = document.createElement('div');
-      tabsContainer.style.display = 'flex';
-      tabsContainer.style.gap = '4px';
-      tabsContainer.style.alignItems = 'center';
-      tabsContainer.style.overflowX = 'auto';
+      tabsContainer.style.cssText = 'display:flex;gap:4px;align-items:center;overflow-x:auto;';
 
       const addTabBtn = document.createElement('button');
-      addTabBtn.innerText = '+';
-      addTabBtn.style.border = 'none';
-      addTabBtn.style.background = '#ccc';
-      addTabBtn.style.borderRadius = '3px';
-      addTabBtn.style.cursor = 'pointer';
-      addTabBtn.style.padding = '2px 8px';
-      addTabBtn.style.cssText += ' font-weight: 700 !important;';
+      addTabBtn.textContent = '+';
+      addTabBtn.style.cssText = 'border:none;background:#ccc;border-radius:3px;cursor:pointer;padding:2px 8px;font-weight:700;';
       addTabBtn.addEventListener('pointerdown', stopProp);
+      addTabBtn.onclick = e => { stopProp(e); addNewTab('https://example.com'); };
 
       const dragArea = document.createElement('div');
-      dragArea.style.flex = '1';
-      dragArea.style.height = '24px';
-      dragArea.style.minWidth = '30px';
-      dragArea.style.cursor = 'grab';
+      dragArea.style.cssText = 'flex:1;height:24px;min-width:30px;cursor:grab;';
 
       const urlRow = document.createElement('div');
-      urlRow.style.display = 'flex';
-      urlRow.style.gap = '4px';
-      urlRow.style.width = '100%';
-      urlRow.style.marginTop = '4px';
+      urlRow.style.cssText = 'display:flex;gap:4px;width:100%;margin-top:4px;';
 
       const addressBar = document.createElement('input');
-      addressBar.type = 'text';
-      addressBar.value = sourceUrl;
-      addressBar.style.flex = '1';
-      addressBar.style.border = '1px solid #ccc';
-      addressBar.style.borderRadius = '3px';
-      addressBar.style.padding = '3px 6px';
-      addressBar.style.cssText += ' font-weight: 700 !important;';
+      addressBar.style.cssText = 'flex:1;border:1px solid #ccc;border-radius:3px;padding:3px 6px;font-weight:700;';
       addressBar.addEventListener('pointerdown', stopProp);
 
       const goBtn = document.createElement('button');
-      goBtn.innerText = 'Idź';
-      goBtn.style.cursor = 'pointer';
-      goBtn.style.border = '1px solid #aaa';
-      goBtn.style.borderRadius = '3px';
-      goBtn.style.cssText += ' font-weight: 700 !important;';
+      goBtn.textContent = 'Idź';
+      goBtn.style.cssText = 'cursor:pointer;border:1px solid #aaa;border-radius:3px;font-weight:700;';
       goBtn.addEventListener('pointerdown', stopProp);
 
-      urlRow.appendChild(addressBar);
-      urlRow.appendChild(goBtn);
-
+      urlRow.append(addressBar, goBtn);
+      
       const navContainer = document.createElement('div');
-      navContainer.style.display = 'flex';
-      navContainer.style.flexDirection = 'column';
-      navContainer.style.width = '100%';
-
+      navContainer.style.cssText = 'display:flex;flex-direction:column;width:100%;';
       const topRow = document.createElement('div');
-      topRow.style.display = 'flex';
-      topRow.style.alignItems = 'center';
-      topRow.style.width = '100%';
-      topRow.appendChild(windowControls);
-      topRow.appendChild(tabsContainer);
-      topRow.appendChild(addTabBtn);
-      topRow.appendChild(dragArea);
-
-      navContainer.appendChild(topRow);
-      navContainer.appendChild(urlRow);
+      topRow.style.cssText = 'display:flex;align-items:center;width:100%;';
+      topRow.append(tabsContainer, addTabBtn, dragArea);
+      navContainer.append(topRow, urlRow);
       browserBar.appendChild(navContainer);
 
       const frameElement = document.createElement(isElectron ? 'webview' : 'iframe');
-      frameElement.style.width = '100%';
-      frameElement.style.flex = '1';
-      frameElement.style.border = 'none';
-      frameElement.style.backgroundColor = '#ffffff';
-      
+      frameElement.style.cssText = 'width:100%;flex:1;border:none;background:#fff;';
       if (!isElectron) {
         frameElement.setAttribute('allow', 'pointer-lock; fullscreen; autoplay; camera; microphone; clipboard-read; clipboard-write');
         frameElement.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-modals');
       }
 
       const resizeHandle = document.createElement('div');
-      resizeHandle.style.position = 'absolute';
-      resizeHandle.style.bottom = '0';
-      resizeHandle.style.right = '0';
-      resizeHandle.style.width = '16px';
-      resizeHandle.style.height = '16px';
-      resizeHandle.style.cursor = 'nwse-resize';
-      resizeHandle.style.zIndex = '999999';
-      resizeHandle.style.display = 'none';
-      resizeHandle.style.background = 'linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.4) 50%)';
+      resizeHandle.style.cssText = 'position:absolute;bottom:0;right:0;width:16px;height:16px;cursor:nwse-resize;z-index:999999;background:linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.4) 50%);';
 
       let tabCounter = 1;
       const frameData = {
-        name: name,
-        container: container,
-        iframe: frameElement,
-        browserBar: browserBar,
-        resizeHandle: resizeHandle,
-        x: 0, y: 0, width: 320, height: 240,
-        isMaximized: false, mode: 'interactive',
-        tabs: [], activeTabId: null
+        name, container, iframe: frameElement, browserBar, resizeHandle, topRow, windowControls, yellowBtn,
+        x: 0, y: 0, width: 320, height: 240, isMaximized: false, mode: 'interactive', tabs: [], activeTabId: null
       };
 
-      const loadUrlInFrame = function (url) {
-        frameElement.src = getFinalUrl(url, false);
-      };
+      const loadUrlInFrame = url => { frameElement.src = getFinalUrl(url, false); };
 
       if (!isElectron) {
-        frameElement.addEventListener('load', function () {
+        frameElement.onload = () => {
           try {
             const doc = frameElement.contentDocument || frameElement.contentWindow.document;
-            if (doc) {
-              const cspMetas = doc.querySelectorAll('meta[http-equiv="Content-Security-Policy"]');
-              cspMetas.forEach(el => el.remove());
-              frameElement.contentWindow.open = url => { if (url) addNewTab(url); return null; };
-            }
+            if (doc) doc.querySelectorAll('meta[http-equiv="Content-Security-Policy"]').forEach(el => el.remove());
+            frameElement.contentWindow.open = u => { if (u) addNewTab(u); return null; };
           } catch (e) {}
-        });
+        };
       }
 
-      const renderTabs = function () {
+      const renderTabs = () => {
         tabsContainer.innerHTML = '';
         frameData.tabs.forEach(t => {
           const tabEl = document.createElement('div');
-          tabEl.style.display = 'flex';
-          tabEl.style.alignItems = 'center';
-          tabEl.style.gap = '4px';
-          tabEl.style.padding = '3px 8px';
-          tabEl.style.borderRadius = '4px 4px 0 0';
-          tabEl.style.fontSize = '11px';
-          tabEl.style.cursor = 'pointer';
-          tabEl.style.userSelect = 'none';
-          tabEl.style.background = t.id === frameData.activeTabId ? '#ffffff' : '#cccccc';
-          tabEl.style.border = '1px solid #999';
+          tabEl.style.cssText = `display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px 4px 0 0;font-size:11px;cursor:pointer;user-select:none;border:1px solid #999;background:${t.id === frameData.activeTabId ? '#fff' : '#ccc'};`;
           if (t.id === frameData.activeTabId) tabEl.style.borderBottom = 'none';
 
           const titleSpan = document.createElement('span');
-          titleSpan.innerText = t.title || ('Karta ' + t.id);
-          titleSpan.style.whiteSpace = 'nowrap';
-          titleSpan.style.overflow = 'hidden';
-          titleSpan.style.textOverflow = 'ellipsis';
-          titleSpan.style.maxWidth = '80px';
-          titleSpan.style.cssText += ' font-weight: 700 !important;';
+          titleSpan.textContent = t.title || `Karta ${t.id}`;
+          titleSpan.style.cssText = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;font-weight:700;';
           tabEl.appendChild(titleSpan);
 
           if (frameData.tabs.length > 1) {
             const closeBtn = document.createElement('div');
-            closeBtn.innerText = '×';
-            closeBtn.style.cursor = 'pointer';
-            closeBtn.style.color = '#d00000';
-            closeBtn.style.marginLeft = '6px';
-            closeBtn.addEventListener('click', e => {
-              e.stopPropagation();
+            closeBtn.textContent = '×';
+            closeBtn.style.cssText = 'cursor:pointer;color:#d00000;margin-left:6px;';
+            closeBtn.onclick = e => {
+              stopProp(e);
               frameData.tabs = frameData.tabs.filter(tab => tab.id !== t.id);
               if (frameData.activeTabId === t.id) {
-                const nextTab = frameData.tabs[frameData.tabs.length - 1];
-                if (nextTab) {
-                  frameData.activeTabId = nextTab.id;
-                  addressBar.value = nextTab.url;
-                  loadUrlInFrame(nextTab.url);
-                }
+                const next = frameData.tabs[frameData.tabs.length - 1];
+                if (next) { frameData.activeTabId = next.id; addressBar.value = next.url; loadUrlInFrame(next.url); }
               }
               renderTabs();
-            });
+            };
             tabEl.appendChild(closeBtn);
           }
 
-          tabEl.addEventListener('click', e => {
-            e.stopPropagation();
-            frameData.activeTabId = t.id;
-            addressBar.value = t.url;
-            loadUrlInFrame(t.url);
-            renderTabs();
-          });
-
+          tabEl.onclick = e => { stopProp(e); frameData.activeTabId = t.id; addressBar.value = t.url; loadUrlInFrame(t.url); renderTabs(); };
           tabEl.addEventListener('pointerdown', stopProp);
           tabsContainer.appendChild(tabEl);
         });
       };
 
-      const addNewTab = function (url) {
-        if (!url) url = 'https://example.com';
+      const addNewTab = url => {
         const id = tabCounter++;
-        frameData.tabs.push({ id: id, title: getTabDisplayTitle(url, id), url: url });
-        frameData.activeTabId = id;
-        addressBar.value = url;
-        loadUrlInFrame(url);
-        renderTabs();
+        frameData.tabs.push({ id, title: getTabDisplayTitle(url, id), url });
+        frameData.activeTabId = id; addressBar.value = url; loadUrlInFrame(url); renderTabs();
       };
 
-      addTabBtn.addEventListener('click', e => { e.stopPropagation(); addNewTab('https://example.com'); });
+      const navCur = () => {
+        const act = frameData.tabs.find(t => t.id === frameData.activeTabId);
+        if (act) { act.url = addressBar.value; act.title = getTabDisplayTitle(act.url, act.id); loadUrlInFrame(act.url); renderTabs(); }
+      };
+      addressBar.onkeydown = e => { if (e.key === 'Enter') navCur(); };
+      goBtn.onclick = e => { stopProp(e); navCur(); };
 
-      const navigateCurrentTab = function () {
-        const activeTab = frameData.tabs.find(t => t.id === frameData.activeTabId);
-        if (activeTab) {
-          activeTab.url = addressBar.value;
-          activeTab.title = getTabDisplayTitle(addressBar.value, activeTab.id);
-          loadUrlInFrame(activeTab.url);
-          renderTabs();
+      addNewTab(sourceUrl || 'https://example.com');
+
+      let isDrag = false, sx = 0, sy = 0, ix = 0, iy = 0;
+      dragArea.onpointerdown = e => {
+        const fd = frames.get(name); if (fd && fd.isMaximized) return;
+        isDrag = true; sx = e.clientX; sy = e.clientY; ix = fd.x; iy = fd.y;
+        window.addEventListener('pointermove', doDrag); window.addEventListener('pointerup', stopDrag);
+      };
+      const doDrag = e => { const fd = frames.get(name); if (isDrag && fd) { fd.x = ix + (e.clientX - sx); fd.y = iy - (e.clientY - sy); updateFramePosition(fd); } };
+      const stopDrag = () => { isDrag = false; window.removeEventListener('pointermove', doDrag); window.removeEventListener('pointerup', stopDrag); };
+
+      let isRes = false, sw = 0, sh = 0, smx = 0, smy = 0;
+      resizeHandle.onpointerdown = e => {
+        stopProp(e); const fd = frames.get(name); if (fd && fd.isMaximized) return;
+        isRes = true; smx = e.clientX; smy = e.clientY; sw = fd.width; sh = fd.height;
+        window.addEventListener('pointermove', doRes); window.addEventListener('pointerup', stopRes);
+      };
+      const doRes = e => {
+        if (!isRes) return;
+        const cv = Scratch.renderer ? Scratch.renderer.canvas : null;
+        const cr = cv ? cv.getBoundingClientRect() : getStageContainer().getBoundingClientRect();
+        const fd = frames.get(name);
+        if (fd) {
+          fd.width = Math.max(200, sw + (e.clientX - smx) / (cr.width / 480));
+          fd.height = Math.max(100, sh + (e.clientY - smy) / (cr.height / 360));
+          updateFramePosition(fd);
         }
       };
+      const stopRes = () => { isRes = false; window.removeEventListener('pointermove', doRes); window.removeEventListener('pointerup', stopRes); };
 
-      addressBar.addEventListener('keydown', e => { if (e.key === 'Enter') navigateCurrentTab(); });
-      goBtn.addEventListener('click', e => { e.stopPropagation(); navigateCurrentTab(); });
-
-      addNewTab(sourceUrl);
-
-      let isDragging = false, startX = 0, startY = 0, initialX = 0, initialY = 0;
-      const startDrag = function (e) {
-        const fd = frames.get(name);
-        if (fd && fd.isMaximized) return;
-        isDragging = true; startX = e.clientX; startY = e.clientY; initialX = fd.x; initialY = fd.y;
-        window.addEventListener('pointermove', doDrag);
-        window.addEventListener('pointerup', stopDrag);
-      };
-      const doDrag = function (e) {
-        if (!isDragging) return;
-        const fd = frames.get(name);
-        if (fd) { fd.x = initialX + (e.clientX - startX); fd.y = initialY - (e.clientY - startY); updateFramePosition(fd); }
-      };
-      const stopDrag = function () {
-        isDragging = false;
-        window.removeEventListener('pointermove', doDrag);
-        window.removeEventListener('pointerup', stopDrag);
-      };
-
-      dragArea.addEventListener('pointerdown', startDrag);
-
-      let isResizing = false, startW = 0, startH = 0, startMouseX = 0, startMouseY = 0;
-      const startResize = function (e) {
-        e.stopPropagation();
-        const fd = frames.get(name);
-        if (fd && fd.isMaximized) return;
-        isResizing = true; startMouseX = e.clientX; startMouseY = e.clientY; startW = fd.width; startH = fd.height;
-        window.addEventListener('pointermove', doResize);
-        window.addEventListener('pointerup', stopResize);
-      };
-      const doResize = function (e) {
-        if (!isResizing) return;
-        const stage = getStageContainer();
-        const stageW = (Scratch.vm && Scratch.vm.runtime && Scratch.vm.runtime.stageWidth) || 480;
-        const stageH = (Scratch.vm && Scratch.vm.runtime && Scratch.vm.runtime.stageHeight) || 360;
-        const canvas = Scratch.renderer ? Scratch.renderer.canvas : null;
-        const canvasRect = canvas ? canvas.getBoundingClientRect() : stage.getBoundingClientRect();
-        
-        let newW = startW + ((e.clientX - startMouseX) / (canvasRect.width / stageW));
-        let newH = startH + ((e.clientY - startMouseY) / (canvasRect.height / stageH));
-        if (newW < 200) newW = 200; if (newH < 100) newH = 100;
-
-        const fd = frames.get(name);
-        if (fd) { fd.width = newW; fd.height = newH; updateFramePosition(fd); }
-      };
-      const stopResize = function () {
-        isResizing = false;
-        window.removeEventListener('pointermove', doResize);
-        window.removeEventListener('pointerup', stopResize);
-      };
-
-      resizeHandle.addEventListener('pointerdown', startResize);
-
-      container.appendChild(browserBar);
-      container.appendChild(frameElement);
-      container.appendChild(resizeHandle);
-      stage.appendChild(container);
-
+      container.append(browserBar, frameElement, resizeHandle);
       frames.set(name, frameData);
+      this.setMode({ NAME: name, MODE: 'interactive' });
       updateFramePosition(frameData);
+      startLoopIfNeeded();
     }
 
-    createIframe(args) {
-      const name = String(args.NAME);
-      const rawUrl = String(args.URL);
-      this._setupFrame(name, rawUrl, false);
-    }
+    createIframe(args) { this._setupFrame(String(args.NAME), String(args.URL), false); }
 
-    async decompressZIP(base64Str) {
+    async decompressZIP(b64) {
       try {
-        const binary = atob(base64Str);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) {
-          bytes[i] = binary.charCodeAt(i);
-        }
-        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
-        return await new Response(stream).text();
-      } catch (e) {
-        console.error('Błąd dekompresji ZIP:', e);
-        return '<h1>Błąd odczytu spakowanego HTML</h1>';
-      }
+        const bin = atob(b64), bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'))).text();
+      } catch { return '<h1>Błąd ZIP</h1>'; }
     }
 
     async createIframeHtml(args) {
-      const name = String(args.NAME);
-      let htmlContent = String(args.HTML);
-
-      if (htmlContent.startsWith('ZIP:')) {
-        htmlContent = await this.decompressZIP(htmlContent.substring(4));
-      }
-
-      const dataUri = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent);
-      this._setupFrame(name, dataUri, true);
+      let html = String(args.HTML);
+      if (html.startsWith('ZIP:')) html = await this.decompressZIP(html.substring(4));
+      this._setupFrame(String(args.NAME), 'data:text/html;charset=utf-8,' + encodeURIComponent(html), true);
     }
 
     removeIframe(args) {
-      const name = String(args.NAME);
-      if (frames.has(name)) {
-        const frameData = frames.get(name);
-        frameData.container.remove();
-        frames.delete(name);
-      }
+      const fd = frames.get(String(args.NAME));
+      if (fd) { fd.container.remove(); frames.delete(fd.name); }
     }
-
-    hideIframe(args) {
-      const name = String(args.NAME);
-      if (frames.has(name)) {
-        frames.get(name).container.style.display = 'none';
-      }
-    }
-
-    showIframe(args) {
-      const name = String(args.NAME);
-      if (frames.has(name)) {
-        frames.get(name).container.style.display = 'flex';
-      }
-    }
-
+    hideIframe(args) { const fd = frames.get(String(args.NAME)); if (fd) fd.container.style.display = 'none'; }
+    showIframe(args) { const fd = frames.get(String(args.NAME)); if (fd) fd.container.style.display = 'flex'; }
     setPosition(args) {
-      const name = String(args.NAME);
-      const frameData = frames.get(name);
-      if (!frameData) return;
-
-      frameData.x = Number(args.X) || 0;
-      frameData.y = Number(args.Y) || 0;
-      updateFramePosition(frameData);
+      const fd = frames.get(String(args.NAME));
+      if (fd) { fd.x = Number(args.X) || 0; fd.y = Number(args.Y) || 0; updateFramePosition(fd); }
     }
 
     setMode(args) {
-      const name = String(args.NAME);
-      const mode = String(args.MODE);
-      const frameData = frames.get(name);
-      if (!frameData) return;
-
-      frameData.mode = mode;
+      const fd = frames.get(String(args.NAME)), mode = String(args.MODE);
+      if (!fd) return;
+      fd.mode = mode;
 
       if (mode === 'przeglądarka') {
-        frameData.browserBar.style.display = 'flex';
-        frameData.resizeHandle.style.display = 'block';
-        frameData.container.style.border = '1px solid #ccc';
-      } else if (mode === 'kiosk' || mode === 'interactive') {
-        frameData.browserBar.style.display = 'none';
-        frameData.resizeHandle.style.display = 'none';
-        frameData.container.style.border = 'none';
+        fd.windowControls.style.cssText = 'display:flex;gap:8px;align-items:center;margin-right:12px;position:static;';
+        fd.topRow.insertBefore(fd.windowControls, fd.topRow.firstChild);
+        fd.browserBar.style.display = 'flex';
+        fd.resizeHandle.style.display = 'block';
+        fd.yellowBtn.style.display = 'block';
+        fd.container.style.border = '1px solid #ccc';
+      } else if (mode === 'interactive') {
+        fd.windowControls.style.cssText = 'display:flex;gap:8px;align-items:center;position:absolute;top:8px;left:8px;z-index:999999;';
+        fd.container.appendChild(fd.windowControls);
+        fd.browserBar.style.display = 'none';
+        fd.resizeHandle.style.display = 'block';
+        fd.yellowBtn.style.display = 'block';
+        fd.container.style.border = 'none';
+      } else if (mode === 'kiosk') {
+        fd.windowControls.style.cssText = `display:${fd.isMaximized ? 'none' : 'flex'};gap:8px;align-items:center;position:absolute;top:8px;left:8px;z-index:999999;`;
+        fd.container.appendChild(fd.windowControls);
+        fd.browserBar.style.display = 'none';
+        fd.resizeHandle.style.display = 'none';
+        fd.yellowBtn.style.display = 'none';
+        fd.container.style.border = 'none';
       }
     }
   }
