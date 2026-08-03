@@ -1,7 +1,7 @@
-(function (Scratch) {
+(function () {
   'use strict';
 
-  if (!Scratch.extensions.unsandboxed) throw new Error('Wymaga unsandboxed!');
+  if (typeof Scratch === 'undefined' || !Scratch.extensions) return;
 
   const PROXY_URL = 'https://proxy.skj-tech.online/?url=';
   const frames = new Map();
@@ -16,9 +16,9 @@
 
   function getTabDisplayTitle(url, defaultIndex) {
     try {
-      if (url.startsWith('data:')) return `HTML`;
-      return new URL(url).hostname.replace('www.', '') || `Karta ${defaultIndex}`;
-    } catch { return `Karta ${defaultIndex}`; }
+      if (url.startsWith('data:')) return 'HTML';
+      return new URL(url).hostname.replace('www.', '') || ('Karta ' + defaultIndex);
+    } catch (e) { return 'Karta ' + defaultIndex; }
   }
 
   function getFinalUrl(url, isHtmlData) {
@@ -43,37 +43,45 @@
     const canvasTop = canvasRect.top - stageRect.top;
 
     if (frameData.isMaximized) {
-      frameData.container.style.left = `${canvasLeft}px`;
-      frameData.container.style.top = `${canvasTop}px`;
-      frameData.container.style.width = `${canvasRect.width}px`;
-      frameData.container.style.height = `${canvasRect.height}px`;
+      frameData.container.style.left = canvasLeft + 'px';
+      frameData.container.style.top = canvasTop + 'px';
+      frameData.container.style.width = canvasRect.width + 'px';
+      frameData.container.style.height = canvasRect.height + 'px';
     } else {
       const w = frameData.width * scaleX, h = frameData.height * scaleY;
       const left = canvasLeft + (canvasRect.width / 2) + (frameData.x * scaleX) - (w / 2);
       const top = canvasTop + (canvasRect.height / 2) - (frameData.y * scaleY) - (h / 2);
-      frameData.container.style.left = `${left}px`;
-      frameData.container.style.top = `${top}px`;
-      frameData.container.style.width = `${w}px`;
-      frameData.container.style.height = `${h}px`;
+      frameData.container.style.left = left + 'px';
+      frameData.container.style.top = top + 'px';
+      frameData.container.style.width = w + 'px';
+      frameData.container.style.height = h + 'px';
     }
   }
 
   function syncAllPositions() { frames.forEach(updateFramePosition); }
+
   function renderLoop() {
-    if (frames.size > 0) { syncAllPositions(); requestAnimationFrame(renderLoop); } 
-    else { isLoopRunning = false; }
-  }
-  function startLoopIfNeeded() {
-    if (!isLoopRunning && frames.size > 0) { isLoopRunning = true; requestAnimationFrame(renderLoop); }
+    if (frames.size > 0) {
+      syncAllPositions();
+      requestAnimationFrame(renderLoop);
+    } else {
+      isLoopRunning = false;
+    }
   }
 
-  window.addEventListener('resize', () => { if (frames.size > 0) syncAllPositions(); });
-  document.addEventListener('fullscreenchange', () => { if (frames.size > 0) syncAllPositions(); });
-  
-  // Obsługa klawisza 'k' dla trybu kiosk
-  window.addEventListener('keydown', e => {
-    if (e.key.toLowerCase() === 'k') {
-      frames.forEach(fd => {
+  function startLoopIfNeeded() {
+    if (!isLoopRunning && frames.size > 0) {
+      isLoopRunning = true;
+      requestAnimationFrame(renderLoop);
+    }
+  }
+
+  window.addEventListener('resize', function () { if (frames.size > 0) syncAllPositions(); });
+  document.addEventListener('fullscreenchange', function () { if (frames.size > 0) syncAllPositions(); });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key && e.key.toLowerCase() === 'k') {
+      frames.forEach(function (fd) {
         if (fd.mode === 'kiosk') {
           fd.isMaximized = !fd.isMaximized;
           fd.windowControls.style.display = fd.isMaximized ? 'none' : 'flex';
@@ -86,8 +94,8 @@
   class SuperFrame {
     constructor() {
       if (Scratch.vm && Scratch.vm.runtime) {
-        Scratch.vm.runtime.on('PROJECT_STOP_ALL', () => {
-          frames.forEach(fd => fd.container.remove());
+        Scratch.vm.runtime.on('PROJECT_STOP_ALL', function () {
+          frames.forEach(function (fd) { fd.container.remove(); });
           frames.clear();
           isLoopRunning = false;
         });
@@ -96,15 +104,18 @@
 
     getInfo() {
       return {
-        id: 'superframe', name: 'SuperFrame', color1: '#4C97FF', color2: '#3373CC',
+        id: 'superframe',
+        name: 'SuperFrame',
+        color1: '#4C97FF',
+        color2: '#3373CC',
         blocks: [
-          { opcode: 'createIframe', blockType: 'command', text: 'Stwórz iframe [NAME] z URL [URL]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' }, URL: { type: 'string', defaultValue: 'https://example.com' } } },
-          { opcode: 'createIframeHtml', blockType: 'command', text: 'Otwórz długi tekst [NAME] z [HTML]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' }, HTML: { type: 'string', defaultValue: '<h1>Hej!</h1>' } } },
-          { opcode: 'removeIframe', blockType: 'command', text: 'Usuń iframe [NAME]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' } } },
-          { opcode: 'hideIframe', blockType: 'command', text: 'Ukryj [NAME]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' } } },
-          { opcode: 'showIframe', blockType: 'command', text: 'Pokaż [NAME]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' } } },
-          { opcode: 'setPosition', blockType: 'command', text: 'Zmień x [X] i y [Y] u [NAME]', arguments: { X: { type: 'number', defaultValue: 0 }, Y: { type: 'number', defaultValue: 0 }, NAME: { type: 'string', defaultValue: 'okno1' } } },
-          { opcode: 'setMode', blockType: 'command', text: 'Ustaw tryb iframe [NAME] na [MODE]', arguments: { NAME: { type: 'string', defaultValue: 'okno1' }, MODE: { type: 'string', menu: 'modes', defaultValue: 'interactive' } } }
+          { opcode: 'createIframe', blockType: Scratch.BlockType.COMMAND, text: 'Stwórz iframe [NAME] z URL [URL]', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' }, URL: { type: Scratch.ArgumentType.STRING, defaultValue: 'https://example.com' } } },
+          { opcode: 'createIframeHtml', blockType: Scratch.BlockType.COMMAND, text: 'Otwórz długi tekst [NAME] z [HTML]', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' }, HTML: { type: Scratch.ArgumentType.STRING, defaultValue: '<h1>Hej!</h1>' } } },
+          { opcode: 'removeIframe', blockType: Scratch.BlockType.COMMAND, text: 'Usuń iframe [NAME]', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } } },
+          { opcode: 'hideIframe', blockType: Scratch.BlockType.COMMAND, text: 'Ukryj [NAME]', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } } },
+          { opcode: 'showIframe', blockType: Scratch.BlockType.COMMAND, text: 'Pokaż [NAME]', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } } },
+          { opcode: 'setPosition', blockType: Scratch.BlockType.COMMAND, text: 'Zmień x [X] i y [Y] u [NAME]', arguments: { X: { type: Scratch.ArgumentType.NUMBER, defaultValue: 0 }, Y: { type: Scratch.ArgumentType.NUMBER, defaultValue: 0 }, NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' } } },
+          { opcode: 'setMode', blockType: Scratch.BlockType.COMMAND, text: 'Ustaw tryb iframe [NAME] na [MODE]', arguments: { NAME: { type: Scratch.ArgumentType.STRING, defaultValue: 'okno1' }, MODE: { type: Scratch.ArgumentType.STRING, menu: 'modes', defaultValue: 'interactive' } } }
         ],
         menus: { modes: { acceptReporters: false, items: ['kiosk', 'interactive', 'przeglądarka'] } }
       };
@@ -112,7 +123,7 @@
 
     _setupFrame(name, sourceUrl, isHtmlData) {
       if (frames.has(name)) {
-        const ex = frames.get(name), act = ex.tabs.find(t => t.id === ex.activeTabId);
+        const ex = frames.get(name), act = ex.tabs.find(function (t) { return t.id === ex.activeTabId; });
         if (act && sourceUrl && act.url !== sourceUrl) {
           act.url = sourceUrl; act.title = getTabDisplayTitle(sourceUrl, act.id);
           ex.iframe.src = getFinalUrl(sourceUrl, isHtmlData);
@@ -120,6 +131,7 @@
         return;
       }
 
+      const self = this;
       const stage = getStageContainer();
       if (getComputedStyle(stage).position === 'static') stage.style.position = 'relative';
 
@@ -139,12 +151,12 @@
       const yellowBtn = document.createElement('div');
       yellowBtn.style.cssText = btnBase + 'background:#ffbd2e;';
 
-      const stopProp = e => e.stopPropagation();
+      const stopProp = function (e) { e.stopPropagation(); };
       redBtn.addEventListener('pointerdown', stopProp);
-      redBtn.addEventListener('click', e => { stopProp(e); this.removeIframe({ NAME: name }); });
-      
+      redBtn.addEventListener('click', function (e) { stopProp(e); self.removeIframe({ NAME: name }); });
+
       yellowBtn.addEventListener('pointerdown', stopProp);
-      yellowBtn.addEventListener('click', e => {
+      yellowBtn.addEventListener('click', function (e) {
         stopProp(e);
         const fd = frames.get(name);
         if (fd) { fd.isMaximized = !fd.isMaximized; updateFramePosition(fd); }
@@ -160,7 +172,7 @@
       addTabBtn.textContent = '+';
       addTabBtn.style.cssText = 'border:none;background:#ccc;border-radius:3px;cursor:pointer;padding:2px 8px;font-weight:700;';
       addTabBtn.addEventListener('pointerdown', stopProp);
-      addTabBtn.onclick = e => { stopProp(e); addNewTab('https://example.com'); };
+      addTabBtn.onclick = function (e) { stopProp(e); addNewTab('https://example.com'); };
 
       const dragArea = document.createElement('div');
       dragArea.style.cssText = 'flex:1;height:24px;min-width:30px;cursor:grab;';
@@ -177,14 +189,18 @@
       goBtn.style.cssText = 'cursor:pointer;border:1px solid #aaa;border-radius:3px;font-weight:700;';
       goBtn.addEventListener('pointerdown', stopProp);
 
-      urlRow.append(addressBar, goBtn);
-      
+      urlRow.appendChild(addressBar);
+      urlRow.appendChild(goBtn);
+
       const navContainer = document.createElement('div');
       navContainer.style.cssText = 'display:flex;flex-direction:column;width:100%;';
       const topRow = document.createElement('div');
       topRow.style.cssText = 'display:flex;align-items:center;width:100%;';
-      topRow.append(tabsContainer, addTabBtn, dragArea);
-      navContainer.append(topRow, urlRow);
+      topRow.appendChild(tabsContainer);
+      topRow.appendChild(addTabBtn);
+      topRow.appendChild(dragArea);
+      navContainer.appendChild(topRow);
+      navContainer.appendChild(urlRow);
       browserBar.appendChild(navContainer);
 
       const frameElement = document.createElement(isElectron ? 'webview' : 'iframe');
@@ -199,31 +215,31 @@
 
       let tabCounter = 1;
       const frameData = {
-        name, container, iframe: frameElement, browserBar, resizeHandle, topRow, windowControls, yellowBtn,
+        name: name, container: container, iframe: frameElement, browserBar: browserBar, resizeHandle: resizeHandle, topRow: topRow, windowControls: windowControls, yellowBtn: yellowBtn,
         x: 0, y: 0, width: 320, height: 240, isMaximized: false, mode: 'interactive', tabs: [], activeTabId: null
       };
 
-      const loadUrlInFrame = url => { frameElement.src = getFinalUrl(url, false); };
+      const loadUrlInFrame = function (url) { frameElement.src = getFinalUrl(url, false); };
 
       if (!isElectron) {
-        frameElement.onload = () => {
+        frameElement.onload = function () {
           try {
             const doc = frameElement.contentDocument || frameElement.contentWindow.document;
-            if (doc) doc.querySelectorAll('meta[http-equiv="Content-Security-Policy"]').forEach(el => el.remove());
-            frameElement.contentWindow.open = u => { if (u) addNewTab(u); return null; };
-          } catch (e) {}
+            if (doc) doc.querySelectorAll('meta[http-equiv="Content-Security-Policy"]').forEach(function (el) { el.remove(); });
+            frameElement.contentWindow.open = function (u) { if (u) addNewTab(u); return null; };
+          } catch (e) { }
         };
       }
 
-      const renderTabs = () => {
+      const renderTabs = function () {
         tabsContainer.innerHTML = '';
-        frameData.tabs.forEach(t => {
+        frameData.tabs.forEach(function (t) {
           const tabEl = document.createElement('div');
-          tabEl.style.cssText = `display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px 4px 0 0;font-size:11px;cursor:pointer;user-select:none;border:1px solid #999;background:${t.id === frameData.activeTabId ? '#fff' : '#ccc'};`;
+          tabEl.style.cssText = 'display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px 4px 0 0;font-size:11px;cursor:pointer;user-select:none;border:1px solid #999;background:' + (t.id === frameData.activeTabId ? '#fff' : '#ccc') + ';';
           if (t.id === frameData.activeTabId) tabEl.style.borderBottom = 'none';
 
           const titleSpan = document.createElement('span');
-          titleSpan.textContent = t.title || `Karta ${t.id}`;
+          titleSpan.textContent = t.title || ('Karta ' + t.id);
           titleSpan.style.cssText = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;font-weight:700;';
           tabEl.appendChild(titleSpan);
 
@@ -231,9 +247,9 @@
             const closeBtn = document.createElement('div');
             closeBtn.textContent = '×';
             closeBtn.style.cssText = 'cursor:pointer;color:#d00000;margin-left:6px;';
-            closeBtn.onclick = e => {
+            closeBtn.onclick = function (e) {
               stopProp(e);
-              frameData.tabs = frameData.tabs.filter(tab => tab.id !== t.id);
+              frameData.tabs = frameData.tabs.filter(function (tab) { return tab.id !== t.id; });
               if (frameData.activeTabId === t.id) {
                 const next = frameData.tabs[frameData.tabs.length - 1];
                 if (next) { frameData.activeTabId = next.id; addressBar.value = next.url; loadUrlInFrame(next.url); }
@@ -243,43 +259,43 @@
             tabEl.appendChild(closeBtn);
           }
 
-          tabEl.onclick = e => { stopProp(e); frameData.activeTabId = t.id; addressBar.value = t.url; loadUrlInFrame(t.url); renderTabs(); };
+          tabEl.onclick = function (e) { stopProp(e); frameData.activeTabId = t.id; addressBar.value = t.url; loadUrlInFrame(t.url); renderTabs(); };
           tabEl.addEventListener('pointerdown', stopProp);
           tabsContainer.appendChild(tabEl);
         });
       };
 
-      const addNewTab = url => {
+      const addNewTab = function (url) {
         const id = tabCounter++;
-        frameData.tabs.push({ id, title: getTabDisplayTitle(url, id), url });
+        frameData.tabs.push({ id: id, title: getTabDisplayTitle(url, id), url: url });
         frameData.activeTabId = id; addressBar.value = url; loadUrlInFrame(url); renderTabs();
       };
 
-      const navCur = () => {
-        const act = frameData.tabs.find(t => t.id === frameData.activeTabId);
+      const navCur = function () {
+        const act = frameData.tabs.find(function (t) { return t.id === frameData.activeTabId; });
         if (act) { act.url = addressBar.value; act.title = getTabDisplayTitle(act.url, act.id); loadUrlInFrame(act.url); renderTabs(); }
       };
-      addressBar.onkeydown = e => { if (e.key === 'Enter') navCur(); };
-      goBtn.onclick = e => { stopProp(e); navCur(); };
+      addressBar.onkeydown = function (e) { if (e.key === 'Enter') navCur(); };
+      goBtn.onclick = function (e) { stopProp(e); navCur(); };
 
       addNewTab(sourceUrl || 'https://example.com');
 
       let isDrag = false, sx = 0, sy = 0, ix = 0, iy = 0;
-      dragArea.onpointerdown = e => {
+      dragArea.onpointerdown = function (e) {
         const fd = frames.get(name); if (fd && fd.isMaximized) return;
         isDrag = true; sx = e.clientX; sy = e.clientY; ix = fd.x; iy = fd.y;
         window.addEventListener('pointermove', doDrag); window.addEventListener('pointerup', stopDrag);
       };
-      const doDrag = e => { const fd = frames.get(name); if (isDrag && fd) { fd.x = ix + (e.clientX - sx); fd.y = iy - (e.clientY - sy); updateFramePosition(fd); } };
-      const stopDrag = () => { isDrag = false; window.removeEventListener('pointermove', doDrag); window.removeEventListener('pointerup', stopDrag); };
+      const doDrag = function (e) { const fd = frames.get(name); if (isDrag && fd) { fd.x = ix + (e.clientX - sx); fd.y = iy - (e.clientY - sy); updateFramePosition(fd); } };
+      const stopDrag = function () { isDrag = false; window.removeEventListener('pointermove', doDrag); window.removeEventListener('pointerup', stopDrag); };
 
       let isRes = false, sw = 0, sh = 0, smx = 0, smy = 0;
-      resizeHandle.onpointerdown = e => {
+      resizeHandle.onpointerdown = function (e) {
         stopProp(e); const fd = frames.get(name); if (fd && fd.isMaximized) return;
         isRes = true; smx = e.clientX; smy = e.clientY; sw = fd.width; sh = fd.height;
         window.addEventListener('pointermove', doRes); window.addEventListener('pointerup', stopRes);
       };
-      const doRes = e => {
+      const doRes = function (e) {
         if (!isRes) return;
         const cv = Scratch.renderer ? Scratch.renderer.canvas : null;
         const cr = cv ? cv.getBoundingClientRect() : getStageContainer().getBoundingClientRect();
@@ -290,9 +306,11 @@
           updateFramePosition(fd);
         }
       };
-      const stopRes = () => { isRes = false; window.removeEventListener('pointermove', doRes); window.removeEventListener('pointerup', stopRes); };
+      const stopRes = function () { isRes = false; window.removeEventListener('pointermove', doRes); window.removeEventListener('pointerup', stopRes); };
 
-      container.append(browserBar, frameElement, resizeHandle);
+      container.appendChild(browserBar);
+      container.appendChild(frameElement);
+      container.appendChild(resizeHandle);
       frames.set(name, frameData);
       this.setMode({ NAME: name, MODE: 'interactive' });
       updateFramePosition(frameData);
@@ -306,7 +324,7 @@
         const bin = atob(b64), bytes = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
         return await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'))).text();
-      } catch { return '<h1>Błąd ZIP</h1>'; }
+      } catch (e) { return '<h1>Błąd ZIP</h1>'; }
     }
 
     async createIframeHtml(args) {
@@ -346,7 +364,7 @@
         fd.yellowBtn.style.display = 'block';
         fd.container.style.border = 'none';
       } else if (mode === 'kiosk') {
-        fd.windowControls.style.cssText = `display:${fd.isMaximized ? 'none' : 'flex'};gap:8px;align-items:center;position:absolute;top:8px;left:8px;z-index:999999;`;
+        fd.windowControls.style.cssText = 'display:' + (fd.isMaximized ? 'none' : 'flex') + ';gap:8px;align-items:center;position:absolute;top:8px;left:8px;z-index:999999;';
         fd.container.appendChild(fd.windowControls);
         fd.browserBar.style.display = 'none';
         fd.resizeHandle.style.display = 'none';
@@ -357,4 +375,4 @@
   }
 
   Scratch.extensions.register(new SuperFrame());
-})(Scratch);
+})();
