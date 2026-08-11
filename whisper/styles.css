@@ -1,0 +1,156 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 10px;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 15px;
+}
+
+.title {
+    text-align: center;
+    color: #4C6EF5;
+    font-size: 1.5rem;
+    margin-top: 0;
+}
+
+.warning-box {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+.warning-box h3 {
+    margin-top: 0;
+    color: #856404;
+    font-size: 1.1rem;
+}
+
+.disclaimer {
+    background-color: #e9ecef;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 15px 0;
+    font-size: 0.8rem;
+}
+
+.model-controls {
+    margin-bottom: 20px;
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 12px 10px;
+    background-color: #4C6EF5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-height: 44px; /* Minimum touch target size */
+}
+
+button:hover {
+    background-color: #3B5bdb;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+select {
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 100%;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    min-height: 44px; /* Minimum touch target size */
+}
+
+.status h3 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.status p {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    min-height: 20px;
+    font-size: 0.9rem;
+}
+
+#recognizedText {
+    font-style: italic;
+    color: #333;
+}
+
+.visualization {
+    text-align: center;
+    margin-top: 15px;
+}
+
+canvas {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Button specific styling */
+#cancelDownloadBtn {
+    background-color: #dc3545;
+}
+
+#cancelDownloadBtn:hover {
+    background-color: #c82333;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+    
+    .title {
+        font-size: 1.3rem;
+    }
+    
+    .warning-box, .disclaimer {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+    
+    .button-group {
+        grid-template-columns: 1fr;
+    }
+    
+    button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4C6EF5">
+    <meta name="description" content="Whisper Speech Recognition App">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Rozpoznawanie Mowy Whisper</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Rozpoznawanie Mowy Whisper</h1>
+        
+        <div class="warning-box">
+            <h3>⚠️ Ważne informacje o bezpieczeństwie</h3>
+            <p>Modele pochodzą z repozytoriłów open-source na platformie Hugging Face. Są one duże (100MB-1GB+) i uruchamiane lokalnie w przeglądarce. Upewnij się, że rozumiesz, co pobierasz przed kontynuowaniem. UWAGA: Urządzenia które mają mniej niż 6 GB RAM SĄ NIEPOLECANE! Uruchomienie na takim urządzeniu może powodować ZAMROŻENIA, RESTARTY, A NAWET SAMOCZYNNE WYŁĄCZANIE SIĘ URZĄDZENIA!!!</p>
+        </div>
+        
+        <div class="model-controls">
+            <h2>Sterowanie Modelem</h2>
+            <div class="button-group">
+                <select id="modelSelect">
+                    <option value="Xenova/whisper-tiny">Tiny</option>
+                    <option value="Xenova/whisper-base">Base (Nie zalecany)</option>
+                    <option value="Xenova/whisper-small">Small</option>
+                    <option value="onnx-community/whisper-large-v3-onnx">Large</option>
+                    <option value="onnx-community/whisper-large-v3-turbo">Large Turbo</option>
+                </select>
+                
+                <button id="downloadBtn">Pobierz Model</button>
+                <button id="cancelDownloadBtn">Zatrzymaj Pobieranie</button>
+                <button id="runBtn">Uruchom Model</button>
+                <button id="stopBtn">Zatrzymaj Model</button>
+                <button id="deleteBtn">Usuń Model</button>
+            </div>
+            
+            <div class="status">
+                <h3>Status Pobierania:</h3>
+                <p id="downloadStatus">Brak pobierania</p>
+                
+                <h3>Rozpoznana Mowa:</h3>
+                <p id="recognizedText">Jeszcze nie rozpoznano mowy</p>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            <p><strong>Uwaga:</strong> Modele są pobierane bezpośrednio z Hugging Face i przetwarzane lokalnie. Nie są przesyłane na żadne serwery.</p>
+        </div>
+        
+        <div class="visualization">
+            <canvas id="audioVisualizer" width="100%" height="200"></canvas>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
