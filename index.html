@@ -31,6 +31,12 @@
      DANE STRONY w  const SITE = { ... } : tagline, przycisk GitHub,
                  dodatkowe przyciski w nagłówku (links).
 
+     TŁUMACZENIE NA ANGIELSKI
+       Przycisk „Switch to English" w nagłówku przełącza stronę na
+       angielski. Teksty angielskie są w sekcji EN niżej — dopisując
+       nowy projekt, dodaj mu tam wpis o tej samej nazwie (name).
+       Jeśli go nie dodasz, karta po prostu zostanie po polsku.
+
      PUBLIKACJA
        Zapisz plik i wgraj go na Cloudflare tak samo jak inne wasze
        aplikacje (projekt Pages → nowy deployment). Przed wgraniem
@@ -171,6 +177,62 @@ const PROJECTS = [
      
 ];
 
+/* ── EN · wersja angielska (przycisk „Switch to English") ──────────
+   tagline  = podpis pod nazwą
+   links    = angielskie etykiety przycisków w nagłówku,
+              po lewej polska etykieta z SITE.links
+   projects = angielskie opisy i znaczniki, po lewej nazwa projektu
+              (musi być dokładnie taka sama jak w name powyżej) */
+
+const EN = {
+  tagline: "Kuba and Jaś's shop (we're not a shop — the name came over from SNJ (Nadia and Jaś's shop))",
+
+  links: {
+    "GitHub Kuby":  "Kuba's GitHub",
+    "GitHub Jasia": "Jaś's GitHub",
+    "O nas":        "About us",
+  },
+
+  projects: {
+    "SKJ Flow": {
+      desc: "SKJ Flow. Where the blocks are, the code is too",
+      tags: ["Programming"],
+    },
+    "SKJ Search": {
+      desc: "Private. We don't use cookies",
+      tags: ["html", "search engine"],
+    },
+    "Whisper": {
+      desc: "Run OpenAI's Whisper models locally in your browser!",
+      tags: ["Whisper", "OpenAI", "Speech recognition"],
+    },
+    "SKJ Apps": {
+      desc: "Apps made by Jaś from SKJ.",
+      tags: ["html", "apps"],
+    },
+    "SKJos26": {
+      desc: "The successor to JanOSxp — more features, more interactive. Out around 1 Sep 2026. Try SKJos26 alpha1 right now!",
+      tags: ["html", "operating system", "JanOSxp successor"],
+    },
+    "JanOSxp": {
+      desc: "Our operating system built from scratch (in HTML). Paused for legal reasons.",
+      tags: ["html", "operating system"],
+    },
+    "SKJ Arcade": {
+      desc: "An arcade made by Jakub from SKJ! This game is hiding secrets...",
+      tags: ["html", "arcade"],
+    },
+    "SKJ Clicker": {
+      desc: "An autoclicker made by Jakub from SKJ.",
+      tags: ["python", "autoclicker"],
+    },
+    "Bruh Converter": {
+      desc: "SKJ",
+      tags: ["Bruh"],
+    },
+  },
+};
+
 /* ────────────────  KONIEC SEKCJI EDYCJI  ────────────────
    Poniżej jest kod strony. Niczego pod tą linią nie
    trzeba nigdy zmieniać.
@@ -218,6 +280,7 @@ const PROJECTS = [
   }
   .btn:hover{border-color:var(--line-hi); background:var(--panel)}
   .btn:focus-visible, a:focus-visible{outline:2px solid var(--line-hi); outline-offset:2px}
+  button.btn{background:none; line-height:inherit; cursor:pointer}
 
   .sec{
     margin:48px 0 14px; color:var(--muted);
@@ -279,7 +342,7 @@ const PROJECTS = [
   </footer>
 </div>
 
-<noscript><p style="padding:20px;font-family:monospace">Włącz JavaScript, aby zobaczyć listę projektów.</p></noscript>
+<noscript><p style="padding:20px;font-family:monospace">Włącz JavaScript, aby zobaczyć listę projektów. · Enable JavaScript to see the list of projects.</p></noscript>
 <script>
 (function(){
   "use strict";
@@ -304,61 +367,103 @@ const PROJECTS = [
     return;
   }
 
-  var STATUS = {
-    live:   ["Działa",    "var(--live)"],
-    wip:    ["W budowie", "var(--wip)"],
-    paused: ["Pauza",     "var(--paused)"]
+  var UI = {
+    pl: {
+      toggle: "Switch to English",
+      count:  "Projekty — ",
+      open:   "Otwórz ↗",
+      code:   "Kod",
+      none:   "Brak projektów — dodaj pierwszy w sekcji EDYTUJ TUTAJ.",
+      status: { live: "Działa", wip: "W budowie", paused: "Pauza" }
+    },
+    en: {
+      toggle: "Zmień język na polski",
+      count:  "Projects — ",
+      open:   "Open ↗",
+      code:   "Code",
+      none:   "No projects yet — add the first one in the EDYTUJ TUTAJ section.",
+      status: { live: "Live", wip: "In progress", paused: "Paused" }
+    }
   };
 
-  var b = $("#brand");
-  b.append(el("span", null, SITE.wordmark || ""),
-           el("span", "dim", SITE.wordmarkSuffix || ""),
-           el("span", "cursor"));
-  $("#tagline").textContent = SITE.tagline || "";
+  var EN_DATA = (typeof EN === "undefined") ? {} : EN;
+  var lang = "pl";
 
-  var nav = $("#nav");
-  if (SITE.github) nav.append(link("GitHub", SITE.github));
-  (SITE.links || []).forEach(function(l){
-    if (l && l.url) nav.append(link(l.label || l.url, l.url));
-  });
+  function render(){
+    var t = UI[lang];
+    document.documentElement.lang = lang;
 
-  var ps = PROJECTS || [];
-  $("#count").textContent = "Projekty — " + ps.length;
+    var b = $("#brand");
+    b.textContent = "";
+    b.append(el("span", null, SITE.wordmark || ""),
+             el("span", "dim", SITE.wordmarkSuffix || ""),
+             el("span", "cursor"));
 
-  var g = $("#grid");
-  if (!ps.length){
-    g.append(el("div", "empty", "Brak projektów — dodaj pierwszy w sekcji EDYTUJ TUTAJ."));
+    $("#tagline").textContent =
+      (lang === "en" && EN_DATA.tagline) ? EN_DATA.tagline : (SITE.tagline || "");
+
+    var nav = $("#nav");
+    nav.textContent = "";
+    if (SITE.github) nav.append(link("GitHub", SITE.github));
+    (SITE.links || []).forEach(function(l){
+      if (!l || !l.url) return;
+      var label = l.label || l.url;
+      if (lang === "en" && EN_DATA.links && EN_DATA.links[label]) label = EN_DATA.links[label];
+      nav.append(link(label, l.url));
+    });
+    var toggle = el("button", "btn", t.toggle);
+    toggle.type = "button";
+    toggle.addEventListener("click", function(){
+      lang = (lang === "pl") ? "en" : "pl";
+      render();
+    });
+    nav.append(toggle);
+
+    var ps = PROJECTS || [];
+    $("#count").textContent = t.count + ps.length;
+
+    var g = $("#grid");
+    g.textContent = "";
+    if (!ps.length) g.append(el("div", "empty", t.none));
+
+    ps.forEach(function(p){
+      var tr = (lang === "en" && EN_DATA.projects) ? (EN_DATA.projects[p.name] || {}) : {};
+      var desc = tr.desc || p.desc;
+      var tags = tr.tags || p.tags;
+
+      var c = el("article", "card");
+
+      var head = el("div", "chead");
+      head.append(el("h2", null, p.name || (lang === "en" ? "Untitled" : "Bez nazwy")));
+      var label = t.status[p.status];
+      var color = { live: "var(--live)", wip: "var(--wip)", paused: "var(--paused)" }[p.status];
+      var s = el("span", "status");
+      var dot = el("i"); dot.style.background = color || "var(--paused)";
+      s.append(dot, document.createTextNode(label || p.status || "—"));
+      head.append(s);
+      c.append(head);
+
+      if (desc) c.append(el("p", "desc", desc));
+
+      if (tags && tags.length){
+        var tg = el("div", "tags");
+        tags.forEach(function(x){ tg.append(el("span", "tag", x)); });
+        c.append(tg);
+      }
+
+      var act = el("div", "actions");
+      if (p.url)  act.append(link(t.open, p.url));
+      if (p.repo) act.append(link(t.code, p.repo));
+      if (act.children.length) c.append(act);
+
+      g.append(c);
+    });
+
+    $("#fleft").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
+    $("#fright").textContent = (SITE.wordmark || "") + (SITE.wordmarkSuffix || "");
   }
-  ps.forEach(function(p){
-    var c = el("article", "card");
 
-    var head = el("div", "chead");
-    head.append(el("h2", null, p.name || "Bez nazwy"));
-    var st = STATUS[p.status] || [p.status || "—", "var(--paused)"];
-    var s = el("span", "status");
-    var dot = el("i"); dot.style.background = st[1];
-    s.append(dot, document.createTextNode(st[0]));
-    head.append(s);
-    c.append(head);
-
-    if (p.desc) c.append(el("p", "desc", p.desc));
-
-    if (p.tags && p.tags.length){
-      var t = el("div", "tags");
-      p.tags.forEach(function(x){ t.append(el("span", "tag", x)); });
-      c.append(t);
-    }
-
-    var act = el("div", "actions");
-    if (p.url)  act.append(link("Otwórz ↗", p.url));
-    if (p.repo) act.append(link("Kod", p.repo));
-    if (act.children.length) c.append(act);
-
-    g.append(c);
-  });
-
-  $("#fleft").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
-  $("#fright").textContent = (SITE.wordmark || "") + (SITE.wordmarkSuffix || "");
+  render();
 })();
 </script>
 </body>
