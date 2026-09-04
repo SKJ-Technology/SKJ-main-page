@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SKJ Translator">
+  <rect width="512" height="512" rx="96" fill="#08201b"/>
+  <rect x="64" y="150" width="384" height="212" rx="10" fill="#f4efe2"/>
+  <rect x="64" y="150" width="384" height="10" fill="#d9a13b"/>
+  <text x="256" y="266" font-family="ui-monospace, Menlo, monospace" font-size="76" font-weight="700"
+        text-anchor="middle" fill="#17231d" letter-spacing="6">SKJ</text>
+  <text x="256" y="326" font-family="ui-monospace, Menlo, monospace" font-size="34"
+        text-anchor="middle" fill="#8a6a2c" letter-spacing="2">en de pl</text>
+</svg>

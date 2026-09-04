@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>SKJ Translator</title>
+<meta name="description" content="Offline translator with camera and voice. Runs neural models on your own device.">
+<meta name="theme-color" content="#08201B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icons/icon-180.png">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">SKJ</span>
+    <span class="brand-name">Translator</span>
+  </div>
+  <div class="net" id="net" data-state="online">
+    <span class="net-dot" aria-hidden="true"></span>
+    <span class="net-label" id="netLabel">Online</span>
+  </div>
+</header>
+
+<div class="pairbar">
+  <button class="pair-side" id="srcBtn" aria-haspopup="listbox" aria-expanded="false">
+    <span class="pair-role">From</span>
+    <span class="pair-name" id="srcName">Detect</span>
+    <span class="pair-code" id="srcCode">auto</span>
+  </button>
+
+  <button class="swap" id="swapBtn" title="Swap languages" aria-label="Swap languages">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <button class="pair-side" id="tgtBtn" aria-haspopup="listbox" aria-expanded="false">
+    <span class="pair-role">To</span>
+    <span class="pair-name" id="tgtName">Polski</span>
+    <span class="pair-code" id="tgtCode">pol_Latn</span>
+  </button>
+</div>
+
+<main id="main">
+
+  <!-- ── Text ─────────────────────────────────────────────── -->
+  <section class="view is-active" id="view-text" aria-label="Type to translate">
+    <div class="editor">
+      <textarea id="input" rows="3" placeholder="Type or paste something" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+      <div class="editor-foot">
+        <span class="counter" id="counter">0</span>
+        <div class="editor-actions">
+          <button class="ghost" id="pasteBtn">Paste</button>
+          <button class="ghost" id="clearBtn">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="go" id="goBtn">Translate</button>
+
+    <article class="plate" id="plate" hidden>
+      <div class="plate-head">
+        <span class="plate-route" id="plateRoute">eng_Latn → pol_Latn</span>
+        <div class="plate-tools">
+          <button class="plate-btn" id="speakBtn" title="Read aloud" aria-label="Read aloud">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l4 4V6L7 10H4z" fill="currentColor"/><path d="M16 8a5 5 0 010 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <button class="plate-btn" id="copyBtn" title="Copy" aria-label="Copy translation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 5H6a2 2 0 00-2 2v9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="plate-btn" id="saveBtn" title="Save phrase" aria-label="Save phrase" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4V4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="plate-text" id="output"></p>
+      <p class="plate-note" id="plateNote" hidden></p>
+    </article>
+
+    <section class="strip" id="savedStrip" hidden>
+      <h2 class="strip-head">Saved</h2>
+      <ul class="strip-list" id="savedList"></ul>
+    </section>
+
+    <section class="strip" id="historyStrip" hidden>
+      <h2 class="strip-head">
+        Recent
+        <button class="ghost tiny" id="historyClear">Clear</button>
+      </h2>
+      <ul class="strip-list" id="historyList"></ul>
+    </section>
+  </section>
+
+  <!-- ── Camera ───────────────────────────────────────────── -->
+  <section class="view" id="view-camera" aria-label="Scan text with the camera">
+    <div class="cam" id="cam" data-mode="idle">
+      <video id="video" playsinline muted autoplay></video>
+      <div class="shot" id="shot" hidden>
+        <img id="shotImg" alt="Captured frame">
+        <div class="boxes" id="boxes"></div>
+      </div>
+      <div class="cam-empty" id="camEmpty">
+        <p class="cam-empty-title">Camera is off</p>
+        <p class="cam-empty-body">Point at a sign, menu or page, then take one shot. The reading stays put until you scan again.</p>
+        <button class="go compact" id="camStart">Turn on camera</button>
+      </div>
+      <div class="cam-status" id="camStatus" hidden></div>
+    </div>
+
+    <div class="cam-bar">
+      <button class="cam-side" id="pickFile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 16l5-5 4 4 3-3 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Photo</span>
+      </button>
+      <button class="shutter" id="shutter" disabled aria-label="Scan text now">
+        <span class="shutter-ring" aria-hidden="true"></span>
+        <span class="shutter-label" id="shutterLabel">Scan</span>
+      </button>
+      <button class="cam-side" id="rescan" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Again</span>
+      </button>
+    </div>
+
+    <div class="cam-toggle">
+      <button class="seg is-on" id="showTranslated" aria-pressed="true">Translation</button>
+      <button class="seg" id="showOriginal" aria-pressed="false">Original</button>
+    </div>
+
+    <section class="strip" id="scanStrip" hidden>
+      <h2 class="strip-head">Full reading</h2>
+      <ul class="strip-list" id="scanList"></ul>
+    </section>
+  </section>
+
+  <!-- ── Voice ────────────────────────────────────────────── -->
+  <section class="view" id="view-voice" aria-label="Speak to translate">
+    <div class="voice">
+      <div class="voice-turn" id="voiceHeard">
+        <span class="voice-role" id="heardRole">Heard</span>
+        <p class="voice-text" id="heardText">Tap the microphone and speak a sentence.</p>
+        <button class="plate-btn wide" id="reheardBtn" hidden>Fix the text and translate again</button>
+      </div>
+
+      <button class="mic" id="micBtn" aria-label="Start recording">
+        <span class="mic-level" id="micLevel" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0014 0M12 18v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="mic-hint" id="micHint">Tap to speak</span>
+      </button>
+
+      <div class="voice-turn is-out" id="voiceSaid">
+        <span class="voice-role" id="saidRole">Translation</span>
+        <p class="voice-text" id="saidText">—</p>
+        <button class="plate-btn wide" id="replayBtn" hidden>Play again</button>
+      </div>
+    </div>
+
+    <label class="switch">
+      <input type="checkbox" id="autoSpeak">
+      <span>Read the translation out loud automatically</span>
+    </label>
+  </section>
+
+  <!-- ── Guide ────────────────────────────────────────────── -->
+  <section class="view" id="view-guide" aria-label="Travel guide"></section>
+
+  <!-- ── Models ───────────────────────────────────────────── -->
+  <section class="view" id="view-models" aria-label="Downloaded models">
+    <p class="lede">
+      Reading the picture, hearing your voice and speaking the answer all happen
+      on this device — zero bytes. Only the translated text goes out, batched so
+      a whole camera scan costs one request of a kilobyte or two.
+    </p>
+
+    <article class="card" id="card-budget">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Network used</h2>
+          <p class="card-sub" id="budgetSub">last 60 minutes</p>
+        </div>
+        <span class="tag is-ready" id="budgetTag">0 B</span>
+      </div>
+      <div class="meter"><span id="budgetBar"></span></div>
+      <p class="card-note" id="budgetNote"></p>
+      <ul class="breakdown" id="breakdown"></ul>
+      <div class="card-foot">
+        <label class="capfield">
+          <span>Ceiling</span>
+          <input type="number" id="capInput" min="1" max="10000" step="10" inputmode="numeric">
+          <span>MB</span>
+        </label>
+        <label class="capfield">
+          <span>per</span>
+          <input type="number" id="windowInput" min="1" max="1440" step="5" inputmode="numeric">
+          <span>min</span>
+        </label>
+        <button class="ghost" id="budgetReset">Reset</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Voice engine</h2>
+          <p class="card-sub">How speech becomes text</p>
+        </div>
+      </div>
+      <div class="tiers" id="enginePicker"></div>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Translation backend</h2>
+          <p class="card-sub">Where the words get translated</p>
+        </div>
+      </div>
+      <div class="tiers" id="providerPicker"></div>
+      <input class="textfield" id="workerUrlInput" type="url" inputmode="url"
+             placeholder="/api/translate" hidden
+             autocapitalize="none" autocorrect="off" spellcheck="false">
+      <div class="card-foot" id="workerTestWrap" hidden>
+        <button class="go compact" id="workerTest">Test the endpoint</button>
+      </div>
+      <p class="card-note" id="workerTestNote" hidden></p>
+      <label class="switch" id="preferMTWrap">
+        <input type="checkbox" id="preferMT">
+        <span>Favour machine translation over memory matches. Better on unusual
+        sentences, worse on common phrases someone has already translated well.</span>
+      </label>
+    </article>
+
+    <article class="card" id="card-chars">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Daily characters</h2>
+          <p class="card-sub" id="charSub">MyMemory allowance</p>
+        </div>
+        <span class="tag is-ready" id="charTag">0 / 5000</span>
+      </div>
+      <div class="meter"><span id="charBar"></span></div>
+      <p class="card-note" id="charNote"></p>
+      <input class="textfield" id="charEmail" type="email" inputmode="email"
+             placeholder="your@email.com — raises it to 50 000"
+             autocapitalize="none" autocorrect="off" spellcheck="false">
+    </article>
+
+    <article class="card" id="card-asr">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Voice input</h2>
+          <p class="card-sub" id="asrLabel">Whisper</p>
+        </div>
+        <span class="tag" id="asrTag">Checking</span>
+      </div>
+      <p class="card-note" id="asrNote">Multilingual speech to text, running on this device.</p>
+      <div class="tiers" id="tierPicker"></div>
+      <div class="meter" id="asrMeter" hidden><span id="asrBar"></span></div>
+      <div class="card-foot">
+        <button class="go compact" id="asrDownload">Download</button>
+        <button class="ghost" id="asrClear">Remove</button>
+      </div>
+    </article>
+
+    <article class="card" id="card-ocr">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Camera text</h2>
+          <p class="card-sub">Tesseract 7</p>
+        </div>
+        <span class="tag" id="ocrTag">On demand</span>
+      </div>
+      <p class="card-note">Each language downloads its own reading data the first time you scan in it, then stays cached.</p>
+      <div class="card-foot">
+        <button class="go compact" id="ocrPrefetch">Get English, German, Polish</button>
+      </div>
+    </article>
+
+    <article class="card quiet">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Speech output</h2>
+          <p class="card-sub">Device voices</p>
+        </div>
+        <span class="tag" id="ttsTag">—</span>
+      </div>
+      <p class="card-note" id="ttsNote">Reading aloud uses the voices your phone or computer already has.</p>
+    </article>
+
+    <label class="switch">
+      <input type="checkbox" id="lowDataToggle">
+      <span><strong>Low data mode</strong> — the camera refuses scans with more than
+      a screenful of text. Voice model size is chosen above.</span>
+    </label>
+
+    <article class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Your data</h2>
+          <p class="card-sub">Everything saved on this device</p>
+        </div>
+      </div>
+      <p class="card-note" id="exportNote"></p>
+      <div class="card-foot">
+        <button class="go compact" id="exportBtn">Copy it all out</button>
+        <button class="ghost" id="wipeBtn">Erase everything</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title">Diagnostics</h2>
+          <p class="card-sub">Tests each part and says what broke</p>
+        </div>
+      </div>
+      <div class="card-foot">
+        <button class="go compact" id="runDiag">Run diagnostics</button>
+      </div>
+      <pre class="diag" id="diagOut" hidden></pre>
+    </article>
+
+    <p class="fineprint" id="buildStamp"></p>
+
+    <p class="fineprint">
+      Photos and audio never leave the device. Translation sends plain text to your
+      own Cloudflare Worker and nothing else — no keys, no third party, no logging
+      unless you add it. Libraries come from jsDelivr and the voice model from
+      Hugging Face on first use only.
+    </p>
+  </section>
+
+</main>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-view="text" role="tab" aria-selected="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M9 7v11M4 4h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span>Text</span>
+  </button>
+  <button class="tab" data-view="camera" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13.5" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 7l1.4-2.4h3.2L15 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <span>Camera</span>
+  </button>
+  <button class="tab" data-view="voice" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.5" y="3" width="5" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span>Voice</span>
+  </button>
+  <button class="tab" data-view="guide" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 016.5 3H19v15H6.5A2.5 2.5 0 004 20.5V5.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 7h6M9 11h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span>Guide</span>
+  </button>
+  <button class="tab" data-view="models" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <span>Data</span>
+  </button>
+</nav>
+
+<!-- Language picker -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-scrim" id="sheetScrim"></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">Translate from</h2>
+      <button class="ghost" id="sheetClose">Close</button>
+    </div>
+    <ul class="sheet-list" id="sheetList" role="listbox"></ul>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<input type="file" id="fileInput" accept="image/*" hidden>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>
