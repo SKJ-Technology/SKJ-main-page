@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f6f4ef">
   <title>skj-tech.online — portfolio</title>
-  <!link rel="stylesheet" href="hhttps://skj-tech.online/theme.css">
+  <!link rel="stylesheet" href="/theme.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
@@ -23,7 +23,6 @@
         --font-heading: "Arial", "Helvetica Neue", sans-serif;
         --font-body: "Arial", "Helvetica Neue", sans-serif;
         --radius: 1.25rem;
-      }
       }
 
       * {
@@ -219,7 +218,7 @@
       .project-card {
         position: relative;
         display: flex;
-        min-height: 240px;
+        min-height: 260px;
         flex-direction: column;
         justify-content: space-between;
         overflow: hidden;
@@ -252,22 +251,22 @@
         letter-spacing: 0.12em;
       }
 
-          .project-title,
-    .project-enhanced h3 {
-      margin: 42px 0 12px;
-      font-family: var(--font-heading);
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: -0.06em;
-    }
+      .project-title,
+      .project-enhanced h3 {
+        margin: 42px 0 12px;
+        font-family: var(--font-heading);
+        font-size: 1.65rem;
+        font-weight: 800;
+        letter-spacing: -0.06em;
+        line-height: 1.1;
+      }
 
-    .project-description {
-      margin: 0 0 20px;
-      color: var(--color-muted);
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
+      .project-description {
+        margin: 0 0 20px;
+        color: var(--color-muted);
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
 
       .project-arrow {
         display: grid;
@@ -289,40 +288,16 @@
       }
 
       .js-enabled .project-fallback {
-        display: none;
+        display: none !important;
       }
 
       .js-enabled .project-enhanced {
         display: flex;
       }
 
-          .project-enhanced .button {
-      margin-top: auto;
-    }
-
-    .project-card h3::after {
-      display: block;
-      margin-top: 12px;
-      color: var(--color-muted);
-      font-family: var(--font-body);
-      font-size: 0.92rem;
-      font-weight: 400;
-      letter-spacing: 0;
-      line-height: 1.55;
-    }
-
-    .project-card:nth-child(1) h3::after {
-      content: "Twórz projekty z bloków i odkrywaj, jak zamieniają się w kod.";
-    }
-
-    .project-card:nth-child(2) h3::after {
-      content: "Wyszukuj wygodnie i prywatnie — bez używania cookies.";
-    }
-
-    .project-card:nth-child(3) h3::after {
-      content: "Więcej informacji o tym projekcie pojawi się wkrótce.";
-    }
-
+      .project-enhanced .button {
+        margin-top: auto;
+      }
 
       .footer {
         display: flex;
@@ -387,7 +362,7 @@
         }
 
         .project-card {
-          min-height: 205px;
+          min-height: 220px;
         }
 
         .section-heading {
@@ -415,6 +390,7 @@
           transition-duration: 0.01ms !important;
         }
       }
+
     </style>
 </head>
 
@@ -431,8 +407,7 @@
         <!-- EDYTUJ TUTAJ: nagłówek — zmień tekst wewnątrz elementu h1. -->
         <h1 id="site-title">skj-tech.online</h1>
         <!-- EDYTUJ TUTAJ: opis pod nagłówkiem — wpisz własny tekst w elemencie p. -->
-        <p class="hero-copy">Sklep Kuby i Jasia (nie jesteśmy sklepem - przeszła ta nazwa po SNJ (Sklep Nadii i Jasia))
-        </p>
+        <p class="hero-copy">Sklep Kuby i Jasia (nie jesteśmy sklepem — przeszła ta nazwa po SNJ, czyli Sklepie Nadii i Jasia).</p>
         <div class="hero-actions">
           <!-- EDYTUJ TUTAJ: linki — zmień napis „test” i cel #projekty. Skopiuj cały link, aby dodać kolejny. -->
           <a class="button-link fallback-link" href="#projekty">test</a>
@@ -453,42 +428,72 @@
       </div>
 
       <div class="projects-grid">
-        <!-- EDYTUJ TUTAJ: kafelki projektów — zmień numer, nazwę oraz adres #kontakt. Skopiuj cały article, aby dodać kafelek. -->
+        <!-- EDYTUJ TUTAJ: kafelki projektów — zmień numer, nazwę, opis oraz adres docelowy. Skopiuj cały article, aby dodać kafelek. -->
+
         <article class="project-card reveal">
-          <a class="project-fallback" href="#kontakt">
+          <!-- WERSJA DLA PRZEGLĄDAREK BEZ JAVASCRIPTU (zwykły link) -->
+          <a class="project-fallback" href="https://skj-tech.online/blockflow/">
             <span class="project-number">PROJEKT 01</span>
-            <h3 class="project-title">Nasz projekt</h3>
+            <div>
+              <h3 class="project-title">SKJ Flow</h3>
+              <!-- EDYTUJ TUTAJ: opis projektu dla wersji non-JS -->
+              <p class="project-description">Gdzie bloki, tam i kod</p>
+            </div>
             <span class="project-arrow" aria-hidden="true">↗</span>
           </a>
+
+          <!-- WERSJA DLA PRZEGLĄDAREK Z JAVASCRIPTE (przycisk) -->
           <div class="project-enhanced">
             <span class="project-number">PROJEKT 01</span>
-            <h3>Nasz projekt</h3>
-            <button class="button" type="button" onclick="document.location='#kontakt'">Otwórz</button>
+            <div>
+              <h3>SKJ Flow — Gdzie bloki, tam i kod</h3>
+              <!-- EDYTUJ TUTAJ: opis projektu dla wersji z przyciskiem -->
+              <p class="project-description">Gdzie bloki, tam i kod</p>
+            </div>
+            <button class="button" type="button" onclick="document.location='https://skj-tech.online/blockflow/'">Otwórz</button>
           </div>
         </article>
 
         <article class="project-card reveal">
-          <a class="project-fallback" href="#kontakt">
+          <a class="project-fallback" href="https://search.skj-tech.online/">
             <span class="project-number">PROJEKT 02</span>
-            <h3 class="project-title">Kolejny pomysł</h3>
+            <div>
+              <h3 class="project-title">SKJ Search</h3>
+              <!-- EDYTUJ TUTAJ: opis projektu dla wersji non-JS -->
+              <p>Prywatna. Nie używamy cookies</p>
+            </div>
             <span class="project-arrow" aria-hidden="true">↗</span>
           </a>
+
           <div class="project-enhanced">
             <span class="project-number">PROJEKT 02</span>
-            <h3>Kolejny pomysł</h3>
-            <button class="button" type="button" onclick="document.location='#kontakt'">Otwórz</button>
+            <div>
+              <h3>SKJ Search</h3>
+              <!-- EDYTUJ TUTAJ: opis projektu dla wersji z przyciskiem -->
+              <p class="project-description">Prywatna. Nie używamy cookies</p>
+            </div>
+            <button class="button" type="button" onclick="document.location='https://search.skj-tech.online/'">Otwórz</button>
           </div>
         </article>
 
         <article class="project-card reveal">
           <a class="project-fallback" href="#kontakt">
             <span class="project-number">PROJEKT 03</span>
-            <h3 class="project-title">Coś nowego</h3>
+            <div>
+              <h3 class="project-title">Coś nowego</h3>
+              <!-- EDYTUJ TUTAJ: opis projektu dla wersji non-JS -->
+              <p class="project-description">Nowy pomysł Kuby i Jasia. Szczegóły pojawią się już wkrótce.</p>
+            </div>
             <span class="project-arrow" aria-hidden="true">↗</span>
           </a>
+
           <div class="project-enhanced">
             <span class="project-number">PROJEKT 03</span>
-            <h3>Coś nowego</h3>
+            <div>
+              <h3>Coś nowego</h3>
+              <!-- EDYTUJ TUTAJ: opis projektu dla wersji z przyciskiem -->
+              <p class="project-description">Nowy pomysł Kuby i Jasia. Szczegóły pojawią się już wkrótce.</p>
+            </div>
             <button class="button" type="button" onclick="document.location='#kontakt'">Otwórz</button>
           </div>
         </article>
