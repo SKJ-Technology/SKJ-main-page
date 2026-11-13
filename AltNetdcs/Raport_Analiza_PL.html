@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Raport z analizy — Xbox 360 → Xbox Live (rozpis pracy)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@page { size: 794px 1123px; margin: 44px 0; }
+@page cover { margin: 0; }
+@page ending { margin: 0; }
+:root{
+  --bg:      #0d120f;
+  --bg-2:    #121a15;
+  --bg-3:    #16211a;
+  --bg-code: #0a0f0c;
+  --border:  #263529;
+  --accent:  #52c98b;
+  --accent-d:#2e7a56;
+  --accent-xl:#52c98b1a;
+  --text:    #e6ede8;
+  --text-2:  #b9c6bd;
+  --muted:   #8aa093;
+  --warn:    #cdb45a;
+  --err:     #c87862;
+  --mono: 'JetBrains Mono','Liberation Mono','DejaVu Sans Mono',monospace;
+  --sans: 'Inter','Liberation Sans','DejaVu Sans',sans-serif;
+}
+html,body{
+  margin:0;padding:0;width:794px;background:var(--bg);color:var(--text);
+  font-family:var(--sans),sans-serif;font-size:14.5px;line-height:1.66;
+  line-break:strict;word-break:normal;overflow-wrap:break-word;
+}
+@media screen{
+  html{height:auto;display:flex;justify-content:center;background:#070a08;}
+  body{transform-origin:top center;margin:20px auto;box-shadow:0 0 60px rgba(0,0,0,.55);}
+}
+*{box-sizing:border-box;}
+p{margin:0 0 10px 0;text-align:justify;}
+strong{color:var(--text);font-weight:600;}
+code{font-family:var(--mono),monospace;font-size:.88em;color:var(--accent);background:var(--bg-code);border:1px solid var(--border);border-radius:3px;padding:0 4px;white-space:nowrap;}
+sup.src{font-family:var(--mono),monospace;font-size:9px;color:var(--accent);margin-left:2px;}
+
+.cover{width:794px;height:1123px;position:relative;break-after:page;overflow:hidden;background:var(--bg);}
+.cover .grid-bg{position:absolute;inset:0;z-index:1;overflow:hidden;
+  background-image:linear-gradient(rgba(82,201,139,.045) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(82,201,139,.045) 1px, transparent 1px);background-size:50px 50px;}
+.cover .glow-a{position:absolute;top:-140px;right:-120px;width:460px;height:460px;border-radius:50%;
+  background:radial-gradient(circle, rgba(82,201,139,.10) 0%, rgba(82,201,139,0) 70%);}
+.cover .glow-b{position:absolute;bottom:-160px;left:-140px;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle, rgba(46,122,86,.13) 0%, rgba(46,122,86,0) 70%);}
+.cover .vline{position:absolute;left:56px;top:96px;bottom:96px;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent-d));z-index:2;}
+.cover .content{position:absolute;inset:0;z-index:3;}
+.cover .kicker{position:absolute;left:102px;top:150px;font-family:var(--mono),monospace;font-size:11px;color:var(--accent);letter-spacing:5px;text-transform:uppercase;font-weight:500;}
+.cover .hero{position:absolute;left:102px;top:206px;max-width:600px;font-size:40px;font-weight:800;line-height:1.16;color:var(--text);letter-spacing:-.5px;}
+.cover .hero .sub{color:var(--accent);}
+.cover .summary{position:absolute;left:102px;top:500px;max-width:530px;font-size:14.5px;line-height:1.7;color:var(--text-2);}
+.cover .meta-block{position:absolute;left:102px;top:730px;font-family:var(--mono),monospace;font-size:11.5px;color:var(--muted);line-height:2.0;}
+.cover .meta-block b{color:var(--text-2);font-weight:500;}
+.cover .chips{position:absolute;left:102px;top:880px;display:flex;flex-wrap:wrap;gap:8px;max-width:600px;}
+.cover .chip{font-family:var(--mono),monospace;font-size:10px;color:var(--accent);border:1px solid var(--accent-d);border-radius:3px;padding:4px 10px;letter-spacing:1px;background:var(--accent-xl);}
+.cover .foot{position:absolute;left:102px;right:60px;bottom:60px;display:flex;justify-content:space-between;font-family:var(--mono),monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+
+.main-content{padding:8px 60px 0 60px;}
+.cover{page:cover;}
+.ending{page:ending;}
+.chapter-header{break-after:avoid;break-inside:avoid;margin-top:26px;}
+.chapter-header.first{margin-top:0;}
+.section-tag{font-family:var(--mono),monospace;font-size:10.5px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;font-weight:500;margin-bottom:6px;}
+.section-title{font-size:25px;font-weight:800;line-height:1.22;margin-bottom:6px;color:var(--text);}
+.divider{height:2px;width:64px;background:var(--accent);margin:12px 0 16px 0;}
+h3{font-size:17.5px;font-weight:700;color:var(--text);margin:20px 0 8px 0;break-after:avoid;}
+h3 .idx{color:var(--accent);font-family:var(--mono),monospace;font-size:13px;font-weight:500;margin-right:6px;}
+ul,ol{margin:6px 0 12px 0;padding-left:22px;}
+li{margin-bottom:5px;text-align:justify;}
+li::marker{color:var(--accent);}
+
+.card{background:var(--bg-2);border:1px solid var(--border);border-left:3px solid var(--accent-d);border-radius:4px;padding:13px 16px;margin:12px 0;break-inside:avoid;}
+.card .card-title{font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;font-weight:500;}
+.card p:last-child{margin-bottom:0;}
+.callout{border-radius:4px;padding:12px 15px;margin:12px 0;break-inside:avoid;font-size:13.5px;}
+.callout p:last-child{margin-bottom:0;}
+.callout.warn{background:rgba(205,180,90,.07);border:1px solid rgba(205,180,90,.35);border-left:3px solid var(--warn);}
+.callout.warn .cl-t{color:var(--warn);}
+.callout.err{background:rgba(200,120,98,.07);border:1px solid rgba(200,120,98,.35);border-left:3px solid var(--err);}
+.callout.err .cl-t{color:var(--err);}
+.callout.info{background:var(--accent-xl);border:1px solid var(--accent-d);border-left:3px solid var(--accent);}
+.callout.info .cl-t{color:var(--accent);}
+.cl-t{font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:5px;}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;break-inside:avoid;}
+thead{display:table-header-group;}
+tr{break-inside:avoid;}
+th{background:#1a2620;color:var(--text);font-weight:600;text-align:left;padding:7px 9px;border:1px solid var(--border);font-size:11px;letter-spacing:.4px;font-family:var(--mono),monospace;text-transform:uppercase;}
+td{padding:6px 9px;border:1px solid var(--border);color:var(--text-2);vertical-align:top;overflow-wrap:break-word;}
+tbody tr:nth-child(odd) td{background:rgba(255,255,255,.016);}
+td.c-mono{font-family:var(--mono),monospace;font-size:11px;overflow-wrap:anywhere;}
+.tbl-caption{font-family:var(--mono),monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:-6px 0 14px 0;}
+span.mono{font-family:var(--mono),monospace;font-size:11px;color:var(--accent);}
+
+.kv{background:var(--bg-2);border:1px solid var(--border);border-radius:3px;padding:6px 11px;font-family:var(--mono),monospace;font-size:10.5px;color:var(--text-2);}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;break-inside:avoid;}
+.kv b{color:var(--accent);font-weight:500;}
+
+.src-item{break-inside:avoid;margin-bottom:9px;padding-left:14px;border-left:2px solid var(--border);}
+.src-item .s-id{font-family:var(--mono),monospace;color:var(--accent);font-weight:700;font-size:11.5px;}
+.src-item .s-name{color:var(--text);font-weight:600;font-size:13px;}
+.src-item .s-url{font-family:var(--mono),monospace;font-size:10.5px;color:var(--muted);word-break:break-all;display:block;margin-top:2px;}
+.src-item .s-note{font-size:12px;color:var(--text-2);margin-top:2px;}
+
+.ending{width:794px;height:1123px;break-before:page;overflow:hidden;position:relative;background:var(--bg);}
+.ending .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(82,201,139,.04) 1px, transparent 1px),linear-gradient(90deg, rgba(82,201,139,.04) 1px, transparent 1px);background-size:50px 50px;}
+.ending .inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 96px;}
+.ending .big{font-size:30px;font-weight:800;line-height:1.3;color:var(--text);}
+.ending .sub{margin-top:18px;color:var(--text-2);font-size:14px;max-width:520px;line-height:1.7;}
+.ending .sig{margin-top:42px;font-family:var(--mono),monospace;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<!-- ==================== OKŁADKA ==================== -->
+<div class="cover">
+  <div class="grid-bg"><div class="glow-a"></div><div class="glow-b"></div></div>
+  <div class="vline"></div>
+  <div class="content">
+    <div class="kicker">Raport z pracy badawczej · Metodyka i rejestr</div>
+    <div class="hero">Raport z analizy<br>Xbox 360 <span class="sub">→</span> Xbox Live<br>Rozpis pracy, metodyka, źródła</div>
+    <div class="summary">Dokument towarzyszący technicznej Dokumentacji PL/EN: opisuje, jak przeprowadzono analizę zachowania sieciowego Xbox 360 — jakie pytania badawcze postawiono, jakimi narzędziami i w jakiej kolejności pracowano, które źródła społecznościowe wykorzystano i jak weryfikowano fakty. Zawiera rejestr kroków, listę potwierdzonych ustaleń z odniesieniami do rozdziałów, jawną mapę luk (UNVERIFIED) oraz instrukcję wykorzystania deliverables przez modele językowe implementujące plugin i serwery.</div>
+    <div class="meta-block">
+      <b>WERSJA</b> 1.0&nbsp;·&nbsp;2026-11-13<br>
+      <b>ZAKRES</b> analiza behawioralna + dokumentacja inżynierska<br>
+      <b>ŹRÓDŁA</b> wyłącznie społeczność homebrew (rejestr [S1]–[S24])
+    </div>
+    <div class="chips">
+      <span class="chip">METODYKA</span>
+      <span class="chip">REJESTR PRACY</span>
+      <span class="chip">USTALENIA</span>
+      <span class="chip">LUKI UNVERIFIED</span>
+      <span class="chip">DELIVERABLES</span>
+    </div>
+    <div class="foot">
+      <span>Raport_Analiza_PL.pdf</span>
+      <span>Towarzyszy: DokumentacjaPL.pdf · DocsEN.pdf</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TREŚĆ ==================== -->
+<div class="main-content">
+
+<div class="chapter-header first">
+  <div class="section-tag">Sekcja 1</div>
+  <div class="section-title">Streszczenie wykonawcze</div>
+  <div class="divider"></div>
+</div>
+
+<p>Zadanie brzmiało: przeprowadzić możliwie najdokładniejszą analizę zachowania Xbox 360 przy łączeniu się z serwerami Xbox Live i przygotować dokumentację, na podstawie której można zbudować plugin DashLaunch przekierowujący pakiety do serwerów społeczności — z wyłączeniem materiałów producenta (Microsoft Learn / Xbox Support), wyłącznie na bazie badań społeczności homebrew. Pracę podzielono na cztery fazy: <strong>(F1)</strong> research źródłowy, <strong>(F2)</strong> synteza i walidacja faktów, <strong>(F3)</strong> redakcja dokumentacji technicznej PL i EN, <strong>(F4)</strong> kontrola jakości i dostawa.</p>
+<p>Wynikiem jest komplet trzech dokumentów: <span class="mono">DokumentacjaPL.pdf</span> (32 strony, 7 diagramów, 19 tabel), <span class="mono">DocsEN.pdf</span> (32 strony, lustrzane tłumaczenie) oraz niniejszy raport. Najważniejsze ustalenia inżynierskie: cały ruch sieciowy aplikacji przechodzi przez eksporty <span class="mono">NetDll_*</span> modułu <span class="mono">xam.xex</span> adresowane stabilnymi ordinalami (np. connect=12, DnsLookup=67), co czyni je idealnym punktem zaczepienia plugina; uwierzytelnianie Live wywodzi się z Kerberos + Secure Gateway (śledy na 360: PA-DATA, PRIMARY_SG_NONCE, XexSetLastKdcTime); przekierowanie DNS jest mechanizmem kompletnym (konsola nie ma nadpisań poza DNS), a podejście hybrydowe DNS + hooki eksportów zostało wybrane jako rekomendacja główna. Każdy fakt liczbowy ma przypisane źródło [S1]–[S24]; 6 obszarów oznaczono jawnie jako UNVERIFIED wraz ze sposobem ich domknięcia.</p>
+
+<div class="meta-row">
+  <span class="kv"><b>F1 research</b> ~40 zapytań/pobrań, 3 agenty badawcze</span>
+  <span class="kv"><b>F2 synteza</b> 24 źródła w rejestrze</span>
+  <span class="kv"><b>F3 redakcja</b> 3 dokumenty, 7 diagramów, 36 tabel łącznie</span>
+  <span class="kv"><b>F4 QA</b> 9/9 testów PASS na dokumentach głównych</span>
+</div>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 2</div>
+  <div class="section-title">Cel i pytania badawcze</div>
+  <div class="divider"></div>
+</div>
+
+<p>Analiza odpowiadała na siedem pytań badawczych, ułożonych tak, by ich odpowiedzi układały się w ścieżkę implementacyjną (kolejność = kolejność rozdziałów Dokumentacji):</p>
+<ol>
+  <li><strong>P1 Architektura:</strong> przez które moduły i warstwy przechodzi ruch sieciowy konsoli? (→ R2–R3)</li>
+  <li><strong>P2 Sekwencja:</strong> w jakiej kolejności konsola przechodzi stany od bootu do sesji online i jakie funkcje sygnalizują każdy stan? (→ R4)</li>
+  <li><strong>P3 Endpointy:</strong> jakie nazwy hostów i porty są poświadczone dla ery 360 w źródłach społecznościowych? (→ R4.4–4.5)</li>
+  <li><strong>P4 Uwierzytelnianie:</strong> jakim protokołem konsola loguje się do Live, jakie klucze i certyfikaty biorą udział i co z tego wynika dla serwera społeczności? (→ R5)</li>
+  <li><strong>P5 Punkty zaczepienia:</strong> gdzie i jak można przechwycić ruch — w konsoli i poza nią — oraz jakie są kompromisy każdej warstwy? (→ R6)</li>
+  <li><strong>P6 Plugin:</strong> jakie API oferuje DashLaunch i jak wygląda minimalny, bezpieczny plugin przekierowujący? (→ R7)</li>
+  <li><strong>P7 Serwer i prior art:</strong> co musi implementować serwer społeczności i jakie rozwiązania już działają (Insignia, XLink Kai, LiNK, Xenia)? (→ R8–R9)</li>
+</ol>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 3</div>
+  <div class="section-title">Metodyka i narzędzia</div>
+  <div class="divider"></div>
+</div>
+
+<h3><span class="idx">3.1</span>Kryteria doboru źródeł</h3>
+<ul>
+  <li><strong>Dozwolone:</strong> wiki inżynierskie społeczności (xboxdevwiki, Free60, Xenon Library, Xbox One Research), kod źródłowy na GitHubie (emulatory, biblioteki, pluginy, serwery DNS), dokumentacja usług społeczności (Insignia, Team XLink), wystąpienia konferencyjne (36C3 2019, DEF CON 30), materiały encyklopedyczne i prasowe jako kontekst historyczny.</li>
+  <li><strong>Wykluczone:</strong> Microsoft Learn, Xbox Support i jakakolwiek dokumentacja producenta protokołu. Strony te pojawiały się w wynikach wyszukiwania i były konsekwentnie pomijane; żaden fakt techniczny nie pochodzi z nich.</li>
+  <li><strong>Priorytet:</strong> kod źródłowy &gt; dokumentacja techniczna &gt; opisy użytkowe &gt; prasa. Dla liczb (ordinals, rozmiary struktur, stałe) wymagana weryfikacja krzyżowa w co najmniej dwóch niezależnych repozytoriach.</li>
+</ul>
+
+<h3><span class="idx">3.2</span>Narzędzia i techniki</h3>
+<ul>
+  <li><strong>Wyszukiwanie webowe</strong> (partie po 5 zapytań równoległych) + <strong>pobieranie stron</strong> z wyodrębnianiem faktów przez model (targetowane prompty).</li>
+  <li><strong>Surowe pliki GitHub</strong> (raw.githubusercontent.com) dla tabel ordinals i nagłówków (xamNet.h, keXeCrypt.h, xam_net.cc) — najwyższa wiarygodność, bo bezpośrednio z kodu.</li>
+  <li><strong>MediaWiki API</strong> (action=parse) dla xboxdevwiki, gdy front-end rate-limitował.</li>
+  <li><strong>Agenty badawcze</strong> (3 sztuki) dla równoległych obszarów: endpointy/syscalle, prior art (LiNK/XLink/Insignia), architektura Live 1.0 + xamNet.h — każdy z ograniczonym budżetem wywołań i obowiązkiem podawania URL przy każdym fakcie.</li>
+  <li><strong>Weryfikacja krzyżowa liczb:</strong> tabele exjam ↔ tabele xenia (hex) ↔ pliki .def xkelib ↔ XML rexdex. Przykład: <span class="mono">XeCryptRc4=397=0x18D</span> potwierdzone w 3 źródłach niezależnie.</li>
+</ul>
+
+<div class="callout warn">
+  <div class="cl-t">Ograniczenia środowiska badawczego (jawne)</div>
+  <p>Część serwisów była niedostępna z środowiska badawczego: consolemods.org i insignia.live za blokadą Cloudflare (częściowo obejtą przez cache/agenty), realmodscene niedostępne, wyszukiwarki okresowo limitowane. Wszystkie fakty, których nie udało się pozyskać w co najmniej jednym osiągalnym źródle, oznaczono w Dokumentacji jako <strong>UNVERIFIED</strong> (mapa luk: Sekcja 6). Raport nie „domyśla się” danych.</p>
+</div>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 4</div>
+  <div class="section-title">Rejestr pracy badawczej (chronologicznie)</div>
+  <div class="divider"></div>
+</div>
+
+<table>
+  <thead><tr><th style="width:40px;">#</th><th style="width:150px;">Obszar</th><th>Działanie i wynik</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">1</td><td>Stos sieciowy</td><td>Wyszukiwanie: xboxdevwiki XNet, syscalls, DashLaunch, xkms. Trafienia: System Link (UDP 3074, 0.0.0.1), Insignia (Kerberos), przewodnik pluginów ClementDreptin.</td></tr>
+    <tr><td class="c-mono">2</td><td>Pluginy</td><td>Pobranie getting-started.md (ClementDreptin/ModdingResources): pełne API pluginu DashLaunch — DllMain, launch.ini, ResolveFunction, XNotifyQueueUI@656, baseaddr, patch 0x816A3158, opcje linkera. → [S7]</td></tr>
+    <tr><td class="c-mono">3</td><td>API sieci</td><td>Pobranie xenia/xam_net.cc (916 linii): struktury XNADDR/XNDNS/XNQOS/WSADATA, NetDll_* z parametrem XNCALLER, gniazda VDP (2 bufory WSASendTo), flagi XNET_GET_XNADDR_*, stuby DnsLookup/QoS. → [S5]</td></tr>
+    <tr><td class="c-mono">4</td><td>Ordinals</td><td>Pobranie exjam/xbox360-emu: syscall.ord (117 Hvx*), xam.ord (1547 eksportów — pełne rodziny NetDll 1–36, XNet 51–86, Xnp 101–142, XHttp 201–222, UPnP 251–264, XNetLogon 301–322). → [S4]</td></tr>
+    <tr><td class="c-mono">5</td><td>Prior art</td><td>Agent RE-ENDPOINTS: endpointy 360 (download/image/avatar.xboxlive.com, tiles.xbox.com, catalog-cdn — den.dev), xboxunity.net (Aurora), syscall tables (exjam/rexdex/xenia), XeCrypt 345–402, czas (XexSetLastKdcTime), SO_MARKINSECURE/SO_GRANTINSECURE, szyfrowanie Account (RC4+HMAC idx 0x19), certyfikat 552 B.</td></tr>
+    <tr><td class="c-mono">6</td><td>Prior art</td><td>Agent RE-PRIORART2: XLink Kai (mechanika, areny, kaiEngine API, limit 30 ms na 360), Insignia (historia, skala, komponenty, DNS 46.101.64.175), prelekcja 36C3 (Tristan Miller; Kerberos + SG + UACS).</td></tr>
+    <tr><td class="c-mono">7</td><td>Live 1.0</td><td>Agent RE-FINAL przez MediaWiki API: xboxdevwiki Xbox_Live (Kerberos + rozszerzenia, Secure Gateway, XOnline* API, arbitraż) + Machine_Account (MACS.XBOXLIVE.COM, klucz pre-shared, PA-DATA 131/204/206) + pełny xamNet.h (1152 linie: stałe SO_*, XNET_OPTID_*, XNetConfigParams 492 B, XnSecAssocInfo 0x78, sygnatury XNet*/Xnp*). → [S6][S10]</td></tr>
+    <tr><td class="c-mono">8</td><td>Synteza</td><td>Budowa rejestru źródeł [S1]–[S24]; eliminacja faktów bez źródła; oznaczenie luk jako UNVERIFIED; spisanie struktury 10 rozdziałów + 3 załączników.</td></tr>
+    <tr><td class="c-mono">9</td><td>Redakcja</td><td>DokumentacjaPL.html (okładka, spis, R1–R10, ZA–ZC, strona końcowa) → render Playwright+Paged.js → 33/32 strony; walidacja HTML (poprawki: fallbacki fontów, odstęp linii okładki); QA pdf_qa (poprawki: nowrap w tabelach → overflow na str. 12 i 27 usunięty; separatory ·/— sklejone nbsp).</td></tr>
+    <tr><td class="c-mono">10</td><td>Redakcja EN</td><td>DocsEN.html — pełne tłumaczenie z zachowaniem tabel/diagramów; render; QA; poprawka: stemplowanie numerów stron (okładka bez, spis „i”, treść 1..N).</td></tr>
+    <tr><td class="c-mono">11</td><td>Raport</td><td>Niniejszy dokument: metodyka, rejestr, ustalenia, luki, deliverables.</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Tabela 4.1 — Rejestr kroków pracy (uproszczony; pełne URL w Załączniku C Dokumentacji).</div>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 5</div>
+  <div class="section-title">Kluczowe ustalenia (zweryfikowane)</div>
+  <div class="divider"></div>
+</div>
+
+<table>
+  <thead><tr><th style="width:220px;">Ustalenie</th><th style="width:90px;">W Dokumentacji</th><th>Dowód / źródła</th></tr></thead>
+  <tbody>
+    <tr><td>Cały ruch aplikacji przechodzi przez NetDll_* z xam.xex; ordinal = stabilny klucz resolwacji (connect=12, socket=3, sendto=24, DnsLookup=67)</td><td class="c-mono">R3, ZA</td><td>exjam xam.ord ↔ xenia xam_table.inc ↔ xkelib .def [S4][S5][S6]</td></tr>
+    <tr><td>Każda funkcja NetDll przyjmuje XNCALLER_TYPE (TITLE=1, SYSAPP=2, XBDM=3, TEST=4)</td><td class="c-mono">R3.1</td><td>xam_net.cc + xamNet.h [S5][S6]</td></tr>
+    <tr><td>Gniazda VDP: WSASendTo przyjmuje 2 bufory (długość + czyste dane gry); ruch szyfrowany XNKEY</td><td class="c-mono">R3.4</td><td>xam_net.cc [S5]</td></tr>
+    <tr><td>Opcje bezpieczeństwa: SO_MARKINSECURE 0x5801, SO_GRANTINSECURE 0x5803; introspekcja: SEC_ASSOC_INFO 0x1399, PRIMARY_SG_NONCE 0x1398</td><td class="c-mono">R3.3</td><td>xamNet.h [S6]</td></tr>
+    <tr><td>Konfiguracja sieci: XNetConfigParams 492 B (hash, konfounder, DNS×2, PPPoE, UPnP…)</td><td class="c-mono">R3.3</td><td>xamNet.h [S6]</td></tr>
+    <tr><td>System Link: UDP 3074 (IANA), adres 0.0.0.1, sesje po XNKID; 360 zrywa połączenie &gt;30 ms</td><td class="c-mono">R3.6</td><td>xboxdevwiki [S1] + XLink Kai/Wikipedia [S12]</td></tr>
+    <tr><td>Sekwencja łączenia: Startup(51) → LinkStatus(75) → adresacja (XNADDR flags) → DnsLookup(67) → LogonTask*(303/305) + Xnp challenge(126/128) → QoS/usługi</td><td class="c-mono">R4, D3</td><td>xam.ord + xamNet.h + xam_net.cc [S4][S5][S6]</td></tr>
+    <tr><td>Endpointy poświadczone dla 360: download/image/avatar.xboxlive.com, tiles.xbox.com, marketplace.xbox.com, catalog-cdn.xboxlive.com (Query, Atom)</td><td class="c-mono">R4.4</td><td>Free60 wiki GPD.md [S14] + den.dev [S17]</td></tr>
+    <tr><td>Auth w rodzinie Kerberos + Secure Gateway; rozszerzenia PA-DATA 131/204/206; Machine Account z MACS (klucz z Online Key + HDD Key + klucz z binariów Live)</td><td class="c-mono">R5.1–5.2</td><td>xboxdevwiki Xbox_Live/Machine_Account [S10] + 36C3 [S11]</td></tr>
+    <tr><td>Certyfikat konsoli RSA-2048, 552 B (0x228); przekazywany przez XNetLogonSetConsoleCertificate(308)</td><td class="c-mono">R5.1</td><td>Free60 [S15] + xkelib [S6] + xam.ord [S4]</td></tr>
+    <tr><td>Profil: gamertag + PUID + klucz online; Account szyfrowany HMAC-SHA1(KeyVault idx 0x19)→RC4, konfounder + 380 B</td><td class="c-mono">R5.3</td><td>Free60 wiki Profile_Account.md [S14]</td></tr>
+    <tr><td>Czas usługi = czas KDC: XexSetLastKdcTime(735/0x2DF); brak udokumentowanego NTP dla 360</td><td class="c-mono">R4.6</td><td>xenia + rexdex + hiddriver360 [S5][S18][S6]</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Tabela 5.1 — Ustalenia: architektura i stos sieciowy (odniesienia do rozdziałów Dokumentacji).</div>
+
+<table>
+  <thead><tr><th style="width:220px;">Ustalenie</th><th style="width:90px;">W Dokumentacji</th><th>Dowód / źródła</th></tr></thead>
+  <tbody>
+    <tr><td>Rekomendacja przekierowania: hybryda DNS (W1) + hooki eksportów (W2), TLS minimalizowany (W3-a)</td><td class="c-mono">R6.4</td><td>synteza; prior art Insignia [S8] + pluginy [S7]</td></tr>
+    <tr><td>Insignia działa na niezmodyfikowanych OG Xboxach wyłącznie przez DNS (46.101.64.175) — dowód kompletności warstwy W1</td><td class="c-mono">R9.1</td><td>insignia.live + Wikipedia [S8][S12]</td></tr>
+    <tr><td>DashLaunch: do 5 pluginów z launch.ini, DllMain, GetProcAddress po ordinalu, XNotifyQueueUI@656, baseaddr&gt;0x90000000</td><td class="c-mono">R7</td><td>ClementDreptin [S7]</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Tabela 5.2 — Ustalenia: przekierowanie, plugin, prior art.</div>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 6</div>
+  <div class="section-title">Luki badawcze (UNVERIFIED) i dalsze kroki</div>
+  <div class="divider"></div>
+</div>
+
+<p>Poniższe obszary <strong>nie zostały potwierdzone</strong> w osiągalnych źródłach społecznościowych i wymagają samodzielnego RE przed użyciem ich jako przesłanek projektowych. Dla każdej luki podano zalecaną metodę domknięcia.</p>
+<table>
+  <thead><tr><th style="width:250px;">Luka</th><th>Metoda domknięcia</th></tr></thead>
+  <tbody>
+    <tr><td>Dokładny format biletu KR na 360 (offety pól PA-DATA)</td><td>Analiza statyczna xam.xex (call-site'y XnpLogonGetChallenge/SetChallengeResponse) + przechwyt sesji na konsoli dev/RGH z xbdm.</td></tr>
+    <tr><td>Lokalizacja magazynu root-CA / ścieżka walidacji XHttp</td><td>Analiza obrazu systemu; test praktyczny: serwer TLS z własnym CA vs konsola RGH (W3-b/c).</td></tr>
+    <tr><td>Pełna lista nazw hostów ery 360 (w tym serwer TU i auth)</td><td>tcpdump/Wireshark na brzegu sieci podczas pełnego cyklu: boot → test sieci → logon → gra z TU.</td></tr>
+    <tr><td>Porty auth ery 360 (UDP 88? 443?)</td><td>Jw. — przechwyt ruchu logonu.</td></tr>
+    <tr><td>Szczegóły techniczne LiNK (protokół, serwery)</td><td>Dokumentacja Aurora/Phoenix (realmodscene) z sieci bez blokad; analiza binarna Aurory.</td></tr>
+    <tr><td>Zakodowane na sztywno IP (poza DNS) w xam/dash</td><td>Analiza statyczna + porównanie przechwytów z i bez DNS community.</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Tabela 6.1 — Mapa luk badawczych.</div>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 7</div>
+  <div class="section-title">Deliverables i instrukcja użycia</div>
+  <div class="divider"></div>
+</div>
+
+<table>
+  <thead><tr><th style="width:210px;">Plik</th><th>Zawartość</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">DokumentacjaPL.pdf</td><td>32 strony, PL: pełna analiza zachowania sieciowego 360 + warstwy przekierowania + plugin + serwer + prior art + tabele ordinals + słownik + rejestr źródeł. 7 diagramów, 19 tabel.</td></tr>
+    <tr><td class="c-mono">DocsEN.pdf</td><td>32 strony, EN: lustrzane tłumaczenie DokumentacjiPL (ta sama struktura, fakty i źródła).</td></tr>
+    <tr><td class="c-mono">Raport_Analiza_PL.pdf</td><td>Niniejszy raport: metodyka, rejestr pracy, ustalenia, luki, instrukcja użycia.</td></tr>
+    <tr><td class="c-mono">*.html (3 szt.)</td><td>Źródła HTML wszystkich dokumentów (edytowalne, te same style).</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Tabela 7.1 — Komplet deliverables.</div>
+
+<h3><span class="idx">7.1</span>Instrukcja dla modelu językowego implementującego system</h3>
+<ol>
+  <li>Przeczytaj <strong>R2–R3</strong> (Dokumentacja) — zbuduj mentalny model warstw i listę eksportów.</li>
+  <li>Przeczytaj <strong>R4–R5</strong> — zrozum, co konsola wyśle i czego oczekuje (sekwencja D3, przepływ D4).</li>
+  <li>Zaimplementuj <strong>W1 (DNS)</strong> wg R6.1 i R8.1 (krok 1–2) — najszybszy zweryfikowany sukces.</li>
+  <li>Zaimplementuj <strong>plugin W2</strong> wg R7 (pseudokod 7.3 jest kompletnym szkieletem; ordinals z ZA).</li>
+  <li>Rozbuduj <strong>serwer</strong> wg R8 (kolejność 8.1), używając wzorców z R5 i prior art z R9.</li>
+  <li>Każdy fakt oznaczony UNVERIFIED (Sekcja 6) zweryfikuj przechwytem zanim na nim zbudujesz.</li>
+</ol>
+
+<div class="callout info">
+  <div class="cl-t">Zasada wiarygodności</div>
+  <p>Dokumentacja celowo rozdziela fakty <strong>zweryfikowane</strong> (z przypisem [Sn]) od <strong>niepewnych</strong> (UNVERIFIED). Implementator powinien utrzymać ten sam podział w kodzie i dokumentacji projektu: każda stała protokołu w kodzie plugina/serwera powinna mieć komentarz z numerem źródła [Sn], a każda wartość „z założenia” — marker UNVERIFIED do domknięcia.</p>
+</div>
+
+<!-- ============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Sekcja 8</div>
+  <div class="section-title">Kontrola jakości deliverables</div>
+  <div class="divider"></div>
+</div>
+
+<ul>
+  <li><strong>Walidacja HTML</strong> (poster_validate check-html): brak błędów blokujących; ostrzeżenia kosmetyczne (rozmiary drobnych etykiet diagramów ≥9,5 px — czytelne w skali strony A4).</li>
+  <li><strong>pdf_qa</strong> na obu dokumentach głównych: <strong>9/9 testów PASS</strong> (metadane, rozmiar stron, brak pustych stron, osadzone fonty, wypełnienie stron, full-bleed okładki, symetria marginesów, numery stron). Pozostałe ostrzeżenia: pojedyncze znaki interpunkcyjne na początku wiersza w wąskich kolumnach tabel (·, —) — akceptowalne typograficznie w tabelach technicznych.</li>
+  <li><strong>Kontrola overflow</strong> (własny skrypt PyMuPDF, bboxy vs. margines): zero elementów poza stroną po poprawkach (wcześniej: tabela endpointów i tabela A.3 — usunięte przez likwidację white-space:nowrap).</li>
+  <li><strong>Diakrytyki PL</strong>: potwierdzone w ekstrakcie tekstu (ą/ć/ę/ł/ń/ó/ś/ź/ż renderują się poprawnie — fonty Inter/JetBrains Mono z fallbackami Liberation).</li>
+  <li><strong>Numery stron</strong>: stemplowane post-processingiem (okładka bez numeru, spis „i”, treść 1..N) — zgodnie ze schematem z wytycznych paginate.</li>
+</ul>
+
+</div>
+
+<!-- ==================== STRONA KOŃCOWA ==================== -->
+<div class="ending">
+  <div class="grid-bg"></div>
+  <div class="inner">
+    <div class="big">Analiza zakończona.<br>Wszystkie ustalenia mają źródła,<br>wszystkie luki mają plan domknięcia.</div>
+    <div class="sub">Raport towarzyszy dokumentacji technicznej DokumentacjaPL.pdf i DocsEN.pdf. Implementację pluginu DashLaunch i serwerów społeczności prowadź w kolejności: W1 (DNS) → W2 (hooki NetDll) → usługi serwera wg R8. Dokument utrzymuje rozdział faktów zweryfikowanych i niepewnych — zachowaj go w dalszej pracy.</div>
+    <div class="sig">Raport_Analiza_PL.pdf · wersja 1.0 · 2026-11-13</div>
+  </div>
+</div>
+</body>
+</html>

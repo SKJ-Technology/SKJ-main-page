@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Xbox 360 -> Xbox Live — Network Behavior Analysis & Redirect Documentation (EN)</title>
+<style>
+@page { size: 794px 1123px; margin: 44px 0; }
+@page cover { margin: 0; }
+@page ending { margin: 0; }
+:root{
+  --bg:      #0d120f;
+  --bg-2:    #121a15;
+  --bg-3:    #16211a;
+  --bg-code: #0a0f0c;
+  --border:  #263529;
+  --border-2:#31453472;
+  --accent:  #52c98b;
+  --accent-d:#2e7a56;
+  --accent-xl:#52c98b1a;
+  --text:    #e6ede8;
+  --text-2:  #b9c6bd;
+  --muted:   #8aa093;
+  --warn:    #cdb45a;
+  --err:     #c87862;
+  --mono: 'JetBrains Mono','Liberation Mono','DejaVu Sans Mono',monospace;
+  --sans: 'Inter','Liberation Sans','DejaVu Sans',sans-serif;
+}
+html,body{
+  margin:0;padding:0;width:794px;background:var(--bg);color:var(--text);
+  font-family:var(--sans),sans-serif;font-size:14.5px;line-height:1.66;
+  line-break:strict;word-break:normal;overflow-wrap:break-word;
+}
+@media screen{
+  html{height:auto;display:flex;justify-content:center;background:#070a08;}
+  body{transform-origin:top center;margin:20px auto;box-shadow:0 0 60px rgba(0,0,0,.55);}
+}
+*{box-sizing:border-box;}
+p{margin:0 0 10px 0;text-align:justify;}
+p,td,li{line-break:strict;}
+strong{color:var(--text);font-weight:600;}
+em{color:var(--text-2);}
+code{font-family:var(--mono),monospace;font-size:.88em;color:var(--accent);background:var(--bg-code);border:1px solid var(--border);border-radius:3px;padding:0 4px;white-space:nowrap;}
+sup.src{font-family:var(--mono),monospace;font-size:9px;color:var(--accent);margin-left:2px;letter-spacing:0;}
+a{color:var(--accent);text-decoration:none;}
+
+/* ---------- COVER ---------- */
+.cover{
+  width:794px;height:1123px;position:relative;break-after:page;overflow:hidden;
+  background:var(--bg);
+}
+.cover .grid-bg{
+  position:absolute;inset:0;z-index:1;overflow:hidden;
+  background-image:
+    linear-gradient(rgba(82,201,139,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(82,201,139,.045) 1px, transparent 1px);
+  background-size:50px 50px;
+}
+.cover .glow-a{position:absolute;top:-140px;right:-120px;width:460px;height:460px;border-radius:50%;
+  background:radial-gradient(circle, rgba(82,201,139,.10) 0%, rgba(82,201,139,0) 70%);}
+.cover .glow-b{position:absolute;bottom:-160px;left:-140px;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle, rgba(46,122,86,.13) 0%, rgba(46,122,86,0) 70%);}
+.cover .vline{position:absolute;left:56px;top:96px;bottom:96px;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent-d));z-index:2;}
+.cover .content{position:absolute;inset:0;z-index:3;}
+.cover .kicker{
+  position:absolute;left:102px;top:150px;font-family:var(--mono),monospace;font-size:11px;
+  color:var(--accent);letter-spacing:5px;text-transform:uppercase;font-weight:500;
+}
+.cover .hero{
+  position:absolute;left:102px;top:206px;max-width:600px;
+  font-size:40px;font-weight:800;line-height:1.16;color:var(--text);letter-spacing:-.5px;
+}
+.cover .hero .sub{color:var(--accent);}
+.cover .summary{
+  position:absolute;left:102px;top:520px;max-width:520px;
+  font-size:14.5px;line-height:1.7;color:var(--text-2);
+}
+.cover .meta-block{position:absolute;left:102px;top:724px;font-family:var(--mono),monospace;font-size:11.5px;color:var(--muted);line-height:2.0;}
+.cover .meta-block b{color:var(--text-2);font-weight:500;}
+.cover .chips{position:absolute;left:102px;top:880px;display:flex;flex-wrap:wrap;gap:8px;max-width:600px;}
+.cover .chip{
+  font-family:var(--mono),monospace;font-size:10px;color:var(--accent);border:1px solid var(--accent-d);
+  border-radius:3px;padding:4px 10px;letter-spacing:1px;background:var(--accent-xl);
+}
+.cover .foot{
+  position:absolute;left:102px;right:60px;bottom:60px;display:flex;justify-content:space-between;
+  font-family:var(--mono),monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;
+}
+
+/* ---------- MAIN CONTENT ---------- */
+.main-content{padding:8px 60px 0 60px;}
+.cover{page:cover;}
+.ending{page:ending;}
+.chapter-header{break-after:avoid;break-inside:avoid;margin-top:26px;}
+.chapter-header.first{margin-top:0;}
+.section-tag{
+  font-family:var(--mono),monospace;font-size:10.5px;color:var(--accent);letter-spacing:3px;
+  text-transform:uppercase;font-weight:500;margin-bottom:6px;
+}
+.section-title{font-size:25px;font-weight:800;line-height:1.22;margin-bottom:6px;color:var(--text);}
+.divider{height:2px;width:64px;background:var(--accent);margin:12px 0 16px 0;}
+h3{font-size:17.5px;font-weight:700;color:var(--text);margin:20px 0 8px 0;break-after:avoid;}
+h3 .idx{color:var(--accent);font-family:var(--mono),monospace;font-size:13px;font-weight:500;margin-right:6px;}
+h4{font-size:15px;font-weight:600;color:var(--text-2);margin:14px 0 6px 0;break-after:avoid;}
+ul,ol{margin:6px 0 12px 0;padding-left:22px;}
+li{margin-bottom:5px;text-align:justify;}
+li::marker{color:var(--accent);}
+
+/* cards & callouts */
+.card{background:var(--bg-2);border:1px solid var(--border);border-left:3px solid var(--accent-d);
+  border-radius:4px;padding:13px 16px;margin:12px 0;break-inside:avoid;}
+.card .card-title{font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;font-weight:500;}
+.card p:last-child{margin-bottom:0;}
+.callout{border-radius:4px;padding:12px 15px;margin:12px 0;break-inside:avoid;font-size:13.5px;}
+.callout p:last-child{margin-bottom:0;}
+.callout.warn{background:rgba(205,180,90,.07);border:1px solid rgba(205,180,90,.35);border-left:3px solid var(--warn);}
+.callout.warn .cl-t{color:var(--warn);}
+.callout.err{background:rgba(200,120,98,.07);border:1px solid rgba(200,120,98,.35);border-left:3px solid var(--err);}
+.callout.err .cl-t{color:var(--err);}
+.callout.info{background:var(--accent-xl);border:1px solid var(--accent-d);border-left:3px solid var(--accent);}
+.callout.info .cl-t{color:var(--accent);}
+.cl-t{font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:5px;}
+
+/* code */
+.code{background:var(--bg-code);border:1px solid var(--border);border-radius:4px;margin:12px 0;break-inside:avoid;}
+.code .code-head{
+  font-family:var(--mono),monospace;font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;
+  padding:7px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;
+}
+.code .code-head .lang{color:var(--accent);}
+.code pre{
+  margin:0;padding:13px 15px;font-family:var(--mono),monospace;font-size:11.2px;line-height:1.56;
+  color:var(--text-2);white-space:pre-wrap;overflow-wrap:break-word;text-align:left;
+}
+.code pre b{color:var(--text);font-weight:500;}
+.code pre .c{color:#5f7a68;}
+.code pre .k{color:var(--accent);}
+.code pre .n{color:var(--warn);}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;break-inside:avoid;}
+thead{display:table-header-group;}
+tr{break-inside:avoid;}
+th{
+  background:#1a2620;color:var(--text);font-weight:600;text-align:left;
+  padding:7px 9px;border:1px solid var(--border);font-size:11px;letter-spacing:.4px;
+  font-family:var(--mono),monospace;text-transform:uppercase;
+}
+td{padding:6px 9px;border:1px solid var(--border);color:var(--text-2);vertical-align:top;overflow-wrap:break-word;}
+td.mono, span.mono{font-family:var(--mono),monospace;font-size:11px;color:var(--accent);}
+tbody tr:nth-child(odd) td{background:rgba(255,255,255,.016);}
+td.c-mono{font-family:var(--mono),monospace;font-size:11px;overflow-wrap:anywhere;}
+td .dim{color:var(--muted);}
+.tbl-caption{font-family:var(--mono),monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:-6px 0 14px 0;}
+
+/* key-value meta rows */
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;break-inside:avoid;}
+.kv{background:var(--bg-2);border:1px solid var(--border);border-radius:3px;padding:6px 11px;font-family:var(--mono),monospace;font-size:10.5px;color:var(--text-2);}
+.kv b{color:var(--accent);font-weight:500;}
+
+/* diagrams */
+figure.diagram{display:block;width:100%;margin:14px 0;break-inside:avoid;}
+figure.diagram .dg-title{
+  font-family:var(--mono),monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:8px;font-weight:500;
+}
+figure.diagram .dg-body{
+  background:var(--bg-2);border:1px solid var(--border);border-radius:5px;padding:16px;position:relative;
+}
+figcaption{font-family:var(--mono),monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:7px;text-transform:uppercase;}
+.dg-node{background:#18251d;border:1px solid var(--accent-d);border-radius:4px;padding:8px 10px;text-align:center;}
+.dg-node .nn{font-size:12.5px;font-weight:700;color:var(--text);}
+.dg-node .nd{font-size:10.5px;color:var(--muted);font-family:var(--mono),monospace;margin-top:3px;line-height:1.45;}
+.dg-arrow-v{width:2px;height:14px;background:var(--accent-d);margin:0 auto;position:relative;}
+.dg-arrow-v::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+  border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--accent);}
+.dg-label{font-family:var(--mono),monospace;font-size:9.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+/* glossary */
+.gloss{margin:8px 0;}
+.gloss .g-term{font-family:var(--mono),monospace;font-size:12.5px;color:var(--accent);font-weight:500;}
+.gloss .g-def{color:var(--text-2);margin:2px 0 10px 0;}
+
+/* sources list */
+.src-item{break-inside:avoid;margin-bottom:9px;padding-left:14px;border-left:2px solid var(--border);}
+.src-item .s-id{font-family:var(--mono),monospace;color:var(--accent);font-weight:700;font-size:11.5px;}
+.src-item .s-name{color:var(--text);font-weight:600;font-size:13px;}
+.src-item .s-url{font-family:var(--mono),monospace;font-size:10.5px;color:var(--muted);word-break:break-all;display:block;margin-top:2px;}
+.src-item .s-note{font-size:12px;color:var(--text-2);margin-top:2px;}
+
+/* ending */
+.ending{width:794px;height:1123px;break-before:page;overflow:hidden;position:relative;background:var(--bg);}
+.ending .grid-bg{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(82,201,139,.04) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(82,201,139,.04) 1px, transparent 1px);background-size:50px 50px;}
+.ending .inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 96px;}
+.ending .big{font-size:30px;font-weight:800;line-height:1.3;color:var(--text);}
+.ending .sub{margin-top:18px;color:var(--text-2);font-size:14px;max-width:520px;line-height:1.7;}
+.ending .sig{margin-top:42px;font-family:var(--mono),monospace;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+
+/* TOC */
+.toc-title{font-size:25px;font-weight:800;margin-bottom:4px;}
+.toc-list{margin-top:16px;}
+.toc-row{display:flex;align-items:baseline;padding:7.5px 2px;border-bottom:1px solid var(--border);break-inside:avoid;}
+.toc-row .t-num{font-family:var(--mono),monospace;font-size:11px;color:var(--accent);width:42px;flex-shrink:0;}
+.toc-row .t-name{font-size:13.5px;color:var(--text-2);font-weight:500;}
+.toc-row .t-name b{color:var(--text);font-weight:600;}
+.toc-row .t-dots{flex:1;border-bottom:1px dotted var(--border-2);margin:0 10px;transform:translateY(-3px);}
+.toc-row .t-tag{font-family:var(--mono),monospace;font-size:9.5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="grid-bg"><div class="glow-a"></div><div class="glow-b"></div></div>
+  <div class="vline"></div>
+  <div class="content">
+    <div class="kicker">Technical documentation · Reverse engineering</div>
+    <div class="hero">Xbox 360 <span class="sub">→</span> Xbox Live<br>Network Behavior Analysis &amp;<br>Community-Server Redirect</div>
+    <div class="summary">A compendium of how the Xbox 360 console connects to Xbox Live: software architecture, the XNet network stack, the sign-in sequence, authentication and cryptography, interception points, and three layers of redirecting traffic to community servers. Source material: homebrew-community research only — no vendor documentation.</div>
+    <div class="meta-block">
+      <b>VERSION</b> 1.0&nbsp;·&nbsp;2026-11-13<br>
+      <b>AUDIENCE</b> reverse-engineering engineers / LLMs building a DashLaunch plugin and servers<br>
+      <b>PLATFORM</b> Xbox 360 (RGH / JTAG / dev) + DashLaunch
+    </div>
+    <div class="chips">
+      <span class="chip">XNET / NETDLL</span>
+      <span class="chip">KERBEROS + SG</span>
+      <span class="chip">XECRYPT</span>
+      <span class="chip">DASHLAUNCH PLUGIN</span>
+      <span class="chip">DNS REDIRECT</span>
+      <span class="chip">SYSCALL HOOKS</span>
+    </div>
+    <div class="foot">
+      <span>DocsEN.pdf</span>
+      <span>Sources: homebrew community</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CONTENT ==================== -->
+<div class="main-content">
+
+<!-- ============================================================
+     TOC + READER GUIDE
+============================================================ -->
+<div class="chapter-header first">
+  <div class="section-tag">Front matter</div>
+  <div class="section-title">Table of contents &amp; reader guide</div>
+  <div class="divider"></div>
+</div>
+
+<div class="toc-title">Table of contents</div>
+<div class="toc-list">
+  <div class="toc-row"><span class="t-num">C1</span><span class="t-name"><b>Purpose, scope and audience</b>&nbsp;— source policy, conventions</span><span class="t-dots"></span><span class="t-tag">intro</span></div>
+  <div class="toc-row"><span class="t-num">C2</span><span class="t-name"><b>Xbox 360 software architecture</b>&nbsp;— boot chain, hypervisor, kernel, XAM</span><span class="t-dots"></span><span class="t-tag">foundations</span></div>
+  <div class="toc-row"><span class="t-num">C3</span><span class="t-name"><b>The XNet network stack</b>&nbsp;— NetDll, structures, VDP, QoS, System Link</span><span class="t-dots"></span><span class="t-tag">networking</span></div>
+  <div class="toc-row"><span class="t-num">C4</span><span class="t-name"><b>Xbox Live connection sequence</b>&nbsp;— phases, DNS, endpoints, ports, time</span><span class="t-dots"></span><span class="t-tag">networking</span></div>
+  <div class="toc-row"><span class="t-num">C5</span><span class="t-name"><b>Authentication &amp; cryptography</b>&nbsp;— Machine Account, KR, SG, XeCrypt, TLS</span><span class="t-dots"></span><span class="t-tag">security</span></div>
+  <div class="toc-row"><span class="t-num">C6</span><span class="t-name"><b>Redirect analysis</b>&nbsp;— three layers: DNS / syscall hooks / TLS</span><span class="t-dots"></span><span class="t-tag">redirect</span></div>
+  <div class="toc-row"><span class="t-num">C7</span><span class="t-name"><b>DashLaunch plugin in practice</b>&nbsp;— API, loading, NetDll hook, pseudocode</span><span class="t-dots"></span><span class="t-tag">redirect</span></div>
+  <div class="toc-row"><span class="t-num">C8</span><span class="t-name"><b>Community server</b>&nbsp;— reference service architecture</span><span class="t-dots"></span><span class="t-tag">server</span></div>
+  <div class="toc-row"><span class="t-num">C9</span><span class="t-name"><b>Prior art</b>&nbsp;— Insignia, XLink Kai, LiNK, Xenia, ExCrypt</span><span class="t-dots"></span><span class="t-tag">prior art</span></div>
+  <div class="toc-row"><span class="t-num">C10</span><span class="t-name"><b>Risks, RE gaps, ethics</b></span><span class="t-dots"></span><span class="t-tag">meta</span></div>
+  <div class="toc-row"><span class="t-num">AX</span><span class="t-name"><b>Appendix A</b>&nbsp;— ordinal tables (NetDll, XNet, Xnp, XNetLogon, XeCrypt…)</span><span class="t-dots"></span><span class="t-tag">reference</span></div>
+  <div class="toc-row"><span class="t-num">BX</span><span class="t-name"><b>Appendix B</b>&nbsp;— glossary</span><span class="t-dots"></span><span class="t-tag">reference</span></div>
+  <div class="toc-row"><span class="t-num">CX</span><span class="t-name"><b>Appendix C</b>&nbsp;— source registry [S1]–[S24]</span><span class="t-dots"></span><span class="t-tag">reference</span></div>
+</div>
+
+<h3>How to read this document</h3>
+<p>The document serves two purposes that can be followed independently. The <strong>analysis track</strong> (C2–C5) describes <em>what the console actually does on the network</em>: what starts at boot, which functions carry every packet, which structures and keys take part in sign-in. The <strong>engineering track</strong> (C6–C8) turns those findings into design decisions: where to intercept traffic, how to build a DashLaunch plugin, and what a community server must expose for the console to accept it as its own.</p>
+<p>This document was written assuming the reader (human or language model) will <strong>implement</strong> the plugin and the servers on its basis — that is why C6–C8 end with concrete recommendations and pseudocode, and Appendix A carries complete export-ordinal tables needed for runtime function resolution.</p>
+
+<div class="card">
+  <div class="card-title">Conventions</div>
+  <p><span class="mono">NetDll_connect(12)</span>&nbsp;— module export name with its ordinal in parentheses, the key used for <code>GetProcAddress</code> resolution. <span class="mono">0x5801</span>&nbsp;— a hexadecimal constant value. References such as <sup class="src">[S7]</sup> point to the source registry in Appendix C — every numeric fact in this document is tied to a community source or is explicitly marked otherwise.</p>
+</div>
+
+<div class="callout warn">
+  <div class="cl-t">The UNVERIFIED marker</div>
+  <p>Facts that could not be confirmed in at least one reachable community source are marked <strong>UNVERIFIED</strong>, together with a suggested way to verify them (usually: packet capture on an RGH console or analysis of <code>xam.xex</code>). No such fact should be treated as a design premise without independent verification.</p>
+</div>
+
+<div class="callout info">
+  <div class="cl-t">Source policy</div>
+  <p>All knowledge comes exclusively from homebrew-community material: xboxdevwiki / Free60 / Xenon Library, GitHub repositories (xenia, exjam/xbox360-emu, hiddriver360/xkelib, insigniaDNS, ExCrypt), the Insignia and Team XLink services, conference talks (36C3, DEF CON 30) and forum archives. Vendor documentation (Microsoft Learn, Xbox Support) was <strong>deliberately excluded</strong> from the research process, per the task specification.</p>
+</div>
+
+<!-- ============================================================
+     C1 — PURPOSE, SCOPE, AUDIENCE
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 1 · Intro</div>
+  <div class="section-title">Purpose, scope and audience</div>
+  <div class="divider"></div>
+</div>
+
+<h3><span class="idx">1.1</span>Purpose of this document</h3>
+<p>This document fully describes the <strong>network behavior of the Xbox 360 console</strong> as it connects to Xbox Live — from system start-up, through network-stack initialization, DNS name resolution and authentication, up to service traffic (title updates, marketplace, presence). This knowledge is the foundation for two engineering deliverables: <strong>(1)</strong> a DashLaunch plugin that redirects packets addressed to Xbox Live servers toward community servers, and <strong>(2)</strong> community servers capable of speaking the console's protocols and meeting its expectations well enough that an "online" session completes successfully instead of failing sign-in.</p>
+<p>The document was commissioned for a top-tier technical audience — reverse-engineering engineers and large language models that will use it to write the plugin and server code. For that reason the priorities are <strong>factual precision</strong> (export ordinals, structure sizes, protocol constants) tied to mechanism explanations — no filler and no fabricated data. Wherever the community has not yet documented something, a "RE gap" section appears describing how to extract the missing fact, instead of a guess.</p>
+
+<h3><span class="idx">1.2</span>Audience and how to use it</h3>
+<p>The document is designed to serve as a <strong>single source of truth</strong> for the implementer. Recommended working order:</p>
+<ol>
+  <li><strong>C2–C3</strong>&nbsp;— understand which modules and functions carry the traffic (this defines the interception-point list).</li>
+  <li><strong>C4–C5</strong>&nbsp;— understand the sign-in sequence and cryptography (this defines what the server must answer, and what cannot be "tricked" by DNS alone).</li>
+  <li><strong>C6</strong>&nbsp;— choose the redirect layer (decision matrix with a hybrid recommendation).</li>
+  <li><strong>C7</strong>&nbsp;— implement the DashLaunch plugin (complete skeleton + hook pseudocode).</li>
+  <li><strong>C8</strong>&nbsp;— implement the server (components and their responsibilities).</li>
+  <li><strong>AX</strong>&nbsp;— ordinal tables for runtime function resolution.</li>
+</ol>
+
+<h3><span class="idx">1.3</span>Scope and exclusions</h3>
+<p>In scope: the Xbox 360 console (all revisions, with emphasis on unlocked units&nbsp;— RGH/JTAG&nbsp;— on which a DashLaunch plugin can be loaded), the XNet/NetDll system network stack, the Xbox Live authentication variant used by this system, the XeCrypt/KeyVault cryptographic machinery, redirect infrastructure, and community-server design patterns.</p>
+<p>Deliberately out of scope: <strong>the mechanics of the RGH/JTAG exploits themselves</strong> (we assume an already-unlocked console), <strong>Xbox One/Series-era protocols</strong> (mentioned only as evolution context&nbsp;— e.g. XSTS tokens), <strong>license circumvention</strong> (this document covers network behavior, not piracy), and <strong>Microsoft's production servers</strong>&nbsp;— the document describes only what the console does and what can be built independently from community research.</p>
+
+<div class="callout info">
+  <div class="cl-t">Business context (2026)</div>
+  <p>The Xbox 360 store and marketplace were retired in 2024 and companion services are being wound down&nbsp;— exactly the scenario that played out earlier on the original Xbox, where the community (the Insignia project) successfully resurrected Xbox Live 1.0 after its April 15, 2010 shutdown.<sup class="src">[S10][S12]</sup> This document is a roadmap for the same operation on the Xbox 360 platform.</p>
+</div>
+
+<h3><span class="idx">1.4</span>Source policy</h3>
+<p>The research rule adopted: <strong>community sources only</strong>. The source registry (Appendix C) includes engineering wikis (xboxdevwiki, Free60, Xenon Library), community emulator and tool source code (xenia, exjam/xbox360-emu, hiddriver360/xkelib, ExCrypt, insigniaDNS), community-service documentation (Insignia, Team XLink), conference talks (36C3 2019, DEF CON 30) and press/encyclopedic articles. No technical fact was taken from Microsoft Learn or Xbox Support; such pages were skipped whenever they appeared in search results. Numeric data (ordinals, structure sizes, constants) was cross-verified in at least two independent repositories where possible (see the companion Work Report&nbsp;— methodology).</p>
+
+<!-- ============================================================
+     C2 — XBOX 360 SOFTWARE ARCHITECTURE
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 2 · Foundations</div>
+  <div class="section-title">Xbox 360 software architecture</div>
+  <div class="divider"></div>
+</div>
+
+<p>Before networking, we must establish <em>where</em> the network functions live in the system&nbsp;— because they define the plugin's interception points. The Xbox 360 is a hypervisor-based console: sensitive operations (cryptography, keys, image loading) run in the hypervisor (HV), while the OS and applications run above it. Everything starts from a chain of bootloaders, each RSA-verifying the next.<sup class="src">[S2][S3]</sup></p>
+
+<h3><span class="idx">2.1</span>Boot chain</h3>
+<p>Start-up sequence (retail, simplified): <span class="mono">1BL</span> (CPU ROM) loads and verifies <span class="mono">CB</span>; CB prepares keys and loads <span class="mono">CD</span>, which decrypts and starts <span class="mono">HV + kernel (kernel.bin)</span>. After kernel init, the <span class="mono">xam.xex</span> module (Xbox Application Model&nbsp;— the system application layer) starts and, among other things, brings up the network; the dashboard (<span class="mono">dash.xex</span>) loads last.<sup class="src">[S2][S3]</sup> For traffic redirection two moments matter: <strong>XNet initialization inside xam</strong> (the system network stack) and <strong>title loading</strong>&nbsp;— titles import their network functions from xam.</p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D1 — Boot chain vs. network layers</div>
+  <div class="dg-body">
+    <div style="display:flex;gap:14px;align-items:stretch;">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+        <div class="dg-node"><div class="nn">1BL — bootloader in CPU ROM</div><div class="nd">entry point, verifies CB</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">CB → CD</div><div class="nd">keys from KeyVault, decryption</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">HV (hypervisor) + kernel</div><div class="nd">Hvx* syscalls, xboxkrnl.exe exports</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">xam.xex (XAM)</div><div class="nd">NetDll_* (network), profiles, UI, content</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">dash.xex / game title</div><div class="nd">network imports resolved from xam.xex</div></div>
+      </div>
+      <div style="width:250px;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+        <div class="dg-node" style="border-color:#3a5a45;"><div class="nn" style="font-size:11.5px;">DashLaunch plugin</div><div class="nd">loaded at system start (launch.ini)<br>runs beside xam; can patch memory<br>and hook NetDll_* exports</div></div>
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">KeyVault (flash)</div><div class="nd">console keys: HDD key,<br>online key, console certificate<br>(RSA-2048, 552 B)</div></div>
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">XConfig (flash)</div><div class="nd">network + timezone configuration<br>(TimeZoneBias, DNS, …)</div></div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D1 — boot flow (based on Free60 / Xenon Library) plus where the plugin sits and where console-identity keys come from.</figcaption>
+</figure>
+
+<h3><span class="idx">2.2</span>Hypervisor and <span class="mono">sc</span> syscalls</h3>
+<p>The HV exposes 117 procedures invoked with the <span class="mono">sc</span> instruction (call number in register r0, arguments in r3–r9).<sup class="src">[S4][S18]</sup> Relevant to network-identity operations are the families: <span class="mono">HvxKeys*</span> (KeyVault access: <span class="mono">HvxKeysGetKey(55)</span>, <span class="mono">HvxKeysSaveKeyVault(53)</span>, <span class="mono">HvxKeysRsaPrvCrypt(57)</span>, <span class="mono">HvxKeysHmacSha(58)</span>, <span class="mono">HvxKeysAesCbc(59)</span>, <span class="mono">HvxKeysDes2Cbc(60)</span>), <span class="mono">HvxSecurity*</span> (81–89) and <span class="mono">HvxKeysGenerateRandomKey(49)</span>. The kernel&nbsp;— and XAM through it&nbsp;— uses these for all identity-related cryptography. A plugin does <em>not</em> call HV syscalls directly; it uses kernel/XAM exports. But this layer explains why console identity cannot be forged without the KeyVault secrets.</p>
+
+<h3><span class="idx">2.3</span>System modules and their roles</h3>
+<table>
+  <thead><tr><th style="width:120px;">Module</th><th style="width:88px;">Exports</th><th>Role in the networking context</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">xboxkrnl.exe</td><td class="c-mono">887</td><td>Kernel: <span class="mono">Nt*</span>, <span class="mono">Rtl*</span>, <span class="mono">Ke*</span>, <span class="mono">XeCrypt*</span> cryptography (ordinals 345–402 and 784–806), system time (incl. <span class="mono">XexSetLastKdcTime</span> = 735 / 0x2DF).<sup class="src">[S4][S5]</sup></td></tr>
+    <tr><td class="c-mono">xam.xex</td><td class="c-mono">1547</td><td>Application layer: the entire network stack seen by titles&nbsp;— <span class="mono">NetDll_*</span> (Winsock, XNet, XHttp, UPnP), the <span class="mono">XNetLogon*</span>/<span class="mono">Xnp*</span> sign-in families, <span class="mono">XamProfile*</span> profiles, <span class="mono">XamContent*</span> content, <span class="mono">XNotify*</span> notifications.<sup class="src">[S4]</sup></td></tr>
+    <tr><td class="c-mono">xbdm.xex</td><td class="c-mono">252</td><td>Debug manager (devkit/RGH): the <span class="mono">Dm*</span> API; used by Neighborhood and tooling&nbsp;— loaded as the first DashLaunch plugin.</td></tr>
+    <tr><td class="c-mono">connectx.dll</td><td class="c-mono">25</td><td>SMB/NBT client (<span class="mono">NbtNetbios</span>, <span class="mono">SmbCreateFileW</span>) — Windows share access; outside the Live path.<sup class="src">[S4]</sup></td></tr>
+    <tr><td class="c-mono">vk.dll / createprofile</td><td class="c-mono">5 / 3</td><td>Virtual keyboard and profile wizard&nbsp;— auxiliary UI.</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 2.1 — Xbox 360 system modules from the network-behavior perspective (export counts: exjam/xbox360-emu).</div>
+
+<h3><span class="idx">2.4</span>Consequence for redirection</h3>
+<p>All network traffic of titles and the dashboard passes through the <strong><span class="mono">NetDll_*</span> exports of xam.xex</strong> (Chapter 3). This is the fundamental good news for the plugin author: neither the kernel nor the hypervisor needs patching&nbsp;— hooking export-table entries in xam, the module titles link against, is sufficient. The bad news: the sign-in/cryptography layer (C5) uses console secrets from the KeyVault, so a community server must <em>accept</em> console identity by other means than copying Microsoft keys&nbsp;— exactly what Insignia did for the original Xbox (C9).</p>
+
+<!-- ============================================================
+     C3 — THE XNET NETWORK STACK
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 3 · Networking</div>
+  <div class="section-title">The XNet network stack</div>
+  <div class="divider"></div>
+</div>
+
+<p>The Xbox 360 does not expose "plain" system sockets to programs. Titles and the dashboard use the <span class="mono">NetDll_*</span> export family of <span class="mono">xam.xex</span>, which wraps: (a) a Winsock2-style socket API (TCP/UDP), (b) the <strong>XNet</strong> layer&nbsp;— a secure, address-virtualizing superset of sockets, and (c) the auxiliary <strong>Xnp</strong> layer (XNet platform) holding configuration, the machine account and connection security state.<sup class="src">[S4][S5][S6]</sup> All outgoing application traffic flows through these exports&nbsp;— which is why the plugin's interception list (C6/C7) is in practice a short list of NetDll functions.</p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D2 — Layers of the Xbox 360 network stack</div>
+  <div class="dg-body">
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:0;">
+        <div class="dg-label" style="width:120px;flex-shrink:0;">Layer 4</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Game title / dash.xex / XAM apps</div><div class="nd">call NetDll_* from xam.xex (imported by ordinal)&nbsp;· XHttp (HTTPS/WinHTTP-like) on top</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;"><div style="width:120px;"></div><div class="dg-arrow-v" style="height:12px;"></div></div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="dg-label" style="width:120px;flex-shrink:0;">Layer 3</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">NetDll / XNet (xam.xex)</div><div class="nd">NetDll_socket/connect/sendto/recvfrom… (Winsock-like, ordinals 1–36)&nbsp;· XNet* (51–86): XNADDR→IN_ADDR mapping, XNKID/XNKEY keys, QoS, DNS</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;"><div style="width:120px;"></div><div class="dg-arrow-v" style="height:12px;"></div></div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="dg-label" style="width:120px;flex-shrink:0;">Layer 2</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Xnp — XNet platform (inside xam)</div><div class="nd">network config (XNetConfigParams 492 B)&nbsp;· machine account&nbsp;· sign-in challenge&nbsp;· security-association table (XnSecAssocInfo)&nbsp;· Ethernet intercept (XnpEthernetIntercept*)</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;"><div style="width:120px;"></div><div class="dg-arrow-v" style="height:12px;"></div></div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="dg-label" style="width:120px;flex-shrink:0;">Layer 1</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">NIC driver / Ethernet</div><div class="nd">kernel IP stack; system sockets; UPnP (NetDll_Upnp* 251–264) for NAT port mapping</div></div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D2 — network-stack layers as seen by Xbox 360 applications (based on xamNet.h/xkelib, exjam ordinals, xenia).</figcaption>
+</figure>
+
+<h3><span class="idx">3.1</span>Socket API — NetDll ("X360 Winsock")</h3>
+<p>The socket function set is nearly 1:1 with Winsock2, except every function takes a leading <span class="mono">XNCALLER_TYPE</span> parameter identifying the calling context: <span class="mono">XNCALLER_TITLE(1)</span> for games, <span class="mono">XNCALLER_SYSAPP(2)</span> for system apps, <span class="mono">XNCALLER_XBDM(3)</span>, <span class="mono">XNCALLER_TEST(4)</span>.<sup class="src">[S5][S6]</sup> The stack checks the caller type&nbsp;— a system app gets different privileges than a title. A redirect plugin must remember this: dashboard and game calls go through the same exports, but in different contexts.</p>
+
+<table>
+  <thead><tr><th style="width:44px;">Ord</th><th style="width:220px;">Function</th><th>Behavior relevant to redirection</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">1–2</td><td class="c-mono">NetDll_WSAStartup / WSACleanup</td><td>Stack init; WSAStartupEx(36) in newer dashes. Emulator stubs reveal WSADATA round-trips titles expect.<sup class="src">[S5]</sup></td></tr>
+    <tr><td class="c-mono">3</td><td class="c-mono">NetDll_socket(af, type, protocol)</td><td>Creates a socket; <span class="mono">type</span> includes SOCK_STREAM/SOCK_DGRAM <strong>and SOCK_VDP</strong> (secure UDP for games&nbsp;— see 3.4).<sup class="src">[S5]</sup></td></tr>
+    <tr><td class="c-mono">12</td><td class="c-mono">NetDll_connect(s, name, namelen)</td><td><strong>Key interception point</strong> for TCP traffic: the sockaddr_in with destination IP/port passes through here. A hook can rewrite the target address.</td></tr>
+    <tr><td class="c-mono">18–25</td><td class="c-mono">NetDll_recv/WSARecv/recvfrom/WSARecvFrom/send/WSASend/sendto/WSASendTo</td><td>Data transfer; WSASendTo on a VDP socket takes <strong>two buffers</strong>: [0]=game-data length, [1]=unencrypted game data (XNet adds its own protection).<sup class="src">[S5]</sup></td></tr>
+    <tr><td class="c-mono">26</td><td class="c-mono">NetDll_inet_addr</td><td>"a.b.c.d"→IN_ADDR conversion; the X360 version returns 0 for an empty string (legacy behavior).<sup class="src">[S5]</sup></td></tr>
+    <tr><td class="c-mono">7</td><td class="c-mono">NetDll_setsockopt</td><td>Extended XNet options (3.3): SO_MARKINSECURE 0x5801, SO_PRIVATE 0x5802, SO_GRANTINSECURE 0x5803.<sup class="src">[S6]</sup></td></tr>
+    <tr><td class="c-mono">15</td><td class="c-mono">NetDll_select</td><td>Multiplexing; big-endian fd_set structures (fd_array[64]).<sup class="src">[S5]</sup></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 3.1 — Selected socket exports (full table: Appendix A).</div>
+
+<h3><span class="idx">3.2</span>XNet — secure addressing and session keys</h3>
+<p>The XNet layer introduces the "secure address" abstraction. A game never handles a peer's raw IP: it receives the peer's <span class="mono">XNADDR</span> structure (online addresses plus a 20-byte identifier <span class="mono">abEnet/abOnline</span>) along with an <span class="mono">XNKID</span> (session id) and <span class="mono">XNKEY</span> (session key), then calls <span class="mono">NetDll_XNetXnAddrToInAddr(57)</span>, which returns a <em>secure</em> <span class="mono">IN_ADDR</span>&nbsp;— a handle used in subsequent socket calls.<sup class="src">[S5][S6]</sup> (XNKID, XNKEY) pairs are registered via <span class="mono">NetDll_XNetCreateKey(54)</span> / <span class="mono">NetDll_XNetRegisterKey(55)</span>. Traffic on sockets bound to such an address is encrypted and authenticated by XNet&nbsp;— this is the Xbox "secure network", known from the original console.<sup class="src">[S10]</sup></p>
+
+<div class="card">
+  <div class="card-title">XNADDR structure (big-endian layout, 38 B)</div>
+  <p><span class="mono">ina (4 B)</span>&nbsp;— local IP (0 if not static); <span class="mono">inaOnline (4 B)</span>&nbsp;— online IP (0 if offline); <span class="mono">wPortOnline (2 B)</span>&nbsp;— online port; <span class="mono">abEnet[6]</span>&nbsp;— NIC MAC address; <span class="mono">abOnline[20]</span>&nbsp;— console online identifier.<sup class="src">[S5]</sup> Tools and libraries (e.g. the 360 port of RakNet) read abEnet to generate identifiers&nbsp;— zeroing these fields crashes games, as xenia researchers' comments confirm.<sup class="src">[S5]</sup></p>
+</div>
+
+<h3><span class="idx">3.3</span>Configuration, DNS and options</h3>
+<p>The console's network configuration (static/DHCP/PPPoE, DNS servers, gateway, UPnP data) lives in the <span class="mono">XNetConfigParams</span> structure of <strong>492 bytes</strong> (0x14 B hash, 8 B confounder, then: machine name, flags, MAC/IP/mask/gateway, two DNS servers, DHCP host, PPPoE user/pass/server, lease fields, UPnP MAC and port).<sup class="src">[S6]</sup> These parameters are persisted in flash and handled by the <span class="mono">NetDll_XnpLoadConfigParams(101)/SaveConfigParams(102)/Config(104)</span> family&nbsp;— the DNS settings configured in the dashboard are exactly this structure.</p>
+<p>Name resolution is asynchronous via <span class="mono">NetDll_XNetDnsLookup(67)</span>: you pass a hostname and an event (WSAEVENT); on completion an <span class="mono">XNDNS</span> structure is filled (status, address count <span class="mono">cina</span>, array of up to 8 addresses <span class="mono">aina[8]</span>) and later freed with <span class="mono">NetDll_XNetDnsRelease(68)</span>.<sup class="src">[S5][S6]</sup> <strong>This is the second key interception point</strong>&nbsp;— a DnsLookup hook can return our own addresses for service names before anything reaches a real DNS server.</p>
+<p>The XNet layer also exposes options read/written via <span class="mono">NetDll_XNetGetOpt(78)/SetOpt(79)</span>. Security-relevant option ids include: <span class="mono">XNKID_SECURITY 0x138C</span>, <span class="mono">SOCK_SECURITY 0x138D</span>, <span class="mono">PRIMARY_SG_NONCE 0x1398</span> (the Secure Gateway nonce!), and <span class="mono">SEC_ASSOC_INFO 0x1399</span> (a dump of the <span class="mono">XnSecAssocInfo</span> structure, 0x78 B&nbsp;— the current security association with XNKID@0x10, XNADDR@0x18, service id, and NAT address/port).<sup class="src">[S6]</sup> These options show that session security state is fully introspectable from XAM&nbsp;— a plugin can read it and understand whom the console "thinks" it is talking to.</p>
+
+<div class="callout warn">
+  <div class="cl-t">Security socket options — what they mean for a community server</div>
+  <p><span class="mono">SO_MARKINSECURE 0x5801</span> and <span class="mono">SO_GRANTINSECURE 0x5803</span> allow a socket to be <em>marked</em> as not using XNet protections (bool TRUE).<sup class="src">[S6]</sup> In community practice this means an "insecure" session can be built and the cryptographic PA-DATA skipped where we choose&nbsp;— but beware: titles may check connection status and refuse to work. A community server should implement the full secure path first, and treat insecure mode as a fallback for purely system-level traffic (e.g. title-list downloads).</p>
+</div>
+
+<h3><span class="idx">3.4</span>VDP sockets and game traffic</h3>
+<p>The <span class="mono">SOCK_VDP</span> protocol (Voice/Data Protocol) is the UDP variant with an XNet overlay in which voice and game data flow over prioritized channels. In <span class="mono">NetDll_WSASendTo(25)</span> on a VDP socket, buffer zero carries the game-data length and buffer one carries the (still unencrypted) game data; the XNet layer then prepends its security header and encrypts the payload with the XNKEY session key.<sup class="src">[S5]</sup> Practical consequence: <strong>gameplay traffic cannot be understood or rewritten without the session keys</strong>, but a community server can either relay the encrypted packets (relay mode) or issue its own XNKID/XNKEY pairs ("new session" mode)&nbsp;— see C8.</p>
+
+<h3><span class="idx">3.5</span>QoS — link-quality probing</h3>
+<p>Before an online session the console measures path quality: <span class="mono">NetDll_XNetQosListen(69)</span> enables probe listening, <span class="mono">NetDll_XNetQosLookup(70)</span> probes an address list (probe/receive counters, min/median RTT in ms, up/down bandwidth in bit/s&nbsp;— the <span class="mono">XNQOSINFO</span> fields), and <span class="mono">NetDll_XNetQosServiceLookup(71)</span> measures quality toward the Live <em>services</em>.<sup class="src">[S5][S6]</sup> A community server should answer QoS probes, otherwise the dashboard will report insufficient link quality and refuse the session&nbsp;— cheap to implement (a UDP responder) and critical for UX.</p>
+
+<h3><span class="idx">3.6</span>System Link — heritage and the 30 ms limit</h3>
+<p>System Link (LAN play) uses UDP on port <strong>3074</strong> (IANA-registered for Xbox) and broadcasts on the special XNet address <span class="mono">0.0.0.1</span>; sessions are identified by XNKID.<sup class="src">[S1]</sup> All tunneling services build on this same mechanism (XLink Kai, LiNK&nbsp;— C9). Key engineering fact: <strong>the Xbox 360 drops a System Link connection when ping exceeds 30 ms</strong>&nbsp;— an anti-tunneling safeguard documented by Team XLink.<sup class="src">[S12]</sup> An RGH console can patch the limit, but any community tunnel must account for it (regional arenas, relay placement).</p>
+
+<h3><span class="idx">3.7</span>Interception-point summary</h3>
+<ul>
+  <li><strong>Service TCP traffic</strong>: NetDll_socket(3) → NetDll_connect(12) → send/recv&nbsp;— hooking 3 functions covers it all.</li>
+  <li><strong>UDP/VDP traffic</strong>: NetDll_sendto(24)/WSASendTo(25) + recvfrom(20)/WSARecvFrom(21)&nbsp;— hook 4 functions.</li>
+  <li><strong>DNS</strong>: NetDll_XNetDnsLookup(67)/Release(68)&nbsp;— hooking 2 functions replaces the name infrastructure.</li>
+  <li><strong>Service HTTPS</strong>: NetDll_XHttp*(201–222)&nbsp;— if the community server speaks HTTPS, a certificate path is additionally required (C5.5, C6-L3).</li>
+  <li><strong>Introspection</strong>: NetDll_XNetGetOpt(78) with SEC_ASSOC_INFO 0x1399&nbsp;— live diagnostics of the security session.</li>
+</ul>
+
+<!-- ============================================================
+     C4 — XBOX LIVE CONNECTION SEQUENCE
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 4 · Networking</div>
+  <div class="section-title">Xbox Live connection sequence</div>
+  <div class="divider"></div>
+</div>
+
+<p>This chapter reconstructs the <strong>chronology of states</strong> the console passes through from boot to a fully active online session, naming the functions observable in each state. The phase layout assumes a console with the final dashboard 2.0.17559&nbsp;— older versions differ in UI details but not in the layer architecture described in C3.</p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D3 — Xbox Live connection sequence (phases)</div>
+  <div class="dg-body">
+    <div style="display:flex;flex-direction:column;">
+      <div style="display:flex;gap:10px;">
+        <div class="dg-node" style="flex:1;"><div class="nn">P0 · Boot</div><div class="nd">kernel + xam<br>XNet initialization</div></div>
+        <div style="display:flex;align-items:center;color:var(--accent);">→</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">P1 · Physical link</div><div class="nd">XNetGetEthernetLinkStatus(75)<br>10/100 Mbps, duplex</div></div>
+        <div style="display:flex;align-items:center;color:var(--accent);">→</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">P2 · Addressing</div><div class="nd">DHCP / static / PPPoE<br>(XNetConfigParams)</div></div>
+        <div style="display:flex;align-items:center;color:var(--accent);">→</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">P3 · DNS</div><div class="nd">XNetDnsLookup(67)<br>service-name tests</div></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <div class="dg-node" style="flex:1;border-color:#3a5a45;"><div class="nn">P4 · Sign-in</div><div class="nd">XNetLogonTaskStart(303)<br>Xnp challenge(126–128)<br>Kerberos tickets → SG</div></div>
+        <div style="display:flex;align-items:center;color:var(--accent);">→</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">P5 · Services</div><div class="nd">service QoS(71) · presence<br>title updates</div></div>
+        <div style="display:flex;align-items:center;color:var(--accent);">→</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">P6 · Game session</div><div class="nd">XNetRegisterKey(55)<br>VDP sockets, port 3074<br>secure network</div></div>
+        <div style="display:flex;align-items:center;color:var(--accent);">→</div>
+        <div class="dg-node" style="flex:1;"><div class="nn">P7 · Maintenance</div><div class="nd">TaskContinue(305)<br>ticket renewal<br>QoS history (135–138)</div></div>
+      </div>
+      <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:9px;">
+        <div class="dg-label" style="margin-bottom:6px;">Live diagnostic cross-sections available in real time</div>
+        <div class="meta-row" style="margin:0;">
+          <span class="kv"><b>NetGetOpt</b> SEC_ASSOC_INFO 0x1399</span>
+          <span class="kv"><b>LogonGetState</b> XNetLogonGetState(322)</span>
+          <span class="kv"><b>NAT</b> XNetLogonGetNatType(302)</span>
+          <span class="kv"><b>Time</b> XexSetLastKdcTime(735)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D3 — online-session phases from boot to maintenance; numbers in parentheses are ordinals in xam.xex/xboxkrnl.exe.</figcaption>
+</figure>
+
+<h3><span class="idx">4.1</span>P0–P2: initialization and addressing</h3>
+<p>At startup XAM calls <span class="mono">NetDll_XNetStartup(51)</span> with startup parameters (<span class="mono">XNetStartupParams</span>: dgram/stream socket limits, buffer sizes, registered-key limits <span class="mono">cfgKeyRegMax</span>/<span class="mono">cfgSecRegMax</span>, QoS limits).<sup class="src">[S5][S6]</sup> The dashboard then runs its test sequence: Ethernet link status via <span class="mono">NetDll_XNetGetEthernetLinkStatus(75)</span> (flags: active 0x01, 100/10 Mbps 0x02/0x04, full/half duplex 0x08/0x10), address acquisition via DHCP (or static/PPPoE from <span class="mono">XNetConfigParams</span>), and configuration completeness via <span class="mono">NetDll_XNetGetTitleXnAddr(73)</span>, whose return flags describe the state: <span class="mono">XNET_GET_XNADDR_PENDING</span> (0), <span class="mono">_ETHERNET</span> (0x2), <span class="mono">_STATIC</span> (0x4), <span class="mono">_DHCP</span> (0x8), <span class="mono">_PPPOE</span> (0x10), <span class="mono">_GATEWAY</span> (0x20), <span class="mono">_DNS</span> (0x40), <span class="mono">_ONLINE</span> (0x80), <span class="mono">_TROUBLE</span> (0x8000).<sup class="src">[S5]</sup> This is exactly the status ladder shown by the dashboard network test&nbsp;— every red icon in the UI corresponds to a specific flag.</p>
+
+<h3><span class="idx">4.2</span>P3: DNS — how the console resolves names</h3>
+<p>The console uses the DNS servers from its configuration (via DHCP or set manually) and resolves names <strong>exclusively</strong> through the asynchronous <span class="mono">NetDll_XNetDnsLookup(67)</span>.<sup class="src">[S6]</sup> There is no system hosts file and no cache outside XNet&nbsp;— every query goes through this function. The current Live DNS server name is additionally available inside XAM via <span class="mono">XNetLogonGetDnsString(313)</span>, confirming that the service keeps its own name record for the sign-in infrastructure.<sup class="src">[S4]</sup> Practical conclusion: <strong>DNS redirection (layer L1, C6) is a complete mechanism</strong>&nbsp;— the console has no built-in override list and no IP pinning beyond DNS.</p>
+
+<h3><span class="idx">4.3</span>P4: sign-in — challenge and tickets</h3>
+<p>The sign-in procedure itself is hidden inside xam: applications see it as asynchronous tasks started by <span class="mono">NetDll_XNetLogonTaskStart(303)</span> and pumped by <span class="mono">NetDll_XNetLogonTaskContinue(305)</span> (the XNetLogon* family also exposes a full state API: <span class="mono">GetState(322)</span>, <span class="mono">GetServiceInfo(306)</span>, <span class="mono">GetUserPrivileges(307)</span>, <span class="mono">GetExtendedStatus(315)</span>).<sup class="src">[S4]</sup> Below, in the Xnp layer, the challenge/response mechanics are visible: <span class="mono">NetDll_XnpLogonGetChallenge(126)</span> fetches a challenge, <span class="mono">NetDll_XnpLogonSetChallengeResponse(128)</span> submits the response.<sup class="src">[S6]</sup> The presence of these exports alongside <span class="mono">XnpGetSecAssocList(129)</span> and <span class="mono">XnpGetKeyList(130)</span> reveals the architecture from C5: sign-in exchanges secrets with the server, and the outcome is a set of security associations and session keys available for introspection.</p>
+
+<h3><span class="idx">4.4</span>Endpoints — what the console queries</h3>
+<p>The table below collects the hostnames <strong>documented by the community</strong> for the Xbox platform (360 era, with markers where a name is attested for the original Xbox or the Xbox One era&nbsp;— the latter serving only as evolution context). The set is incomplete by definition: the full list for a given dashboard version is established by traffic capture (see the Work Report&nbsp;— research gaps).</p>
+
+<table>
+  <thead><tr><th style="width:200px;">Host / pattern</th><th style="width:110px;">Platform</th><th>Function and source</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">download.xboxlive.com</td><td class="c-mono">X360</td><td>Content CDN: <span class="mono">/content/&lt;titleID&gt;/thumbnails/{64,128,300}/&lt;id&gt;.png</span>, <span class="mono">/content/&lt;titleID&gt;/avataritems/&lt;guid&gt;.bin</span>&nbsp;— confirmed in community tools (Velocity).<sup class="src">[S14]</sup></td></tr>
+    <tr><td class="c-mono">image.xboxlive.com</td><td class="c-mono">X360</td><td>Gamer/title icons: <span class="mono">/global/t.&lt;titleID&gt;/icon/0/8000</span>.<sup class="src">[S14]</sup></td></tr>
+    <tr><td class="c-mono">avatar.xboxlive.com</td><td class="c-mono">X360</td><td>Avatar marketplace imagery.<sup class="src">[S14]</sup></td></tr>
+    <tr><td class="c-mono">tiles.xbox.com</td><td class="c-mono">X360</td><td>Box art: <span class="mono">/consoleAssets/&lt;titleID&gt;/&lt;locale&gt;/{small,large}boxart.jpg</span>.<sup class="src">[S14]</sup></td></tr>
+    <tr><td class="c-mono">marketplace.xbox.com</td><td class="c-mono">X360</td><td>Web marketplace for titles.<sup class="src">[S14]</sup></td></tr>
+    <tr><td class="c-mono">catalog-cdn.xboxlive.com</td><td class="c-mono">X360</td><td>Marketplace catalog service (SOAP-like: <span class="mono">/Catalog/Catalog.asmx/Query</span>, Names/Values params: Locale, Store, PageSize≤300, DetailView, MediaTypes, CategoryIds=3027 "Xbox LIVE Games"; Atom XML response).<sup class="src">[S17]</sup></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 4.1 — 360-era service hosts attested in community sources.</div>
+
+<table style="break-inside:avoid;">
+  <thead><tr><th style="width:200px;">Host / pattern</th><th style="width:110px;">Platform</th><th>Function and source</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">MACS.XBOXLIVE.COM</td><td class="c-mono">OG Xbox</td><td><strong>Machine Account Creation Service</strong>&nbsp;— the server that creates the machine account on first network test.<sup class="src">[S10]</sup> 360 counterpart: UNVERIFIED&nbsp;— to be confirmed by capture.</td></tr>
+    <tr><td class="c-mono">xkms / xsts.auth / title.auth / eds / titlestorage / time …xboxlive.com</td><td class="c-mono">Xbox One</td><td>XONE-era endpoints (auth/token/catalog/time services)&nbsp;— listed as evolution context; 360 use: UNVERIFIED.<sup class="src">[S20]</sup></td></tr>
+    <tr><td class="c-mono">xboxunity.net</td><td class="c-mono">community</td><td>External TU/title-info service used by the Aurora/FSD dashboards&nbsp;— proof that the console accepts alternative content servers if they answer in a known format.<sup class="src">[S14]</sup></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 4.2 — Context hosts: OG Xbox, XONE era, community services (registry: Appendix C).</div>
+
+<h3><span class="idx">4.5</span>Ports and transport</h3>
+<ul>
+  <li><span class="mono">UDP/TCP 3074</span>&nbsp;— the IANA-registered Xbox port; System Link and Xbox 360 secure-socket traffic.<sup class="src">[S1]</sup></li>
+  <li><span class="mono">UDP 88</span> (Kerberos) and <span class="mono">TCP 443</span> for HTTPS&nbsp;— repeated in community firewall threads; <strong>UNVERIFIED</strong> for the 360 in the available source material (confirm by capture).</li>
+  <li>Console↔console UDP traffic (game sessions)&nbsp;— VDP sockets encrypted with XNKEY; NAT opened via UPnP (<span class="mono">NetDll_UpnpActionCreate(258)</span>&nbsp;— AddPortMapping etc.).<sup class="src">[S4][S6]</sup></li>
+</ul>
+
+<h3><span class="idx">4.6</span>System time — a hard prerequisite</h3>
+<p>The console does not query public NTP in any way documented for the 360 (the <span class="mono">time.xboxlive.com</span> names belong to the XONE era&nbsp;— UNVERIFIED for 360).<sup class="src">[S20]</sup> Instead, service time follows <strong>KDC time</strong>: the kernel exports <span class="mono">XexSetLastKdcTime(735 / 0x2DF)</span>, storing the timestamp received from the authenticating server.<sup class="src">[S5][S18]</sup> Engineering consequences: (a) session tickets have validity windows, so <strong>a wrong console clock means rejected tickets</strong>; (b) XHttp TLS certificate validation also depends on the clock; (c) the console RTC is bounded (the community-known "2025 cap" problem and the TimeFixer tool)<sup class="src">[S22]</sup>&nbsp;— a community server must accept timestamps with wide tolerance and/or provide its own KDC time in the sign-in response.</p>
+
+<!-- ============================================================
+     C5 — AUTHENTICATION & CRYPTOGRAPHY
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 5 · Security</div>
+  <div class="section-title">Authentication and cryptography</div>
+  <div class="divider"></div>
+</div>
+
+<p>The authentication layer is where a "homemade Xbox Live" project wins or dies. Below we assemble the full picture from community material: machine identity (console certificate + machine account), user identity (profile with online key), the Kerberos-family ticket protocol with Xbox extensions (PA-DATA), and the Secure Gateway. Where 360-era attestation is missing, we lean on original-Xbox (Live 1.0) documentation&nbsp;— the same protocol lineage, as the 36C3/DEF CON speakers state outright.<sup class="src">[S10][S11]</sup></p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D4 — Authentication flow (Live 1.0 model → 360)</div>
+  <div class="dg-body">
+    <div style="display:flex;gap:14px;">
+      <div style="flex:1;display:flex;flex-direction:column;">
+        <div class="dg-node"><div class="nn">1 · Machine identity</div><div class="nd">console certificate RSA-2048 (552 B)&nbsp;—<br>XNetLogonSetConsoleCertificate(308)<br>machine account from MACS (pre-shared key:<br>Online Key + HDD Key + key inside Live binaries)<sup class="src">[S10][S15]</sup></div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">2 · Ticket exchange (KR)</div><div class="nd">Kerberos with Xbox extensions:<br>PA-DATA 131 / 204 / 206 (version, title,<br>title version)&nbsp;· Xnp challenge 126→128<sup class="src">[S6][S10]</sup></div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">3 · Secure Gateway (SG)</div><div class="nd">service-gateway session; nonce:<br>PRIMARY_SG_NONCE 0x1398&nbsp;· behind SG:<br>matchmaking, statistics, storage<sup class="src">[S6][S10]</sup></div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">4 · Session keys</div><div class="nd">XNKID/XNKEY registered (54/55)&nbsp;·<br>XnSecAssocInfo (0x78 B)&nbsp;· VDP traffic on 3074<sup class="src">[S5][S6]</sup></div></div>
+      </div>
+      <div style="width:255px;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">User profile</div><div class="nd">Account file: gamertag, PUID,<br>online key; encryption RC4 + HMAC-SHA1<br>(KeyVault key idx 0x19)<sup class="src">[S14]</sup></div></div>
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">Context: XONE era</div><div class="nd">XSTS tokens (JWT/JWE, identities xdi/xti/xsi/xui)&nbsp;—<br>a different generation, same pattern:<br>token service + relying parties<sup class="src">[S20]</sup></div></div>
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">Arbitration (anti-cheat)</div><div class="nd">XOnlineArbitration* (OG): the server compares<br>result reports from every round participant<sup class="src">[S10]</sup></div></div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D4 — the chain of trust from console certificate to session keys; right column: companion elements.</figcaption>
+</figure>
+
+<h3><span class="idx">5.1</span>Machine identity — certificate and account</h3>
+<p>Every console carries a manufacturer-signed <strong>RSA-2048 security certificate of 552 bytes (0x228)</strong>, described in Free60 documentation and in the <span class="mono">XE_CONSOLE_CERTIFICATE</span> structure of the xkelib headers.<sup class="src">[S15][S6]</sup> XAM hands it to the network stack via <span class="mono">XNetLogonSetConsoleCertificate(308)</span>, and a title identifies itself separately via <span class="mono">XNetLogonSetTitleID(314)</span>/<span class="mono">GetTitleVersion(311)</span>.<sup class="src">[S4][S6]</sup> The certificate binds the console's public key to its identifiers&nbsp;— the console can prove its identity by signature (RSA operations run on the HV side through <span class="mono">HvxKeysRsaPrvCrypt</span>).</p>
+<p>The second element is the <strong>machine account</strong>, attested for the original Xbox: created on first network test by the <span class="mono">MACS.XBOXLIVE.COM</span> server, based on a pre-shared key derived from the <em>online key, the HDD key and a fixed key present in all Live binaries</em>. The machine account alone only grants access to the user-account creation service (UACS); full services require a user account.<sup class="src">[S10]</sup> The pattern transfers directly to a community server: <strong>console registration</strong> (verifying possession of console keys) + <strong>player registration</strong> (gamertag)&nbsp;— exactly how Insignia onboarding works (C9).</p>
+
+<h3><span class="idx">5.2</span>The ticket protocol — Kerberos, Xbox edition</h3>
+<p>The xboxdevwiki documentation for Live 1.0 confirms: authentication uses <strong>the Kerberos protocol with proprietary Xbox customizations</strong>, and service access (matchmaking, statistics/leaderboards, dedicated game servers) goes through a <strong>Secure Gateway</strong>.<sup class="src">[S10]</sup> Traces of this model are visible on the 360: the <span class="mono">PRIMARY_SG_NONCE 0x1398</span> option is the SG gateway nonce, and the <span class="mono">XexSetLastKdcTime</span> export attests the KDC (Kerberos Domain Controller) time concept.<sup class="src">[S5][S6]</sup> Xbox extensions in the pre-auth data (PA-DATA) cover types 131, 204 and 206 (Xbox version, title, title version)&nbsp;— these let the server bind a ticket to a specific game.<sup class="src">[S10]</sup></p>
+<p>Three conclusions for the server implementer. First, <strong>the cryptography does not need to be broken</strong>&nbsp;— it suffices to be the server side of the exchange: the console sends a KR-format request, the server answers with its own tickets signed by its own service key. Second, <strong>the clock must agree</strong> (C4.6). Third, the exact ticket layout and field offsets for the 360 are an <strong>RE gap</strong>&nbsp;— to be extracted from <code>xam.xex</code> (analysis of the XnpLogon* call sites) or from dev-console captures.</p>
+
+<h3><span class="idx">5.3</span>User identity — profile and online key</h3>
+<p>The player profile stores, among other things, the gamertag, the <span class="mono">PUID</span> (Passport User ID) and the <strong>online key</strong>; the Account file is encrypted with an "HMAC-RC4" scheme: HMAC-SHA1 with a KeyVault key (index 0x19; the retail key is known to the community) derives an RC4 key, which encrypts a confounder + 380-byte payload.<sup class="src">[S14]</sup> Attested XAM exports for Live credentials are <span class="mono">XamProfileSaveWindowsLiveCredentials(572)/LoadWindowsLiveCredentials(573)</span>.<sup class="src">[S4]</sup> Conclusion: a community server can issue its own "gamertag + key" in the same profile-file format (Insignia's practice confirms this: web account registration + writing it to the console).</p>
+
+<h3><span class="idx">5.4</span>System cryptography — XeCrypt and KeyVault</h3>
+<p>The kernel exports the full primitive set (Appendix A, Table A.6): RC4 (<span class="mono">XeCryptRc4Key 395 / Rc4Ecb 396 / Rc4 397</span>), AES-ECB/CBC/CBC-MAC/CTR, DES/3DES, MD5, SHA-1/256/384/512, HMAC-MD5/SHA, RSA (keygen, private/public encryption) and Diffie-Hellman (the <span class="mono">BnDwLeDh*</span> family&nbsp;— session-key exchange!).<sup class="src">[S4][S5][S16]</sup> Console secrets live in the KeyVault (flash, HV-gated access); key operations run through the <span class="mono">HvxKeys*</span> family (C2.2). A universal reimplementation for offline analysis is the ExCrypt project.<sup class="src">[S16]</sup></p>
+
+<h3><span class="idx">5.5</span>TLS and XHttp — the certificate problem</h3>
+<p>The console calls HTTP(S) services through the <span class="mono">NetDll_XHttp*</span> API (201–222)&nbsp;— a WinHTTP analog: <span class="mono">XHttpOpen(203)</span>, <span class="mono">XHttpConnect(205)</span>, <span class="mono">XHttpOpenRequest(207)</span>, <span class="mono">XHttpSendRequest(209)</span>, <span class="mono">XHttpReceiveResponse(210)</span>, <span class="mono">XHttpSetOption(215)</span> etc.<sup class="src">[S4][S5]</sup> The key question: <strong>where does the console keep its trusted TLS root CAs, and is validation bypassable?</strong> The community answer is currently incomplete: the location of the trusted-certificate store in the 360 system image remains <strong>UNVERIFIED</strong> (RE gap). It is known, however, that homebrew builds its own TLS 1.2 clients without external stores (example: the XboxTLS implementation in the X-Store project)<sup class="src">[S19]</sup>&nbsp;— meaning an SSL stack is reachable from user-mode code. Practical bypass strategies on an RGH console are discussed in C6 (L3).</p>
+
+<div class="callout err">
+  <div class="cl-t">What cannot be done "the short way"</div>
+  <p>Without possessing manufacturer keys you cannot: forge a console certificate, sign a custom dashboard for an unmodified console, or stand up a TLS server the console will accept without touching its trust store or patching validation. Every real redirect project (Insignia included) solves this either on the console side (modification/RGH) or by designing services so they avoid TLS validated against the system store. This is not a limitation of this document&nbsp;— it is the boundary of cryptography.</p>
+</div>
+
+<!-- ============================================================
+     C6 — REDIRECT ANALYSIS (3 LAYERS)
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 6 · Redirect</div>
+  <div class="section-title">Redirect analysis — three layers</div>
+  <div class="divider"></div>
+</div>
+
+<p>We now have the full picture of console behavior. Time to answer the main question: <strong>how do we make packets addressed to Xbox Live arrive at community servers?</strong> There are three complementary layers&nbsp;— L1: DNS, L2: export hooks inside the console, L3: TLS/certificate handling. This document recommends the <strong>hybrid L1+L2 approach</strong>, with L3 optional depending on the TLS decision. Each layer is discussed below and compared in a decision matrix at the end.</p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D5 — Three redirect architectures</div>
+  <div class="dg-body">
+    <div style="display:flex;gap:14px;">
+      <div style="flex:1;">
+        <div class="dg-label" style="margin-bottom:6px;">L1 · DNS (outside the console)</div>
+        <div class="dg-node" style="min-height:128px;"><div class="nn">Community DNS server</div><div class="nd">console pointed at community DNS<br>(like Insignia: 46.101.64.175)<br>or a local insigniaDNS-style forwarder<sup class="src">[S8][S9]</sup></div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">Service server IP</div><div class="nd">A answers for *.xboxlive.com names<br>→ our own IP</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node" style="border-color:#3a5a45;"><div class="nn">Console (unmodified)</div><div class="nd">XNetDnsLookup(67) returns our IP</div></div>
+      </div>
+      <div style="flex:1;">
+        <div class="dg-label" style="margin-bottom:6px;">L2 · Export hooks (inside the console)</div>
+        <div class="dg-node" style="min-height:128px;"><div class="nn">DashLaunch plugin</div><div class="nd">patches the xam.xex export table<br>(NetDll_connect 12, sendto 24,<br>XNetDnsLookup 67, XHttp* 201–222)</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">On-the-fly address mapping</div><div class="nd">sockaddr_in rewritten in connect/sendto<br>or the DnsLookup result swapped</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node" style="border-color:#3a5a45;"><div class="nn">Traffic to community server</div><div class="nd">works independently of DNS/ISP</div></div>
+      </div>
+      <div style="flex:1;">
+        <div class="dg-label" style="margin-bottom:6px;">L3 · TLS (both sides)</div>
+        <div class="dg-node" style="min-height:128px;"><div class="nn">Certificate path</div><div class="nd">options: (a) services over HTTP,<br>(b) our own CA added to the trust store,<br>(c) patch validation inside XHttp</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">Community TLS server</div><div class="nd">a certificate the console accepts<br>(via one of paths a/b/c)</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node" style="border-color:#3a5a45;"><div class="nn">Validation</div><div class="nd">status: parts of the root-CA store<br>for 360 = UNVERIFIED (C10)</div></div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D5 — three independent redirect layers; L1 and L2 cover the same ground functionally, L3 additionally closes HTTPS.</figcaption>
+</figure>
+
+<h3><span class="idx">6.1</span>L1 — DNS redirection</h3>
+<p>Mechanics: the console resolves all names via XNetDnsLookup (C4.2) using the configured DNS servers. By setting the community DNS server as primary (manually in the dashboard, via a DHCP option, or via a local forwarder like insigniaDNS on a LAN PC), we take over the <strong>entire</strong> <span class="mono">*.xboxlive.com</span> namespace and related names. This approach is operationally proven: Insignia instructs users to set primary DNS to <span class="mono">46.101.64.175</span> (secondary: public 8.8.8.8/1.1.1.1), and provides a local DNS server for restrictive ISPs.<sup class="src">[S8][S9]</sup></p>
+<p><strong>Pros:</strong> zero console modification (works even on retail units&nbsp;— how Insignia serves unmodified OG Xboxes), operational simplicity, full traffic coverage. <strong>Cons:</strong> depends on DNS/ISP settings; does not solve TLS (the hostname remains original, so the server certificate must pass console validation); traffic outside the name system (hard-coded IPs, if any exist&nbsp;— UNVERIFIED) is not captured. <strong>Recommendation:</strong> L1 as the base layer for every installation.</p>
+
+<h3><span class="idx">6.2</span>L2 — export hooks inside the console (plugin)</h3>
+<p>Mechanics: a DashLaunch plugin (C7) patches entries in the <span class="mono">xam.xex</span> export table so that selected NetDll functions route through plugin code first. Hooks cover three traffic classes: (a) <strong>TCP</strong>&nbsp;— <span class="mono">NetDll_connect(12)</span>: rewrite the <span class="mono">sockaddr_in</span> before the original implementation sees it; (b) <strong>UDP/VDP</strong>&nbsp;— <span class="mono">NetDll_sendto(24)</span>/<span class="mono">WSASendTo(25)</span> analogously; (c) <strong>names</strong>&nbsp;— <span class="mono">NetDll_XNetDnsLookup(67)</span>: instead of waiting for DNS, synchronously return our own XNDNS structure. <strong>Pros:</strong> independent of DNS/ISP; precision (only chosen traffic is redirected&nbsp;— e.g. LAN stays untouched); on-console traffic logging/debugging. <strong>Cons:</strong> requires RGH/JTAG; patching risk (mitigated by the conventions in C7.4); dashboard updates could shift code offsets (we hook the table <em>pointer</em>, so we survive code relocation as long as the ordinal stays&nbsp;— and NetDll ordinals are stable because titles link by them).</p>
+
+<h3><span class="idx">6.3</span>L3 — the TLS layer</h3>
+<p>If the community server exposes services the console calls via XHttp over HTTPS, the certificate-trust problem appears. Three paths: <strong>(a) avoid</strong>&nbsp;— design services over plain HTTP where possible (360 system traffic historically used HTTP for content CDNs&nbsp;— Table 4.1 shows the <span class="mono">http://</span> patterns); <strong>(b) own trust</strong>&nbsp;— if the console root-CA store is modifiable (RE gap: location UNVERIFIED), import the community CA; <strong>(c) validation patch</strong>&nbsp;— the plugin patches the validation function on the XHttp path (location: to be determined by <code>xam.xex</code> analysis; community projects use this pattern for other purposes&nbsp;— e.g. the system-notification patch at 0x816A3158 demonstrates the "locate-path-patch" approach)<sup class="src">[S7]</sup>. The L3 decision belongs to the server architect; this document recommends <strong>minimizing HTTPS</strong> (path a), because every touch of validation widens the failure surface.</p>
+
+<h3><span class="idx">6.4</span>Decision matrix</h3>
+<table>
+  <thead><tr><th>Criterion</th><th>L1 DNS</th><th>L2 Hooks</th><th>L3 TLS</th></tr></thead>
+  <tbody>
+    <tr><td>Requires modified hardware</td><td>No (retail OK)</td><td>Yes (RGH/JTAG)</td><td>Depends on path (a=no, b/c=yes)</td></tr>
+    <tr><td>Depends on ISP / network</td><td>High</td><td>None</td><td>None</td></tr>
+    <tr><td>Traffic coverage</td><td>Everything via DNS</td><td>Only hooked functions</td><td>Only XHttp/HTTPS</td></tr>
+    <tr><td>Console stability</td><td>Full</td><td>Good under C7.4 conventions</td><td>Risky when patching validation</td></tr>
+    <tr><td>Required RE work</td><td>Service protocol formats</td><td>Ordinals (ready&nbsp;— AX) + export table</td><td>Root-CA store (gap)</td></tr>
+    <tr><td>Prior art</td><td>Insignia (OG)<sup class="src">[S8]</sup></td><td>Community plugins (JRPC2, XInputCapsPatch)<sup class="src">[S7]</sup></td><td>Homebrew TLS (X-Store)<sup class="src">[S19]</sup></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 6.1 — Comparison of redirect layers.</div>
+
+<div class="callout info">
+  <div class="cl-t">This document's recommendation</div>
+  <p><strong>Hybrid architecture:</strong> a community DNS server (L1) as the path for every console, a DashLaunch plugin (L2) as an enhancement for RGH/JTAG consoles (precise mapping, logging, fallback when DNS fails), and server services designed with minimal HTTPS (path L3-a). This composition maximizes the number of working consoles at minimal risk&nbsp;— and should be built in that order: L1 can go live in a day, L2 is a week of work, L3 only if business demands it.</p>
+</div>
+
+<!-- ============================================================
+     C7 — DASHLAUNCH PLUGIN IN PRACTICE
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 7 · Redirect</div>
+  <div class="section-title">DashLaunch plugin in practice</div>
+  <div class="divider"></div>
+</div>
+
+<p>This chapter is a ready implementation base: project structure, the DashLaunch plugin API, and complete redirect-hook pseudocode. All facts come from the community guide (ClementDreptin/ModdingResources) and the code of existing plugins.<sup class="src">[S7]</sup></p>
+
+<h3><span class="idx">7.1</span>Plugin loading model</h3>
+<p>DashLaunch is a system module (<span class="mono">launch.xex</span>) configured by <span class="mono">launch.ini</span>, which at boot loads up to five dynamic libraries into plugin slots (.xex files with the sysdll flag). Configuration entries:<sup class="src">[S7]</sup></p>
+<div class="code">
+  <div class="code-head"><span>launch.ini — excerpt</span><span class="lang">ini</span></div>
+  <pre>[Plugins]
+plugin1 = Hdd:\xbdm\xbdm.xex          <span class="c">; xbdm always first — other plugins may depend on it</span>
+plugin2 = Hdd:\plugins\LiveRedirect.xex <span class="c">; our redirect plugin</span></pre>
+</div>
+<p>A plugin is a native big-endian PowerPC library with the entry point <span class="mono">DllMain(HINSTANCE, DWORD reason, void*)</span>, called on <span class="mono">DLL_PROCESS_ATTACH</span> (load) and <span class="mono">DLL_PROCESS_DETACH</span> (unload). Plugin code runs in system space beside xam.xex&nbsp;— it can read and write system memory and resolve module exports via <span class="mono">GetModuleHandle</span>/<span class="mono">GetProcAddress</span>.<sup class="src">[S7]</sup></p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D6 — Plugin lifecycle and hook operation</div>
+  <div class="dg-body">
+    <div style="display:flex;gap:14px;">
+      <div style="flex:1.25;display:flex;flex-direction:column;">
+        <div class="dg-node"><div class="nn">System boot → launch.xex (DashLaunch)</div><div class="nd">reads launch.ini&nbsp;· loads xbdm + plugin slots 2–5</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">DllMain(ATTACH)</div><div class="nd">resolve xam.xex exports by ordinal&nbsp;·<br>save original pointers&nbsp;· patch export table</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">Operation: call interception</div><div class="nd">connect/sendto/DnsLookup → our function →<br>address mapping → call the original</div></div>
+        <div class="dg-arrow-v"></div>
+        <div class="dg-node"><div class="nn">DllMain(DETACH)</div><div class="nd">restore original pointers (clean unload)</div></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">Practical constraints</div><div class="nd">· up to 5 plugin slots<br>· baseaddr &gt; 0x90000000 (no collisions)<br>· notifications from system threads need the 0x816A3158 patch (0x4800)<sup class="src">[S7]</sup></div></div>
+        <div class="dg-node" style="border-color:#4a4a35;"><div class="nn" style="font-size:11.5px;">Notifications</div><div class="nd">XNotifyQueueUI from xam.xex, ordinal 656&nbsp;—<br>show "redirected to server X" in the UI</div></div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D6 — from boot to an active hook; right column: constraints and user-facing communication.</figcaption>
+</figure>
+
+<h3><span class="idx">7.2</span>Function resolution and export-table patching</h3>
+<p>All xam.xex functions are addressed <strong>by ordinal number</strong> (full tables&nbsp;— Appendix A). The resolution pattern:<sup class="src">[S7]</sup></p>
+<div class="code">
+  <div class="code-head"><span>ResolveFunction — obtaining an export address</span><span class="lang">C++</span></div>
+  <pre><span class="k">void</span>* ResolveFunction(<span class="k">const</span> std::string&amp; module, <span class="n">uint32_t</span> ordinal) {
+    HMODULE h = GetModuleHandle(module.c_str());
+    <span class="k">return</span> h ? GetProcAddress(h, <span class="k">reinterpret_cast</span>&lt;<span class="k">const</span> <span class="k">char</span>*&gt;(ordinal)) : <b>nullptr</b>;
+}
+
+<span class="c">// exports needed for redirection (xam.xex):</span>
+<span class="n">DWORD</span>  (*Real_XNetDnsLookup)(<span class="n">DWORD</span> caller, <span class="k">const</span> <span class="k">char</span>* host, <span class="n">HANDLE</span> ev, <span class="n">XNDNS</span>** out) =
+        (<span class="n">DWORD</span>(*)(...))ResolveFunction(<span class="s">"xam.xex"</span>, <span class="n">67</span>);   <span class="c">// NetDll_XNetDnsLookup</span>
+<span class="n">DWORD</span>  (*Real_Connect)(<span class="n">DWORD</span> caller, <span class="n">SOCKET</span> s, <span class="k">const</span> <span class="n">sockaddr</span>* name, <span class="n">DWORD</span> len) =
+        (<span class="n">DWORD</span>(*)(...))ResolveFunction(<span class="s">"xam.xex"</span>, <span class="n">12</span>);   <span class="c">// NetDll_connect</span></pre>
+</div>
+<p>The hook itself replaces the export-table entry with the address of our function (the same technique community plugins already use). Required behavior: <strong>(1)</strong> save the original pointer; <strong>(2)</strong> the new function has an identical signature (including the leading XNCALLER_TYPE); <strong>(3)</strong> restore the originals on DETACH. Because we patch the <em>pointer</em>, not function code, updates that relocate code do not break the hook (as long as the ordinal is unchanged&nbsp;— the AX tables show NetDll numbers are stable across dashboard versions, since titles link by them).</p>
+
+<h3><span class="idx">7.3</span>LiveRedirect plugin skeleton (pseudocode, part 1)</h3>
+<div class="code">
+  <div class="code-head"><span>LiveRedirect.xex — redirection core (part 1/2)</span><span class="lang">C++ (pseudocode)</span></div>
+  <pre><span class="c">// ============ 1. Mapping table ============</span>
+<span class="k">struct</span> RedirectRule { <span class="k">const</span> <span class="k">char</span>* hostSuffix; <span class="n">uint32_t</span> targetIpBe; <span class="n">uint16_t</span> targetPortBe; };
+<span class="k">static</span> <span class="k">const</span> RedirectRule g_rules[] = {
+    { <span class="s">"xboxlive.com"</span>, HTON32(COMMUNITY_IP), <span class="n">0</span> },   <span class="c">// DNS: suffix match</span>
+    { <span class="s">"xbox.com"</span>,      HTON32(COMMUNITY_IP), <span class="n">0</span> },
+};
+<span class="c">// Port mapping for TCP traffic (optional)</span>
+<span class="k">static</span> <span class="n">uint32_t</span> MapIp(<span class="n">uint32_t</span> ipBe)  { <span class="k">return</span> CommunityIpSet(ipBe) ? COMMUNITY_IP_BE : ipBe; }
+<span class="k">static</span> <span class="n">uint16_t</span> MapPort(<span class="n">uint16_t</span> pBe) { <span class="k">return</span> (pBe == HTONS(<span class="n">3074</span>)) ? pBe : pBe; }
+
+<span class="c">// ============ 2. DNS hook ============</span>
+<span class="k">static</span> <span class="n">DWORD</span> Hook_XNetDnsLookup(<span class="n">DWORD</span> caller, <span class="k">const</span> <span class="k">char</span>* host, <span class="n">HANDLE</span> ev, <span class="n">XNDNS</span>** out) {
+    <span class="k">for</span> (<span class="k">auto</span>&amp; r : g_rules)
+        <span class="k">if</span> (HostMatchesSuffix(host, r.hostSuffix)) {
+            <span class="c">// fill XNDNS ourselves: status=0, cina=1, aina[0]=r.targetIpBe</span>
+            FillXndns(out, r.targetIpBe);
+            <span class="k">if</span> (ev) SetEvent(ev);              <span class="c">// immediate readiness (async contract)</span>
+            <span class="k">return</span> <span class="n">0</span>;
+        }
+    <span class="k">return</span> Real_XNetDnsLookup(caller, host, ev, out); <span class="c">// other names → real DNS</span>
+}
+</pre>
+</div>
+
+<div class="code">
+  <div class="code-head"><span>LiveRedirect.xex — redirection core (part 2/2)</span><span class="lang">C++ (pseudocode)</span></div>
+  <pre><span class="c">// ============ 3. TCP hook (connect) ============</span>
+<span class="k">static</span> <span class="n">DWORD</span> Hook_Connect(<span class="n">DWORD</span> caller, <span class="n">SOCKET</span> s, <span class="k">const</span> <span class="n">sockaddr</span>* name, <span class="n">DWORD</span> len) {
+    <span class="n">sockaddr_in</span> mapped = *(<span class="k">const</span> <span class="n">sockaddr_in</span>*)name;
+    <span class="k">if</span> (CommunityTarget(mapped.sin_addr.s_addr))
+        mapped.sin_addr.s_addr = COMMUNITY_IP_BE;         <span class="c">// rewrite destination address</span>
+    <span class="k">return</span> Real_Connect(caller, s, (<span class="k">const</span> <span class="n">sockaddr</span>*)&amp;mapped, len);
+}
+
+<span class="c">// ============ 4. DllMain — installation ============</span>
+<span class="n">BOOL</span> DllMain(<span class="n">HINSTANCE</span> h, <span class="n">DWORD</span> reason, <span class="k">void</span>*) {
+    <span class="k">if</span> (reason == DLL_PROCESS_ATTACH) {
+        <span class="k">if</span> (!InstallExportHook(<span class="s">"xam.xex"</span>, <span class="n">67</span>, Hook_XNetDnsLookup, &amp;Real_XNetDnsLookup)) <span class="k">return</span> <b>FALSE</b>;
+        <span class="k">if</span> (!InstallExportHook(<span class="s">"xam.xex"</span>, <span class="n">12</span>, Hook_Connect,          &amp;Real_Connect))          <span class="k">return</span> <b>FALSE</b>;
+        <span class="c">// likewise: sendto(24), WSASendTo(25), XHttpConnect(205) — as needed</span>
+        ShowNotification(L<span class="s">"LiveRedirect: active"</span>);   <span class="c">// XNotifyQueueUI @656</span>
+    }
+    <span class="k">if</span> (reason == DLL_PROCESS_DETACH) {
+        RemoveExportHook(<span class="s">"xam.xex"</span>, <span class="n">67</span>, Real_XNetDnsLookup);
+        RemoveExportHook(<span class="s">"xam.xex"</span>, <span class="n">12</span>, Real_Connect);
+    }
+    <span class="k">return</span> <b>TRUE</b>;
+}</pre>
+</div>
+
+<h3><span class="idx">7.4</span>Safety and stability rules</h3>
+<ul>
+  <li><strong>Atomic patching</strong>&nbsp;— the export-table pointer swap must be a single aligned store; never leave a "half-hooked" state.</li>
+  <li><strong>Idempotent DETACH</strong>&nbsp;— unload restores original pointers; if later plugins fail to load, the system is not left with a corrupted table.</li>
+  <li><strong>Threads</strong>&nbsp;— hooks are called from many threads (title, dashboard, system threads); the mapping table is read-only after ATTACH; any state needs locks (or lock-free&nbsp;— contention is low).</li>
+  <li><strong>XNCALLER_TYPE</strong>&nbsp;— the hook sees the caller context (C3.1); you can log or map SYSAPP vs TITLE traffic differently.</li>
+  <li><strong>Base address</strong>&nbsp;— plugin <span class="mono">baseaddr</span> &gt; 0x90000000, no collisions with other plugins (community example: 0x91D00000).<sup class="src">[S7]</sup></li>
+  <li><strong>Configuration</strong>&nbsp;— read mapping rules from a file (e.g. <span class="mono">Hdd:\plugins\LiveRedirect.ini</span>) or a launch.ini section, so a server change never requires recompiling.</li>
+</ul>
+
+<h3><span class="idx">7.5</span>Build process (XDK-style toolchain)</h3>
+<div class="code">
+  <div class="code-head"><span>xex config XML + linker options</span><span class="lang">xml / msvc</span></div>
+  <pre><span class="c">&lt;!-- LiveRedirect.xml — xex image configuration --&gt;</span>
+&lt;xex&gt;
+  &lt;baseaddr addr=<span class="s">"0x91D00000"</span>/&gt;
+  &lt;sysdll /&gt;                          <span class="c">&lt;!-- system library (plugin) --&gt;</span>
+  &lt;format&gt;&lt;compressed /&gt;&lt;/format&gt;
+&lt;/xex&gt;
+
+<span class="c"># Project options (Visual Studio + xenon toolchain):</span>
+<span class="c">#   Application type : Dynamic Library (.xex)</span>
+<span class="c">#   Linker additional options : /DLL /ENTRY:"_DllMainCRTStartup" /ALIGN:128,4096</span>
+<span class="c">#   XEX config file : LiveRedirect.xml ("XEX Configuration File" property)</span>
+<span class="c">#   Deployment : Copy to Hard Drive  →  Hdd:\plugins\</span></pre>
+</div>
+<p>After building, add the path to <span class="mono">launch.ini</span> ([Plugins] section) and reboot&nbsp;— the plugin loads during system start, before the dashboard, guaranteeing the hooks are active before any application starts calling network functions.<sup class="src">[S7]</sup></p>
+
+<!-- ============================================================
+     C8 — COMMUNITY SERVER
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 8 · Server</div>
+  <div class="section-title">Community server — reference architecture</div>
+  <div class="divider"></div>
+</div>
+
+<p>This chapter defines <strong>what must exist on the other side</strong> for redirected traffic to end in a working online session. The model is dictated by console behavior (C4–C5): every "expected answer" of the console is a required server component. The architecture deliberately mirrors what Insignia achieved for Live 1.0 (a closed service rebuilt by closed-source reverse engineering and maintained for 216 games).<sup class="src">[S12]</sup></p>
+
+<figure class="diagram">
+  <div class="dg-title">Diagram D7 — Reference community-server architecture</div>
+  <div class="dg-body">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="dg-node" style="border-color:#3a5a45;"><div class="nn">Edge layer — DNS (L1)</div><div class="nd">authoritative DNS for selected Xbox domains → edge addresses&nbsp;· tip: model on insigniaDNS (Python, a simple forwarder+override)<sup class="src">[S9]</sup></div></div>
+      <div class="dg-arrow-v"></div>
+      <div style="display:flex;gap:10px;">
+        <div class="dg-node" style="flex:1;"><div class="nn">Console registration</div><div class="nd">MACS/UACS analog: verify console keys<br>(552 B certificate / online key), issue a "machine account"<sup class="src">[S10]</sup></div></div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Sign-in service (KR)</div><div class="nd">challenge/response (the XnpLogon 126/128 pattern)&nbsp;·<br>session tickets signed with our own key&nbsp;· KDC time in the answer</div></div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Service gateway (SG-like)</div><div class="nd">post-sign-in sessions&nbsp;· routing to services&nbsp;·<br>nonce (PRIMARY_SG_NONCE)<sup class="src">[S6]</sup></div></div>
+      </div>
+      <div class="dg-arrow-v"></div>
+      <div style="display:flex;gap:10px;">
+        <div class="dg-node" style="flex:1;"><div class="nn">Presence / friends</div><div class="nd">player lists, invites, notifications<br>(pattern: presence in LiNK/Insignia)</div></div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Matchmaking</div><div class="nd">sessions/lobbies per title (XNKID), exchanging participants'<br>XNADDR, result arbitration (OG pattern)<sup class="src">[S10]</sup></div></div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Storage / stats</div><div class="nd">leaderboards, per-profile saves&nbsp;— the analog of<br>XOnlineStorage* from Live 1.0<sup class="src">[S10]</sup></div></div>
+      </div>
+      <div class="dg-arrow-v"></div>
+      <div style="display:flex;gap:10px;">
+        <div class="dg-node" style="flex:1;"><div class="nn">Content CDN (HTTP)</div><div class="nd">URL patterns from Table 4.1: /content/&lt;titleID&gt;/…&nbsp;—<br>thumbnails, icons, box art<sup class="src">[S14]</sup></div></div>
+        <div class="dg-node" style="flex:1;"><div class="nn">Title updates</div><div class="nd">the title-update server; TU package format&nbsp;—<br>community tooling (Aurora/FSD) shows the pattern<sup class="src">[S22]</sup></div></div>
+        <div class="dg-node" style="flex:1;"><div class="nn">QoS responder</div><div class="nd">UDP probe responder (RTT/bandwidth)&nbsp;—<br>required, else the network test rejects the session (C3.5)</div></div>
+      </div>
+    </div>
+  </div>
+  <figcaption>D7 — server components; the top layer answers phases of D3, the lower rows the services and game traffic.</figcaption>
+</figure>
+
+<h3><span class="idx">8.1</span>Recommended implementation order</h3>
+<ol>
+  <li><strong>DNS + HTTP CDN</strong>&nbsp;— cheapest start, pure HTTP, zero cryptography; instant visible effect in the dashboard (icons/box art&nbsp;— URL patterns from Table 4.1).</li>
+  <li><strong>QoS responder + UPnP</strong>&nbsp;— lets the network test complete; the console handles UPnP itself via NetDll_Upnp* (the server simply must not block it).</li>
+  <li><strong>Console registration + sign-in</strong>&nbsp;— the heart of the system; requires RE of the ticket format (gap from C5.2); the challenge/response exchange pattern is the XnpLogon* export family.</li>
+  <li><strong>Presence and matchmaking</strong>&nbsp;— the first visible win for players; exchanging XNADDR between consoles (as in System Link&nbsp;— XNKID as the session identifier).</li>
+  <li><strong>Storage/TU</strong>&nbsp;— raising service quality to a full Live analog.</li>
+</ol>
+
+<h3><span class="idx">8.2</span>Game traffic: relay vs P2P</h3>
+<p>After matchmaking, a player console hosts or connects to peers over VDP sockets (UDP 3074) with XNKEY-encrypted traffic. Two server models: <strong>(a) P2P</strong>&nbsp;— the server only hands participants each other's XNADDR (the Live and Insignia model: gameplay is console↔console)<sup class="src">[S10][S12]</sup>; <strong>(b) relay</strong>&nbsp;— relay servers tunnel the encrypted packets (the XLink Kai model&nbsp;— requires patching the 30 ms limit on the console or very low relay latency).<sup class="src">[S12][S13]</sup> Recommendation: P2P by default + relay for "symmetric NAT" pairs where P2P cannot negotiate.</p>
+
+<h3><span class="idx">8.3</span>Clock and the "2025 cap"</h3>
+<p>The server should: (a) return KDC time in the sign-in response and accept a wide console-RTC deviation window; (b) not enforce TLS certificate validity on system traffic (use HTTP, C6-L3a); (c) document tools like TimeFixer for consoles with an exhausted RTC.<sup class="src">[S22]</sup></p>
+
+<!-- ============================================================
+     C9 — PRIOR ART
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 9 · Prior art</div>
+  <div class="section-title">Prior art — what already works in the community</div>
+  <div class="divider"></div>
+</div>
+
+<p>None of the projects described here is a mere curiosity&nbsp;— each solves a piece of the same puzzle. Below, a synthesis of their documentation and code.</p>
+
+<h3><span class="idx">9.1</span>Insignia — the full resurrection of Xbox Live 1.0 (OG Xbox)</h3>
+<p>The closest template for a 360 project. A non-commercial, closed-source replacement for the original Xbox Live: closed beta 2022, open beta with 25 games in November 2022, Halo 2 servers in March 2024; it supports 216 of 381 Live games and over 36,000 users (2026).<sup class="src">[S12]</sup> Rebuilt services: matchmaking, leaderboards, friends, invites, clans, UGC content, voice chat, updates/DLC for some titles.<sup class="src">[S12]</sup> Onboarding: web account registration + console registration (on unmodified consoles via the one-shot "endgame" USB exploit); configuration: primary DNS <span class="mono">46.101.64.175</span>; local insigniaDNS for restrictive ISPs.<sup class="src">[S8][S9][S12]</sup> The protocol architecture was rebuilt from RE: Kerberos + Secure Gateway + UACS/Machine Accounts.<sup class="src">[S10][S11]</sup> The directly transferable lesson: <strong>you do not need Microsoft's keys</strong>&nbsp;— it suffices that the server is the party issuing its own tickets, and the console accepts them because it trusts the server pointed to by DNS.</p>
+
+<h3><span class="idx">9.2</span>XLink Kai — System Link tunneling (OG + 360)</h3>
+<p>Team XLink's long-running service: an engine on a PC/RPi "glues" consoles into a virtual LAN (tunneling System Link broadcasts), with per-game and per-region arenas, XTag profiles, free, 1300+ games.<sup class="src">[S12][S13]</sup> The exposed kaiEngine API (REST-like: GetActiveGames/v3, GetGameList/v3; arena vectors, per-game ping limits) shows what a presence/matchmaking layer looks like without touching Live protocols.<sup class="src">[S13]</sup> Engineering lesson: the 30 ms System Link limit on the 360 (C3.6)&nbsp;— XLink documents it as a deliberate anti-tunneling safeguard; an RGH console can patch it.<sup class="src">[S12]</sup></p>
+
+<h3><span class="idx">9.3</span>Aurora LiNK — the online service for RGH (360)</h3>
+<p>The service built into the Aurora dashboard for modified consoles: online play via System Link tunneling plus a social layer (friends, presence, notifications). Requires RGH partly because of the 30 ms limit. <strong>UNVERIFIED in technical detail</strong> (the creators' sites&nbsp;— realmodscene/Phoenix&nbsp;— were unreachable from this research environment); indirectly confirmed: community discussions about having to disable LiNK for clean LAN System Link, and about the service allowing one console per IP when hosting.<sup class="src">[S22]</sup> Lesson: <strong>for an RGH audience, System Link + presence is enough</strong>&nbsp;— full Live sign-in is not a precondition for online play.</p>
+
+<h3><span class="idx">9.4</span>Knowledge and code repositories</h3>
+<table>
+  <thead><tr><th style="width:150px;">Project</th><th>What it contributes to our project</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">xenia</td><td>The most complete public implementation of the X360 API (NetDll, XHttp, XNADDR/XNDNS structures); behavioral patterns titles expect (e.g. WSADATA round-trips, non-zero abEnet).<sup class="src">[S5]</sup></td></tr>
+    <tr><td class="c-mono">exjam/xbox360-emu</td><td>Ordinal tables for all modules (xam, xboxkrnl, xbdm, connectx, vk)&nbsp;— Appendix A is based on them.<sup class="src">[S4]</sup></td></tr>
+    <tr><td class="c-mono">xkelib (hiddriver360)</td><td>XNet/Xnp/XHttp prototypes from xamNet.h and XeCrypt from keXeCrypt.h&nbsp;— the community's "official" signatures; the library archive from the TitanOffLine project.<sup class="src">[S6]</sup></td></tr>
+    <tr><td class="c-mono">ExCrypt (emoose)</td><td>An XeCrypt reimplementation for the PC (RC4/AES/HMAC/RSA…) for offline cryptography analysis.<sup class="src">[S16]</sup></td></tr>
+    <tr><td class="c-mono">insigniaDNS</td><td>The model local DNS server (Python) for networks with ISP restrictions.<sup class="src">[S9]</sup></td></tr>
+    <tr><td class="c-mono">X-Store (XboxTLS)</td><td>Proof that a user-mode TLS 1.2 client is feasible on the 360 without the system certificate store.<sup class="src">[S19]</sup></td></tr>
+    <tr><td class="c-mono">36C3 / DEF CON 30 talks</td><td>"Reversing the Original Xbox Live Protocols" (Tristan Miller)&nbsp;— Live 1.0 architecture and the ethics of supporting abandoned networked devices.<sup class="src">[S11]</sup></td></tr>
+    <tr><td class="c-mono">Free60 / xboxdevwiki / Xenon Library</td><td>Boot, console certificate, Live 1.0 (Kerberos/SG/UACS/MACS), System Link, file formats (GPD, Account, XConfig).<sup class="src">[S2][S3][S10][S14][S15]</sup></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 9.1 — Map of community resources used in this document.</div>
+
+<!-- ============================================================
+     C10 — RISKS, GAPS, ETHICS
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Chapter 10 · Meta</div>
+  <div class="section-title">Risks, RE gaps, ethics and law</div>
+  <div class="divider"></div>
+</div>
+
+<h3><span class="idx">10.1</span>Technical risks</h3>
+<ul>
+  <li><strong>Console stability</strong>&nbsp;— every memory patch can end the session in a crash; minimize the patch surface (hook pointers, not code), test on devkits/RGH with xbdm.</li>
+  <li><strong>Dashboard versions</strong>&nbsp;— NetDll/XAM ordinals are stable (titles link by them), but XHttp/sign-in code paths may differ between 16537 and 17559; the hook assumes nothing about code, so it survives&nbsp;— but L3-c validations need per-version offsets.</li>
+  <li><strong>The 30 ms limit</strong>&nbsp;— with relays we must patch or provide geographically close servers.<sup class="src">[S12]</sup></li>
+  <li><strong>Clock</strong>&nbsp;— RTC cap and drift; the server must tolerate and correct time (C8.3).<sup class="src">[S22]</sup></li>
+  <li><strong>Scaling</strong>&nbsp;— VDP sessions are P2P, so server load grows with presence/matchmaking, not game traffic&nbsp;— good news for cheap infrastructure.</li>
+</ul>
+
+<h3><span class="idx">10.2</span>RE gaps to close (the UNVERIFIED map)</h3>
+<table>
+  <thead><tr><th style="width:230px;">Gap</th><th>How to close it</th></tr></thead>
+  <tbody>
+    <tr><td>Exact KR ticket format on 360 (PA-DATA fields, offsets)</td><td>Analysis of xam.xex (functions calling XnpLogonGetChallenge/SetChallengeResponse) + session capture on a dev console with xbdm.</td></tr>
+    <tr><td>Root-CA store / XHttp validation path</td><td>Analysis of the system image and xam.xex; test with a TLS server holding our own CA on an RGH console.</td></tr>
+    <tr><td>TU host list and the full 360-era name list</td><td>Wireshark/tcpdump on the router during a full dashboard+game cycle; compare with XONE-era lists.<sup class="src">[S20]</sup></td></tr>
+    <tr><td>UDP 88 / 360-era auth ports</td><td>Same&nbsp;— capture sign-in traffic.</td></tr>
+    <tr><td>LiNK technical details</td><td>Aurora/Phoenix documentation (realmodscene) from a network without Cloudflare blocks.</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table 10.1 — Open research questions and how to resolve them.</div>
+
+<h3><span class="idx">10.3</span>Ethics and legal framing (the community's perspective)</h3>
+<p>The 36C3/DEF CON talk puts it best: supporting abandoned networked devices that the vendor no longer updates is a form of heritage preservation, and the homebrew community's doctrine consistently separates <strong>interoperability</strong> (your own console, your own servers, keeping purchased games functional) from <strong>license circumvention</strong> (unauthorized content acquisition).<sup class="src">[S11]</sup> A redirect project should: run only on the owner's hardware or with consent, not distribute vendor keys or content, not enable play of titles the user does not own, and be released non-commercially&nbsp;— exactly the mode Insignia operates in.<sup class="src">[S12]</sup> Legal aspects (copyright, DMCA/EUCD interoperability provisions) differ between jurisdictions&nbsp;— consult local counsel before public distribution; this document is a technical analysis, not legal advice.</p>
+
+<!-- ============================================================
+     APPENDIX A — ORDINAL TABLES
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Appendix A · Reference</div>
+  <div class="section-title">Ordinal tables (xam.xex / xboxkrnl.exe)</div>
+  <div class="divider"></div>
+</div>
+
+<p>All tables come from export-table dumps (exjam/xbox360-emu, cross-confirmed by xenia's <span class="mono">xam_table.inc</span>/<span class="mono">xboxkrnl_table.inc</span> and xkelib .def files)<sup class="src">[S4][S5][S6]</sup> and cover the <span class="mono">xam.xex</span> module (networking) and <span class="mono">xboxkrnl.exe</span> (cryptography). Numbers are stable across dashboard versions&nbsp;— titles link by them, which makes them a safe resolution key for the plugin.</p>
+
+<h3><span class="idx">A.1</span>NetDll — Winsock (1–36)</h3>
+<table>
+  <tbody>
+    <tr><td class="c-mono">1 WSAStartup</td><td class="c-mono">14 accept</td><td class="c-mono">24 sendto</td><td class="c-mono">32 WSAResetEvent</td></tr>
+    <tr><td class="c-mono">2 WSACleanup</td><td class="c-mono">15 select</td><td class="c-mono">25 WSASendTo</td><td class="c-mono">33 WSAWaitForMultipleEvents</td></tr>
+    <tr><td class="c-mono">3 socket</td><td class="c-mono">16 WSAGetOverlappedResult</td><td class="c-mono">26 inet_addr</td><td class="c-mono">34 __WSAFDIsSet</td></tr>
+    <tr><td class="c-mono">4 closesocket</td><td class="c-mono">17 WSACancelOverlappedIO</td><td class="c-mono">27 WSAGetLastError</td><td class="c-mono">35 WSAEventSelect</td></tr>
+    <tr><td class="c-mono">5 shutdown</td><td class="c-mono">18 recv</td><td class="c-mono">28 WSASetLastError</td><td class="c-mono">36 WSAStartupEx</td></tr>
+    <tr><td class="c-mono">6 ioctlsocket</td><td class="c-mono">19 WSARecv</td><td class="c-mono">29 WSACreateEvent</td><td></td></tr>
+    <tr><td class="c-mono">7 setsockopt</td><td class="c-mono">20 recvfrom</td><td class="c-mono">30 WSACloseEvent</td><td></td></tr>
+    <tr><td class="c-mono">8 getsockopt</td><td class="c-mono">21 WSARecvFrom</td><td class="c-mono">31 WSASetEvent</td><td></td></tr>
+    <tr><td class="c-mono">9 getsockname</td><td class="c-mono">22 send</td><td></td><td></td></tr>
+    <tr><td class="c-mono">10 getpeername</td><td class="c-mono">23 WSASend</td><td></td><td></td></tr>
+    <tr><td class="c-mono">11 bind</td><td></td><td></td><td></td></tr>
+    <tr><td class="c-mono">12 connect</td><td></td><td></td><td></td></tr>
+    <tr><td class="c-mono">13 listen</td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.1 — NetDll (Winsock), full range 1–36; every function takes a leading XNCALLER_TYPE parameter.</div>
+
+<h3><span class="idx">A.2</span>NetDll — XNet (51–86)</h3>
+<table>
+  <tbody>
+    <tr><td class="c-mono">51 XNetStartup</td><td class="c-mono">63 XNetUnregisterInAddr</td><td class="c-mono">75 XNetGetEthernetLinkStatus</td></tr>
+    <tr><td class="c-mono">52 XNetCleanup</td><td class="c-mono">64 XNetXnAddrToMachineId</td><td class="c-mono">76 XNetGetBroadcastVersionStatus</td></tr>
+    <tr><td class="c-mono">53 XNetRandom</td><td class="c-mono">65 XNetConnect</td><td class="c-mono">77 XNetQosGetListenStats</td></tr>
+    <tr><td class="c-mono">54 XNetCreateKey</td><td class="c-mono">66 XNetGetConnectStatus</td><td class="c-mono">78 XNetGetOpt</td></tr>
+    <tr><td class="c-mono">55 XNetRegisterKey</td><td class="c-mono">67 XNetDnsLookup</td><td class="c-mono">79 XNetSetOpt</td></tr>
+    <tr><td class="c-mono">56 XNetUnregisterKey</td><td class="c-mono">68 XNetDnsRelease</td><td class="c-mono">80 XNetStartupEx</td></tr>
+    <tr><td class="c-mono">57 XNetXnAddrToInAddr</td><td class="c-mono">69 XNetQosListen</td><td class="c-mono">81 XNetReplaceKey</td></tr>
+    <tr><td class="c-mono">58 XNetServerToInAddr</td><td class="c-mono">70 XNetQosLookup</td><td class="c-mono">82 XNetGetXnAddrPlatform</td></tr>
+    <tr><td class="c-mono">59 XNetTsAddrToInAddr</td><td class="c-mono">71 XNetQosServiceLookup</td><td class="c-mono">83 XNetGetSystemLinkPort</td></tr>
+    <tr><td class="c-mono">60 XNetInAddrToXnAddr</td><td class="c-mono">72 XNetQosRelease</td><td class="c-mono">84 XNetSetSystemLinkPort</td></tr>
+    <tr><td class="c-mono">61 XNetInAddrToServer</td><td class="c-mono">73 XNetGetTitleXnAddr</td><td class="c-mono">85 XNetDnsReverseLookup</td></tr>
+    <tr><td class="c-mono">62 XNetInAddrToString</td><td class="c-mono">74 XNetGetDebugXnAddr</td><td class="c-mono">86 XNetDnsReverseRelease</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.2 — the XNet secure-addressing layer.</div>
+
+<h3><span class="idx">A.3</span>NetDll — Xnp, the XNet platform (101–142)</h3>
+<table>
+  <tbody>
+    <tr><td class="c-mono">101 XnpLoadConfigParams</td><td class="c-mono">111 XnpEthernetInterceptRecv</td></tr>
+    <tr><td class="c-mono">102 XnpSaveConfigParams</td><td class="c-mono">112 XnpLogonGetStatus</td></tr>
+    <tr><td class="c-mono">103 XnpConfigUPnP</td><td class="c-mono">113–116 XnpLogon Q-flags/Q-event (Get/Set/Clear)</td></tr>
+    <tr><td class="c-mono">104 XnpConfig</td><td class="c-mono">117 XnpLogonGetQVals</td></tr>
+    <tr><td class="c-mono">105 XnpGetConfigStatus</td><td class="c-mono">118 XnpLogonSetQVals</td></tr>
+    <tr><td class="c-mono">106 XnpLoadMachineAccount</td><td class="c-mono">119 XnpLogonSetPState</td></tr>
+    <tr><td class="c-mono">107 XnpSaveMachineAccount</td><td class="c-mono">120 XnpGetVlanXboxName</td></tr>
+    <tr><td class="c-mono">108 XnpCapture</td><td class="c-mono">121 XnpSetVlanXboxName</td></tr>
+    <tr><td class="c-mono">109 XnpEthernetInterceptSetCallbacks</td><td class="c-mono">122 XnpGetActiveSocketList</td></tr>
+    <tr><td class="c-mono">110 XnpEthernetInterceptXmit</td><td class="c-mono">123 XnpNoteSystemTime</td></tr>
+    <tr><td class="c-mono">124 XnpRegisterKeyForCallerType</td><td class="c-mono">134 XnpEthernetInterceptSetExtendedRecvCb</td></tr>
+    <tr><td class="c-mono">125 XnpUnregisterKeyForCallerType</td><td class="c-mono">135 XnpQosHistoryLoad</td></tr>
+    <tr><td class="c-mono">126 XnpLogonGetChallenge</td><td class="c-mono">136 XnpQosHistorySaveMeasurements</td></tr>
+    <tr><td class="c-mono">127 XnpLogonClearChallenge</td><td class="c-mono">137 XnpQosHistoryGetEntries</td></tr>
+    <tr><td class="c-mono">128 XnpLogonSetChallengeResponse</td><td class="c-mono">138 XnpQosHistoryGetAggregateMeasurement</td></tr>
+    <tr><td class="c-mono">129 XnpGetSecAssocList</td><td class="c-mono">139 XnpToolSetCallbacks</td></tr>
+    <tr><td class="c-mono">130 XnpGetKeyList</td><td class="c-mono">140 XnpToolIpProxyInject</td></tr>
+    <tr><td class="c-mono">131 XnpGetQosLookupList</td><td class="c-mono">141 XnpUpdateConfigParams</td></tr>
+    <tr><td class="c-mono">132 XnpPersistTitleState</td><td class="c-mono">142 XnpEthernetInterceptXmitAsIp</td></tr>
+    <tr><td class="c-mono">133 XnpReplaceKeyForCallerType</td><td class="c-mono">&nbsp;</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.3 — platform layer: configuration, machine account, sign-in challenge, frame interception.</div>
+
+<h3><span class="idx">A.4</span>NetDll — XHttp (201–222) and UPnP (251–264)</h3>
+<table>
+  <tbody>
+    <tr><td class="c-mono">201 XHttpStartup</td><td class="c-mono">209 XHttpSendRequest</td><td class="c-mono">217 XHttpSetCredentials</td></tr>
+    <tr><td class="c-mono">202 XHttpShutdown</td><td class="c-mono">210 XHttpReceiveResponse</td><td class="c-mono">218 XHttpQueryAuthSchemes</td></tr>
+    <tr><td class="c-mono">203 XHttpOpen</td><td class="c-mono">211 XHttpQueryHeaders</td><td class="c-mono">219 XHttpCrackUrlW</td></tr>
+    <tr><td class="c-mono">204 XHttpCloseHandle</td><td class="c-mono">212 XHttpReadData</td><td class="c-mono">220 XHttpCrackUrl</td></tr>
+    <tr><td class="c-mono">205 XHttpConnect</td><td class="c-mono">213 XHttpWriteData</td><td class="c-mono">221 XHttpCreateUrl</td></tr>
+    <tr><td class="c-mono">206 XHttpSetStatusCallback</td><td class="c-mono">214 XHttpQueryOption</td><td class="c-mono">222 XHttpCreateUrlW</td></tr>
+    <tr><td class="c-mono">207 XHttpOpenRequest</td><td class="c-mono">215 XHttpSetOption</td><td class="c-mono">251–264 Upnp* (Startup, Search,</td></tr>
+    <tr><td class="c-mono">208 XHttpOpenRequestUsingMemory</td><td class="c-mono">216 XHttpDoWork</td><td class="c-mono">Describe, Action, Event, DoWork, Close)</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.4 — HTTP(S) and UPnP; XHttp is the WinHTTP-like service layer.</div>
+
+<h3><span class="idx">A.5</span>XNetLogon — sign-in API (301–322)</h3>
+<table>
+  <tbody>
+    <tr><td class="c-mono">301 GetLoggedOnUsers</td><td class="c-mono">309 GetMachineID</td><td class="c-mono">317 InitOverrideInfo</td></tr>
+    <tr><td class="c-mono">302 GetNatType</td><td class="c-mono">310 GetTitleID</td><td class="c-mono">318 GetLastUPnPStatus</td></tr>
+    <tr><td class="c-mono">303 TaskStart</td><td class="c-mono">311 GetTitleVersion</td><td class="c-mono">319 GetFlowToken</td></tr>
+    <tr><td class="c-mono">304 TaskClose</td><td class="c-mono">312 GetServiceNetworkID</td><td class="c-mono">320 GetTicketOpt</td></tr>
+    <tr><td class="c-mono">305 TaskContinue</td><td class="c-mono">313 GetDnsString</td><td class="c-mono">321 SetTicketOpt</td></tr>
+    <tr><td class="c-mono">306 GetServiceInfo</td><td class="c-mono">314 SetTitleID</td><td class="c-mono">322 GetState</td></tr>
+    <tr><td class="c-mono">307 GetUserPrivileges</td><td class="c-mono">315 GetExtendedStatus</td><td></td></tr>
+    <tr><td class="c-mono">308 SetConsoleCertificate</td><td class="c-mono">316 ClearTicketCaches</td><td></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.5 — the XNetLogon* family (shared prefix).</div>
+
+<h3><span class="idx">A.6</span>xboxkrnl.exe — XeCrypt (345–402, 784–806, 863–865)</h3>
+<table>
+  <tbody>
+    <tr><td class="c-mono">345 AesKey</td><td class="c-mono">367 BnDwLeDwToPkcs1Sig</td><td class="c-mono">389 HmacShaVerify</td></tr>
+    <tr><td class="c-mono">346 AesEcb</td><td class="c-mono">368 BnDwLePkcs1Verify</td><td class="c-mono">390 Md5Digest</td></tr>
+    <tr><td class="c-mono">347 AesCbc</td><td class="c-mono">369–372 BnQwBeSig* (4)</td><td class="c-mono">391 Md5Init/Update/Final…</td></tr>
+    <tr><td class="c-mono">348 BnDwLeInit</td><td class="c-mono">373 BnQwNeRsaKeyGen</td><td class="c-mono">392–394 Parve*</td></tr>
+    <tr><td class="c-mono">349 BnDwLeSetUint</td><td class="c-mono">374 BnQwNeRsaPrvCrypt</td><td class="c-mono">395 Rc4Key</td></tr>
+    <tr><td class="c-mono">350–353 BnDwLe* (mul/cmp)</td><td class="c-mono">375 BnQwNeRsaPubCrypt</td><td class="c-mono">396 Rc4Ecb</td></tr>
+    <tr><td class="c-mono">354 BnDwLeDhKey</td><td class="c-mono">376 ChainAndSumMac</td><td class="c-mono">397 Rc4</td></tr>
+    <tr><td class="c-mono">355 BnDwLeDhValue</td><td class="c-mono">377–380 Des/Des3* (4)</td><td class="c-mono">398 Random</td></tr>
+    <tr><td class="c-mono">356–360 BnDwLe* (5)</td><td class="c-mono">381–385 HmacMd5* (5)</td><td class="c-mono">399 RotSumSha</td></tr>
+    <tr><td class="c-mono">361–366 BnDwLePkcs1* (6)</td><td class="c-mono">386–388 HmacSha* (3)</td><td class="c-mono">400–402 Sha*</td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.6 — XeCrypt core (345–402); further: 784–806 SHA-256/384/512 + Bn compare, 863–865 AesCtr/AesCbcMac/AesDmMac; in xenia: XeCryptRc4 = 0x18D (397).<sup class="src">[S5]</sup></div>
+
+<h3><span class="idx">A.7</span>Selected auxiliary exports</h3>
+<table>
+  <thead><tr><th style="width:80px;">Module</th><th style="width:80px;">Ord</th><th>Function · role</th></tr></thead>
+  <tbody>
+    <tr><td class="c-mono">xam</td><td class="c-mono">123</td><td><span class="mono">NetDll_XnpNoteSystemTime</span>&nbsp;— the system-time path inside Xnp.</td></tr>
+    <tr><td class="c-mono">xam</td><td class="c-mono">650–656</td><td><span class="mono">XNotifyCreateListener… XNotifyQueueUI(656)</span>&nbsp;— UI notifications (used by plugins).<sup class="src">[S7]</sup></td></tr>
+    <tr><td class="c-mono">xam</td><td class="c-mono">523/548</td><td><span class="mono">XamUserLogon / XamUserLogonEx</span>&nbsp;— user sign-in from the application's perspective.</td></tr>
+    <tr><td class="c-mono">xam</td><td class="c-mono">572–575</td><td><span class="mono">XamProfileSave/LoadWindowsLiveCredentials</span> (+ Is/SetEnabled)&nbsp;— WLID credentials in the profile.</td></tr>
+    <tr><td class="c-mono">xboxkrnl</td><td class="c-mono">735 (0x2DF)</td><td><span class="mono">XexSetLastKdcTime</span>&nbsp;— the kernel storing KDC (Kerberos) time.<sup class="src">[S5][S18]</sup></td></tr>
+    <tr><td class="c-mono">xboxkrnl</td><td class="c-mono">1081</td><td><span class="mono">XRegisterThreadNotifyRoutine</span>&nbsp;— thread-notification registration (used by plugins).</td></tr>
+    <tr><td class="c-mono">HV (sc)</td><td class="c-mono">49/53/55/57–60</td><td><span class="mono">HvxKeysGenerateRandomKey / SaveKeyVault / GetKey / RsaPrvCrypt / HmacSha / AesCbc / Des2Cbc</span>&nbsp;— hypervisor key operations.<sup class="src">[S4]</sup></td></tr>
+  </tbody>
+</table>
+<div class="tbl-caption">Table A.7 — auxiliary exports relevant to the plugin and the server.</div>
+
+<!-- ============================================================
+     APPENDIX B — GLOSSARY
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Appendix B · Reference</div>
+  <div class="section-title">Glossary</div>
+  <div class="divider"></div>
+</div>
+
+<div class="gloss">
+  <div class="g-term">XAM</div><div class="g-def">Xbox Application Model — the <span class="mono">xam.xex</span> module: the system layer above the kernel hosting profiles, system UI, content and the whole network stack applications see (NetDll_*).</div>
+  <div class="g-term">XNet</div><div class="g-def">The Xbox secure-addressing and session layer: turns XNADDR+XNKID into "secure" IN_ADDR handles, registers session keys (XNKEY), runs QoS and DNS.</div>
+  <div class="g-term">Xnp</div><div class="g-def">"XNet platform" — the internal configuration/state layer (XNetConfigParams, machine account, sign-in challenge, security associations, Ethernet intercept).</div>
+  <div class="g-term">NetDll_*</div><div class="g-def">The xam.xex network export prefix (Winsock-like + XNet + XHttp + UPnP), each taking a leading XNCALLER_TYPE.</div>
+  <div class="g-term">KR / KDC</div><div class="g-def">The ticket-protocol family derived from Kerberos; KDC (Key Distribution Center) — the ticket-issuing server; 360 trace: XexSetLastKdcTime.</div>
+  <div class="g-term">SG (Secure Gateway)</div><div class="g-def">The Live service gateway: after authentication, an SG session opens matchmaking, statistics and storage; 360 trace: PRIMARY_SG_NONCE 0x1398.</div>
+  <div class="g-term">MACS / UACS</div><div class="g-def">Machine Account Creation Service and User Account Creation Service — Live 1.0 services; the registration patterns for a community server.</div>
+  <div class="g-term">PA-DATA</div><div class="g-def">Pre-authentication data — extensible Kerberos request fields; Xbox uses types 131, 204, 206 (console/title versions).</div>
+  <div class="g-term">VDP</div><div class="g-def">An XNet socket type (SOCK_VDP) for game voice/data traffic — UDP with an XNet security overlay; WSASendTo takes two buffers (length + data).</div>
+  <div class="g-term">XNKID / XNKEY</div><div class="g-def">Session identifier and session key of a console pair; registered via XNetCreateKey/XNetRegisterKey; the basis of the "secure network".</div>
+  <div class="g-term">XNADDR</div><div class="g-def">Console address structure (38 B): local/online IP, online port, MAC, 20-byte online identifier.</div>
+  <div class="g-term">QoS</div><div class="g-def">Quality of Service — RTT/bandwidth probes (XNetQos*) run before a session; a community server must answer them.</div>
+  <div class="g-term">System Link</div><div class="g-def">LAN play over UDP 3074 (address 0.0.0.1); on the 360 with a 30 ms ping limit (anti-tunneling).</div>
+  <div class="g-term">KeyVault</div><div class="g-def">A protected flash area holding console keys (incl. HDD key, online key); accessible only via HvxKeys* syscalls.</div>
+  <div class="g-term">XeCrypt</div><div class="g-def">The kernel's cryptographic export family (RC4, AES, DES, MD5/SHA, HMAC, RSA, DH); PC reimplementation: the ExCrypt project.</div>
+  <div class="g-term">Ordinal</div><div class="g-def">A module export number used by GetProcAddress to resolve a function — the stable identifier of the X360 API.</div>
+  <div class="g-term">DashLaunch</div><div class="g-def">A system module (launch.xex) loading up to 5 plugins (.xex/sysdll) per launch.ini; the standard vehicle for RGH community system extensions.</div>
+  <div class="g-term">RGH / JTAG</div><div class="g-def">Console unlock techniques allowing unsigned code to run — the plugin's prerequisite.</div>
+  <div class="g-term">PUID</div><div class="g-def">Passport User ID — the account identifier in the player profile (next to gamertag and online key).</div>
+  <div class="g-term">GPD</div><div class="g-def">Game Progress Data — game/profile data files; their headers reveal content-CDN URL patterns (Table 4.1).</div>
+  <div class="g-term">TU (Title Update)</div><div class="g-def">A title update distributed via the Live service; a community server can fill this role for titles the user owns.</div>
+  <div class="g-term">RTC</div><div class="g-def">The console's real-time clock; bounded range (the "2025 cap") and drift — relevant to tickets and TLS.</div>
+</div>
+
+<!-- ============================================================
+     APPENDIX C — SOURCES
+============================================================ -->
+<div class="chapter-header">
+  <div class="section-tag">Appendix C · Reference</div>
+  <div class="section-title">Source registry [S1]–[S24]</div>
+  <div class="divider"></div>
+</div>
+
+<p>The registry is complete with respect to the document's content: every <sup class="src">[Sn]</sup> marker in the text points to a source below. All entries are community material; vendor documentation was not used.</p>
+
+<div class="src-item"><span class="s-id">[S1]</span> <span class="s-name">xboxdevwiki — System Link</span><span class="s-url">https://xboxdevwiki.net/System_Link</span><span class="s-note">UDP 3074, 0.0.0.1 addressing, XNKID session detection.</span></div>
+<div class="src-item"><span class="s-id">[S2]</span> <span class="s-name">Free60 — Boot Process / Bootloaders</span><span class="s-url">https://free60.org/System-Software/Boot_Process · https://free60.org/System-Software/Bootloaders</span><span class="s-note">1BL→CB→CD→HV/kernel boot chain, RSA verification.</span></div>
+<div class="src-item"><span class="s-id">[S3]</span> <span class="s-name">Xenon Library — Bootloaders (Free60 continuation)</span><span class="s-url">https://xenonlibrary.com/wiki/Bootloaders</span><span class="s-note">CPU Key, intermediate bootloaders, POST codes.</span></div>
+<div class="src-item"><span class="s-id">[S4]</span> <span class="s-name">exjam/xbox360-emu — docs/kernel/ordinals (syscall.ord, xboxkrnl.ord, xam.ord, xbdm.ord, connectx.ord, vk.ord, structures.txt)</span><span class="s-url">https://github.com/exjam/xbox360-emu/tree/master/docs/kernel/ordinals</span><span class="s-note">Export-table dumps for all modules (xam: 1547, xboxkrnl: 887, xbdm: 252) — the basis of Appendix A.</span></div>
+<div class="src-item"><span class="s-id">[S5]</span> <span class="s-name">xenia-project/xenia — kernel/xam/xam_net.cc; xboxkrnl_table.inc; xam_table.inc</span><span class="s-url">https://github.com/xenia-project/xenia/blob/master/src/xenia/kernel/xam/xam_net.cc</span><span class="s-note">NetDll_* implementation; XNADDR/XNDNS/XNQOS/WSADATA structures; VDP (two WSASendTo buffers); hex ordinals confirming exjam.</span></div>
+<div class="src-item"><span class="s-id">[S6]</span> <span class="s-name">EinTim23/hiddriver360 — xkelib (xam/xamNet.h, kernel/keXeCrypt.h)</span><span class="s-url">https://github.com/EinTim23/hiddriver360/tree/master/hiddriver/xkelib</span><span class="s-note">The xkelib archive (from the TitanOffLine project): NetDll_XNet*/Xnp*/XHttp* prototypes, SO_*/XNET_OPTID_* constants, XNetConfigParams (492 B), XnSecAssocInfo, XE_CONSOLE_CERTIFICATE.</span></div>
+<div class="src-item"><span class="s-id">[S7]</span> <span class="s-name">ClementDreptin/ModdingResources — Getting Started (DashLaunch plugins)</span><span class="s-url">https://github.com/ClementDreptin/ModdingResources/blob/main/GettingStarted/getting-started.md</span><span class="s-note">DllMain, launch.ini (plugin1–5), ordinal-based ResolveFunction, XNotifyQueueUI @656, baseaddr, the 0x816A3158 patch, linker options and xex XML.</span></div>
+<div class="src-item"><span class="s-id">[S8]</span> <span class="s-name">Insignia — Connect (user documentation)</span><span class="s-url">https://insignia.live/connect</span><span class="s-note">Primary DNS 46.101.64.175, dashboard requirements, console/player registration, P2P gameplay.</span></div>
+<div class="src-item"><span class="s-id">[S9]</span> <span class="s-name">insignia-live/insigniaDNS</span><span class="s-url">https://github.com/insignia-live/insigniaDNS</span><span class="s-note">The local DNS server (Python) for ISPs blocking custom DNS — the L1 layer template.</span></div>
+<div class="src-item"><span class="s-id">[S10]</span> <span class="s-name">xboxdevwiki — Xbox Live (+ /Machine_Account)</span><span class="s-url">https://xboxdevwiki.net/Xbox_Live · https://xboxdevwiki.net/Xbox_Live/Machine_Account</span><span class="s-note">Live 1.0 architecture: Kerberos + extensions (PA-DATA 131/204/206), Secure Gateway, UACS, MACS.XBOXLIVE.COM, the pre-shared key (Online Key + HDD Key + key inside Live binaries), XOnline* API, arbitration, storage.</span></div>
+<div class="src-item"><span class="s-id">[S11]</span> <span class="s-name">TIB AV-Portal — "Reversing the Original Xbox Live Protocols" (36C3 2019; DEF CON 30 version 2022, Tristan Miller)</span><span class="s-url">https://av.tib.eu/media/62261</span><span class="s-note">A talk on Live 1.0 architecture and the ethics of replacement servers for abandoned devices.</span></div>
+<div class="src-item"><span class="s-id">[S12]</span> <span class="s-name">Wikipedia — Insignia (Xbox); XLink Kai</span><span class="s-url">https://en.wikipedia.org/wiki/Insignia_(Xbox) · https://en.wikipedia.org/wiki/XLink_Kai</span><span class="s-note">Insignia history and scale (216/381 games, 36k+ users); XLink Kai mechanics and the 360's 30 ms limit.</span></div>
+<div class="src-item"><span class="s-id">[S13]</span> <span class="s-name">Team XLink — API Endpoints (kaiEngine)</span><span class="s-url">https://teamxlink.co.uk/wiki/API_Endpoints</span><span class="s-note">The engine's REST-like API: GetActiveGames/v3, GetGameList/v3, arena vectors, ping limits.</span></div>
+<div class="src-item"><span class="s-id">[S14]</span> <span class="s-name">Free60Project/wiki (GitHub) — GPD.md; Profile_Account.md; XConfig.md</span><span class="s-url">https://github.com/Free60Project/wiki/blob/master/docs/System-Software/Formats/GPD.md · …/Profile_Account.md · …/XConfig.md</span><span class="s-note">Content-CDN URL patterns (download/image/avatar.xboxlive.com, tiles.xbox.com, marketplace.xbox.com); Account-file encryption (HMAC-SHA1 idx 0x19 + RC4, confounder, 380 B); XConfig timezone fields.</span></div>
+<div class="src-item"><span class="s-id">[S15]</span> <span class="s-name">Free60 — Console Security Certificate</span><span class="s-url">https://free60.org/System-Software/Console_Security_Certificate/</span><span class="s-note">The console certificate, RSA-2048, 552 B (0x228) — machine identity.</span></div>
+<div class="src-item"><span class="s-id">[S16]</span> <span class="s-name">emoose/ExCrypt</span><span class="s-url">https://github.com/emoose/ExCrypt</span><span class="s-note">Open-source drop-in replacement for the XeCrypt suite (BSD-3) for offline analysis.</span></div>
+<div class="src-item"><span class="s-id">[S17]</span> <span class="s-name">Den Delimarsky — Querying the Xbox Live Game Marketplace</span><span class="s-url">https://den.dev/blog/query-xbox-marketplace/</span><span class="s-note">catalog-cdn.xboxlive.com /Catalog/Catalog.asmx/Query — Names/Values parameters and the Atom response (2011, 360 era).</span></div>
+<div class="src-item"><span class="s-id">[S18]</span> <span class="s-name">rexdex/recompiler — xenon_decompiler.xml</span><span class="s-url">https://github.com/rexdex/recompiler</span><span class="s-note">An independent HV syscall table with hexadecimal ids (confirming exjam).</span></div>
+<div class="src-item"><span class="s-id">[S19]</span> <span class="s-name">951261/X-Store — XboxTLS.h</span><span class="s-url">https://github.com/951261/X-Store/blob/main/XboxTLS.h</span><span class="s-note">A homebrew TLS 1.2 client for the 360 — proof of user-mode TLS feasibility.</span></div>
+<div class="src-item"><span class="s-id">[S20]</span> <span class="s-name">Xbox One Research wiki — XSTS tokens; relying parties</span><span class="s-url">https://xboxoneresearch.github.io/wiki/xbox-live/xsts-token</span><span class="s-note">XSTS tokens (JWT/JWE, identities xdi/xti/xsi/xui) and the XONE-era endpoint list — evolution context.</span></div>
+<div class="src-item"><span class="s-id">[S21]</span> <span class="s-name">Copetti — Xbox 360 Architecture</span><span class="s-url">https://www.copetti.org/writings/consoles/xbox-360/</span><span class="s-note">Hardware architecture background (Xenon, Xenos, memory).</span></div>
+<div class="src-item"><span class="s-id">[S22]</span> <span class="s-name">consolemods.org — Xbox 360 wiki (DashLaunch, LiNK, Title Updates, TimeFixer)</span><span class="s-url">https://consolemods.org/wiki/Xbox_360:DashLaunch · …/Xbox_360:LiNK · …/Xbox_360:TimeFixer</span><span class="s-note">DashLaunch configuration; the LiNK description; the RTC problem (2025 cap) and TimeFixer; TU practice.</span></div>
+<div class="src-item"><span class="s-id">[S23]</span> <span class="s-name">Kotaku — Insignia Project Aims To Resurrect Xbox Live</span><span class="s-url">https://kotaku.com/insignia-project-aims-to-resurrect-xbox-live-for-the-or-1843600151</span><span class="s-note">Media context: Kerberos in Live, protocol RE (2020).</span></div>
+<div class="src-item"><span class="s-id">[S24]</span> <span class="s-name">xboxdevwiki — Patents</span><span class="s-url">https://xboxdevwiki.net/Patents</span><span class="s-note">Patents on multi-user console authentication and untrusted-system service access (US7218739B2, US8607324) — legal background of the architecture.</span></div>
+
+</div>
+
+<!-- ==================== ENDING PAGE ==================== -->
+<div class="ending">
+  <div class="grid-bg"></div>
+  <div class="inner">
+    <div class="big">You now know what the console does,<br>where to hook in,<br>and what the server must answer.</div>
+    <div class="sub">This document is a complete starting point for implementing a DashLaunch plugin that redirects Xbox Live traffic, and for the community servers behind it. All facts come from homebrew-community research; gaps are explicitly marked UNVERIFIED together with the way to close them. The companion Work Report describes the methodology, the work chronology and the full source registry.</div>
+    <div class="sig">DocsEN.pdf · version 1.0 · 2026-11-13 · sources: homebrew community</div>
+  </div>
+</div>
+</body>
+</html>
